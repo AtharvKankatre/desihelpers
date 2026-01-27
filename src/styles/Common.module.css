@@ -1,0 +1,1470 @@
+/* These styles are for the global / static and reusable components */
+
+.headerMain {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 0;
+  z-index: 1;
+  box-shadow: 1px 1px 1px 2px #e0dede;
+}
+
+.whiteDivider {
+  border-bottom: 1px dotted white;
+  width: 100%;
+  padding: 1px;
+}
+
+.hr {
+  border: none;
+  border-top: 2px dotted rgb(91, 88, 88);
+}
+
+.h5CSS {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.h6CSS {
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.h7CSS {
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.h8CSS {
+  font-size: 0.65rem;
+  font-weight: 400;
+}
+
+.body {
+  /* top: 33px; Removed to prevent layout gap */
+  min-height: 88.5vh;
+}
+
+.bodyText {
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+.border_bottom_dark {
+  border-bottom: 1px dashed #ffc107;
+}
+
+.btnGap {
+  margin-right: 20px !important;
+}
+
+.btnPrimary {
+  background-color: #1a5891;
+  width: auto;
+  min-width: 100px;
+}
+
+.btnPrimary:hover {
+  background-color: #0a365f;
+  width: auto;
+  min-width: 100px;
+  color: white;
+}
+
+.btnSmall {
+  padding: 3px 8px !important;
+  font-size: 0.9rem;
+  height: auto;
+}
+
+.btnCancel {
+  color: black !important;
+  background-color: #abb0b4;
+  border: 0 !important;
+  width: auto;
+  min-width: 100px;
+}
+
+.btnCancel:hover {
+  background-color: #7c8287;
+  width: auto;
+  min-width: 100px;
+  color: white;
+}
+
+.btnBuildProfile {
+  border-radius: 8px;
+  font-family: Arial;
+  /* color: #000000; */
+  font-size: 18px;
+  background: #ffc803;
+  padding: 15px 25px 15px 25px;
+  text-decoration: none;
+  width: auto;
+}
+
+.btnBuildProfile:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
+  color: white;
+}
+
+.btnCommon {
+  -webkit-border-radius: 8;
+  -moz-border-radius: 8;
+  border-radius: 8px;
+  font-family: Arial;
+  color: #000000;
+  font-size: 14px;
+  background: #f5f5f5;
+  padding: 9px 12px;
+  text-decoration: none;
+  margin: 8px;
+  min-width: 144px !important;
+}
+
+.btnCommon:hover {
+  background: #40a4de;
+  text-decoration: none;
+  color: white;
+}
+
+.headerIconBeta {
+  font-size: small;
+}
+
+.headerButtonCSS {
+  background-color: transparent;
+  border: 0px;
+  color: black;
+}
+
+.inputFieldMainContainer {
+  display: grid;
+  grid-column: auto auto;
+  margin: 0 8px;
+}
+
+.inputTitleStyle {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: black;
+}
+
+.inputFieldStyle {
+  border: 1px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  padding: 4px 8px 4px 8px;
+  margin: 0px 0px 16px 0px;
+}
+
+.buttonCommonCSS {
+  width: auto;
+  margin: 4px;
+  border: 0px;
+  padding: 4px 12px 4px 12px;
+  border-radius: 4px;
+  min-width: 150px;
+}
+
+.dividerLineWrapper {
+  padding: 16px;
+}
+
+.dividerLine {
+  height: 1px;
+  background-color: #06b9a3;
+  width: 100%;
+}
+
+.postJobAnimatedButton {
+  background-color: #1a5891;
+  color: white;
+  border: 0px;
+  -webkit-animation: postJobAnimation 1s infinite;
+  /* Safari 4+ */
+  -moz-animation: postJobAnimation 1s infinite;
+  /* Fx 5+ */
+  -o-animation: postJobAnimation 1s infinite;
+  /* Opera 12+ */
+  animation: postJobAnimation 1s infinite;
+}
+
+.pLabel {
+  font-weight: 500;
+  font-size: 1.20rem !important;
+  line-height: 1.6;
+  letter-spacing: 0.0075em;
+  color: #0066b2;
+  margin-bottom: 16px;
+}
+
+.pLabelSmall {
+  font-weight: 500;
+  font-size: 0.85rem !important;
+  line-height: 1.6;
+  letter-spacing: 0.0075em;
+  color: #0066b2;
+  margin-bottom: 16px;
+}
+
+.cardLabel {
+  font-weight: 600;
+  font-size: 1rem !important;
+  line-height: 1.6;
+  letter-spacing: 0.0075em;
+  color: #0066b2;
+  margin-bottom: 16px;
+}
+
+/* image slider css */
+.nextRightArrow {
+  position: absolute;
+  top: 50%;
+  right: -55px;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.nextLeftArrow {
+  position: absolute;
+  top: 50%;
+  left: -50px;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+/* testimonils card hover effect  */
+.cardHoverEffect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cardHoverEffect:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* image css  */
+.cardProfilePhoto {
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  margin-right: 16px;
+}
+
+.cardProfilePhoto img {
+  object-fit: cover;
+  border-radius: 20px;
+  height: 60px;
+  width: 60px;
+}
+
+.mapMarker {
+  padding: 3px;
+  background-color: #06b9a3;
+  border-radius: 50%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Remove border-radius for tabs */
+.navtabs {
+  border: none;
+}
+
+.navtabs .nav_link {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent !important;
+}
+
+/* Show underline for active tab */
+.navtabs .nav_link .active {
+  background: transparent !important;
+}
+
+.navtabs .navItem {
+  background: transparent;
+  border-bottom: 2px solid #007bff;
+  font-weight: bold;
+}
+
+.textFlicker {
+  -webkit-animation: postJobAnimation 1s infinite;
+  /* Safari 4+ */
+  -moz-animation: postJobAnimation 1s infinite;
+  /* Fx 5+ */
+  -o-animation: postJobAnimation 1s infinite;
+  /* Opera 12+ */
+  animation: postJobAnimation 1s infinite;
+}
+
+.bgTransparent {
+  background-color: transparent !important;
+}
+
+.profileMessageBox {
+  background-color: #fbfbfb;
+  border-radius: 8px;
+  padding: 32px;
+  margin-top: 32px;
+  border: 1px dashed #06b9a3;
+}
+
+.bgImageLanding {
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-position-x: right;
+  background-size: contain;
+}
+
+.bgImageLogin {
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-position-x: right;
+  background-size: cover;
+}
+
+.emailWrap {
+  word-wrap: break-word;
+}
+
+.cardHeight {
+  height: 66px;
+}
+
+.customTooltip {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  /* White background with 80% opacity */
+  color: black !important;
+  /* Ensure the text remains readable */
+  border: 1px solid #ddd;
+  /* Optional: light border for visibility */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  /* Optional: subtle shadow for depth */
+  padding: 8px;
+  /* Adjust padding if necessary */
+}
+
+.backArrow {
+  margin: 0px 15px 5px 0px;
+  padding: 5px;
+  cursor: pointer;
+  float: left !important;
+}
+
+.card {
+  padding: 1.5em 0.5em 0.5em;
+  text-align: center;
+  border-radius: 1em;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.listFilters {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.appliedFilters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+}
+
+.appliedFiltersDisplay {
+  display: flex !important;
+}
+
+/* Desktop */
+@media (min-width: 1120px) and (max-width: 3440px) {
+  .backArrow {
+    margin: 5px 15px 5px 0px;
+  }
+
+}
+
+@media (max-width: 1390px) {
+  .JobcardHeight {
+    height: 60px;
+  }
+
+  .listFilters {
+    display: block;
+  }
+
+  .appliedFilters {
+    margin-top: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+
+  }
+
+  .applied-filters {
+    padding-top: 12px;
+  }
+
+  .appliedFiltersDisplay {
+    display: block !important;
+  }
+}
+
+
+@keyframes postJobAnimation {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.avatar {
+  margin-left: 8px;
+  margin-right: 8px;
+  color: #06b9a3;
+  padding: 0px;
+}
+
+.titlePlusLabelForTitle {
+  color: gray;
+}
+
+.titlePlusLabelForLabel {
+  color: #000;
+}
+
+.hrefLabel {
+  color: blue !important;
+}
+
+.displayDetailsWrapper {
+  background-color: #f4f4f4;
+  min-height: 88.5vh;
+  justify-content: center;
+  align-content: start;
+  padding-top: 80px;
+  position: relative;
+}
+
+.mapStyling {
+  min-height: 500px;
+  min-width: 400px;
+  position: relative;
+}
+
+.filterDiv {
+  min-width: 200px !important;
+  font-size: 12px;
+}
+
+.filterBadge {
+  background-color: rgb(221, 221, 221) !important;
+  border: 1px solid rgb(191, 191, 191) !important;
+  color: #000;
+  height: fit-content;
+  margin: 3px -2px 3px 5px;
+  padding: 10px 8px;
+  border-radius: 4px !important;
+  font-weight: normal !important;
+}
+
+/* ==================== */
+/* SIGNUP PAGE STYLES   */
+/* ==================== */
+
+.signupContainer {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  margin-top: 0;
+  /* Push content below fixed navbar */
+  padding-top: 74px;
+  background-color: white;
+}
+
+.signupLeftPanel {
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
+  background: radial-gradient(73.06% 73.06% at 50% 37%, #005DE1 0%, #001738 100%);
+  padding: 70px 40px 30px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.signupRightPanel {
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center horizontally */
+  text-align: center;
+  /* Center text */
+  position: relative;
+  overflow-y: auto;
+}
+
+
+
+.signupLogo {
+  height: 40px;
+  width: auto;
+  margin-bottom: 20px;
+}
+
+.signupHeroSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.signupBackgroundArrow {
+  position: absolute;
+  width: 500px;
+  height: auto;
+  left: 50%;
+  top: 80%;
+  transform: translate(-50%, -50%);
+  opacity: 0.95;
+  z-index: 1;
+}
+
+.signupCenterDesign {
+  position: relative;
+  z-index: 2;
+  width: 250px;
+  height: auto;
+}
+
+.signupUpwardArrows {
+  position: absolute;
+  z-index: 3;
+  width: 16px;
+  height: auto;
+}
+
+.signupUpwardArrowsLeft {
+  left: 32%;
+  top: 32%;
+}
+
+.signupUpwardArrowsCenter {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 22%;
+}
+
+.signupUpwardArrowsRight {
+  right: 30%;
+  top: 28%;
+}
+
+/* Decorative elements */
+.signupDecorGreen {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  color: #22c55e;
+  font-size: 12px;
+  z-index: 5;
+}
+
+.signupDecorX {
+  position: absolute;
+  top: 25%;
+  right: 15%;
+  color: #ef4444;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 5;
+}
+
+.signupTagline {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  margin-top: 20px;
+}
+
+.highlight {
+  color: #005DE1;
+}
+
+.signupDescription {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.signupStats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: auto;
+  padding-top: 30px;
+}
+
+.signupStatDivider {
+  width: 1px;
+  height: 50px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.signupStatItem {
+  text-align: center;
+  color: white;
+}
+
+.signupStatNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  display: block;
+}
+
+.signupStatLabel {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  display: block;
+}
+
+/* Right Panel Styles */
+.signupClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+  padding: 8px;
+  line-height: 1;
+}
+
+.signupClose:hover {
+  color: #000;
+}
+
+.signupFormContainer {
+  max-width: 450px;
+  margin: 0 auto;
+  width: 100%;
+  padding-top: 40px;
+}
+
+.signupTitle {
+  color: #005DE1;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.signupTitleUnderline {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #FF6B00, #FF8C00);
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+.signupStepIndicator {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.signupSubtitle {
+  color: #001738;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.signupSocialButtons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.signupSocialBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.signupSocialBtn:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+.signupSocialBtn img {
+  width: 20px;
+  height: 20px;
+}
+
+.signupDivider {
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+  margin: 20px 0;
+  position: relative;
+}
+
+.signupEmailSection {
+  margin-bottom: 16px;
+}
+
+.signupLabel {
+  display: block;
+  color: #333;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.signupLabel .required {
+  color: #ff4444;
+}
+
+.signupEmailInputWrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.signupEmailInputWrapper input {
+  flex: 1;
+  border: none;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.signupVerifyBtn {
+  background: none;
+  border: none;
+  color: #FF6B00;
+  font-weight: 600;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.signupVerifyBtn:hover {
+  color: #e55b00;
+}
+
+.signupOtpHint {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 16px 0 12px;
+}
+
+.signupOtpInputs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.signupOtpInput {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
+
+.signupOtpInput:focus {
+  border-color: #005DE1;
+}
+
+.signupButton {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #FF6B00, #FF8C00);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.signupButton:hover {
+  opacity: 0.9;
+}
+
+.signupButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.signupLoginLink {
+  text-align: center;
+  margin-top: 24px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.signupLoginLink a {
+  color: #005DE1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signupLoginLink a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .signupContainer {
+    flex-direction: column;
+    margin-top: 0;
+    padding-top: 74px;
+    /* Ensure padding is kept */
+  }
+
+  .signupLeftPanel,
+  .signupRightPanel {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .signupLeftPanel {
+    padding: 60px 30px;
+    align-items: center;
+    /* Ensure centering */
+  }
+
+  .signupRightPanel {
+    padding: 40px 30px;
+  }
+
+  .signupBackgroundArrow {
+    width: 80%;
+    /* responsive width */
+    max-width: 500px;
+  }
+
+  .signupCenterDesign {
+    width: 200px;
+    /* Slightly smaller on tablets/mobile */
+  }
+
+  .signupStats {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .signupLeftPanel,
+  .signupRightPanel {
+    padding: 30px 20px;
+  }
+
+  .signupTagline {
+    font-size: 1.25rem;
+  }
+
+  .signupStats {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .signupStatDivider {
+    width: 50px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .signupStatNumber {
+    font-size: 1.5rem;
+  }
+
+  .signupSocialButtons {
+    flex-direction: column;
+  }
+
+  .signupOtpInputs {
+    gap: 8px;
+  }
+
+  .signupOtpInput {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* ===================== NAVBAR STYLES ===================== */
+.navbarMain {
+  background-color: #001738;
+  width: 100%;
+  height: 74px;
+  padding: 16px 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.navbarContainer {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.navbarBrand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbarLinks {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-left: auto;
+  /* Push center links to right */
+  margin-right: 32px;
+  /* Add spacing between links and actions */
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  padding: 8px 0;
+}
+
+.navLink:hover {
+  color: #FF6B35;
+}
+
+.navbarActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.langSelector {
+  position: relative;
+}
+
+.langButton {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.langButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.langDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  padding: 8px 0;
+  z-index: 1001;
+}
+
+.langOption {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.langOption:hover {
+  background-color: #f5f5f5;
+}
+
+.navIconButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.navIconButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navIconButton img {
+  filter: brightness(0) invert(1);
+}
+
+/* Navbar responsive */
+@media (max-width: 768px) {
+  .navbarMain {
+    height: 60px;
+    padding: 12px 16px;
+  }
+
+  .navbarLinks {
+    display: none;
+  }
+}
+
+/* ===================== MULTI-STEP FORM STYLES ===================== */
+
+/* Progress Bar */
+.progressBarContainer {
+  width: 100%;
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B35 0%, #FF8C5A 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.stepIndicator {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* align-items: center; Remove this to let inputs expand to form width */
+}
+
+.stepTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #004080;
+  margin: 0;
+  text-align: center;
+}
+
+.stepSubtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.stepSubtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  text-align: center;
+}
+
+.signupForm {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form Styles */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required {
+  color: #FF6B35;
+}
+
+.formInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #333333;
+  transition: border-color 0.2s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #004080;
+}
+
+.formInput:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+}
+
+.formSelect {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  color: #333333;
+  cursor: pointer;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.inputWithButton {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.inputWithButton .formInput {
+  padding-right: 80px;
+}
+
+.verifyButton {
+  position: absolute;
+  right: 12px;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: #FF6B35;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.verifiedBadge {
+  position: absolute;
+  right: 12px;
+  color: #22c55e;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.errorText {
+  font-size: 12px;
+  color: #dc2626;
+}
+
+/* Checkbox Styles */
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #22c55e;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Social Buttons */
+.signupSocialButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.socialButton {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.socialButton:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+/* Divider */
+.dividerWithText {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.dividerWithText::before,
+.dividerWithText::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dividerWithText span {
+  padding: 0 16px;
+  color: #999;
+  font-size: 12px;
+}
+
+/* OTP Styles */
+.otpHint {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.verifyOtpButton {
+  padding: 10px 24px;
+  background: #004080;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+/* Step Buttons */
+.stepButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.backButton {
+  background: transparent;
+  border: none;
+  color: #FF6B35;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px;
+}
+
+/* Upload Area */
+.uploadArea {
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.uploadArea:hover {
+  border-color: #FF6B35;
+}
+
+.uploadIcon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.uploadHint {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 8px 0;
+}
+
+.browseLink {
+  color: #004080;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.fileInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Switch Mode Text */
+.switchModeText {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-top: 16px;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #FF6B35;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Close Button */
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background-color: #f5f5f5;
+}
+
+/* Header Button */
+.headerButtonCSS {
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  padding: 8px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.headerButtonCSS:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #FF6B35;
+  border-color: #FF6B35;
+}
+
+/* Responsive Multi-Step Form */
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .signupSocialButtons {
+    flex-direction: column;
+  }
+
+  .socialButton {
+    min-width: 100%;
+  }
+}

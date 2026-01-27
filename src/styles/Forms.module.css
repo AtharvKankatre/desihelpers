@@ -1,0 +1,101 @@
+.formMainBody {
+  background-color: #fbfbfb;
+  min-height: 88.5vh;
+  justify-content: center;
+  align-content: start;
+  padding: 8px;
+  padding-top: 80px;
+  position: relative;
+}
+
+.formAlternateBody {
+  background-color: transparent;
+  min-height: 88.5vh;
+  justify-content: center;
+  align-content: start;
+  padding: 8px;
+  padding-top: 80px;
+  position: relative;
+}
+
+.formBody {
+  margin: 16px;
+  background-color: white;
+  padding: 24px;
+  justify-content: center;
+  align-items: start;
+  text-align: center;
+  box-shadow: 0px 2px 6px 2px rgba(238, 238, 238, 1),
+    0px 1px 2px 0px rgba(155, 155, 155, 1);
+  border-radius: 6px;
+  justify-self: center;
+}
+
+.selectWrapper {
+  text-align: start !important;
+}
+
+.datePickWrapper {
+  padding: 0px;
+}
+
+.errorMessage {
+  font-size: 12px;
+  color: red;
+  height: 1rem;
+  padding-left: 4px;
+  padding-top: 2px;
+}
+
+.errorMessageWithExtraHeight {
+  font-size: 12px;
+  color: red;
+  height: 1.5rem;
+  padding-left: 4px;
+  padding-top: 2px;
+}
+
+.mandatoryIndicator {
+  color: red;
+  padding-left: 4px;
+}
+
+.iconTextButton {
+  border: 0px;
+  border-radius: 4px;
+  padding: 8px 12px 2px 12px;
+  margin: auto;
+  width: 100%;
+  box-shadow: 0px 2px 6px 2px rgba(238, 238, 238, 1),
+    0px 1px 2px 0px rgba(155, 155, 155, 1);
+}
+
+.checkBoxCSS {
+  margin-left: 14px;
+  width: max-content;
+  border-radius: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.passwordCSS {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.passwordIconCSS {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.inputArea {
+  text-align: justify;
+}
+
+.toggleInput {
+  margin: 8px;
+}

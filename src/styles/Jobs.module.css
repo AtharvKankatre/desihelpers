@@ -1,0 +1,226 @@
+.jobRow {
+  margin: auto;
+}
+
+.jobCardDetails {
+  position: relative;
+  background-color: #163756;
+  width: auto;
+  color: white;
+  padding: 0;
+  height: 100%;
+}
+
+.jobCardsDetailsMap {
+  width: 200px !important;
+  float: left !important;
+  margin-right: 10px !important;
+  margin-top: 20px;
+}
+
+.jobIcon {
+  text-align: center !important;
+  height: 32px;
+}
+
+.jobCardDetails ul {
+  padding-left: 0px;
+}
+
+.jobCardDetails ul li {
+  list-style-type: none;
+  text-align: start;
+}
+
+.pt_10 {
+  padding-top: 0.1rem !important;
+}
+
+.iconLocation {
+  height: 20px;
+  width: auto;
+}
+.list_groupnobg li {
+  border: none !important;
+  background: transparent !important;
+}
+.list_groupcategory {
+  width: 150px;
+}
+.list_groupbookmarks {
+  width: 200px;
+}
+.mapTitile {
+  margin-left: 0 !important;
+}
+.jobPostdetailModal {
+  background-color: #e0f7fa !important;
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding-top: 10px;
+}
+.jobPostdetailModal p {
+  margin-right: 180px;
+}
+
+@media (max-width: 487px) {
+  .jobRow {
+    width: 100%;
+  }
+  .jobCardDetails {
+    width: 100%;
+  }
+  .jobCardsDetailsMap {
+    width: 100% !important;
+    padding-left: 5px !important;
+  }
+  .list_groupbookmarks {
+    width: 250px;
+  }
+}
+
+.viewJobDetailsMainBody {
+  background-color: white;
+  box-shadow: 0px 2px 6px 2px rgba(238, 238, 238, 1),
+    0px 1px 2px 0px rgba(155, 155, 155, 1);
+  border-radius: 4px;
+}
+
+.myPostJobCard {
+  border-radius: 4px;
+  border-width: 1.5px;
+  border-style: solid;
+  border-color: transparent;
+  background-color: white;
+  color: #0f5391;
+  box-shadow: 0px 2px 2px 0px rgba(238, 238, 238, 0.5),
+    0px 1px 2px 0px rgba(155, 155, 155, 1);
+}
+
+.editProfileJobDetailsCard {
+  margin: 4px;
+  margin-bottom: 24px;
+  padding: 16px 0px;
+  border-radius: 4px;
+  background-color: aliceblue;
+  border: 1px solid lightblue;
+  /* box-shadow: 2px 2px 2px 4px rgba(238, 238, 238, 0.5),
+    0px 1px 2px 0px rgba(155, 155, 155, 1); */
+}
+
+.deleteIcon {
+  color: red;
+}
+
+.imageSize {
+  width: 100%;
+  height: 205px;
+}
+
+.imageSizeMobile {
+  width: 100%;
+  height: 150px;
+}
+
+/* CSS for job poster display card for map */
+.jobPosterCardForMap {
+  background-color: black;
+  color: white;
+  border-radius: 8px;
+  height: 150px;
+  margin: 0px;
+  margin: 4px 15px 4px 0px;
+}
+.jobPosterCardForMap {
+  cursor: pointer;
+}
+
+.jobPosterCardForMapMobile {
+  background-color: black;
+  color: white;
+  border-radius: 8px;
+  height: 150px;
+  margin: 0px;
+  margin: 4px 0px 4px 0px;
+  width: 100%;
+}
+.jobPosterCardForMapMobile:hover {
+  cursor: pointer;
+}
+
+.jobPosterCardForMapImg {
+  opacity: 0.25;
+  height: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.jobPosterCardForMapOverlay {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  justify-content: center;
+}
+
+.jobPosterCardForMapFirstRow {
+  display: flex;
+  flex-direction: row;
+  text-align: start;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.workTypeAndPayRange {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+/* End of CSS for job poster display card for map */
+
+/* CSS for job seeker display card for map */
+.jobSeekerCardForMap {
+  color: white;
+  border-radius: 8px;
+  margin: 0px;
+  margin: 4px 15px 4px 0px;
+  /* padding: 12px; */
+}
+
+.jobSeekerCardForMapMobile {
+  background-color: teal;
+  color: white;
+  border-radius: 8px;
+  height: auto;
+  margin: 0px;
+  margin: 4px 0px 4px 0px;
+  width: 100%;
+}
+
+.jobSeekerPhotoAndDisplayName {
+  display: flex;
+  flex-direction: row;
+  text-align: start;
+  width: 100%;
+  justify-content: start;
+  align-items: center;
+  padding: 12px;
+}
+
+.jobSeekerExpertiseIcons {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 4px;
+  width: 100;
+  margin: 4px 12px 4px 12px;
+  border-radius: 4px;
+  justify-content: space-between;
+  align-items: start;
+}
+/* End of CSS for job seeker display card for map */

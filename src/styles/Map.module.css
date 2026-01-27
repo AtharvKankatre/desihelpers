@@ -1,0 +1,177 @@
+.mapMasterBody {
+  position: fixed;
+  left: 0;
+  top: 55px;
+  width: 100%;
+  height: calc(100vh - 55px);
+  background-color: #e0dede;
+}
+
+.firstRow {
+  padding: 12px 0px 0px 0px;
+  background-color: #e0dede;
+}
+
+.firstRowTablet {
+  padding: 12px;
+  background-color: #e0dede;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.secondRow {
+  height: 95%;
+  justify-content: center;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.secondRowMobile {
+  height: 82%;
+}
+
+.mapInnerBody {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 100%;
+  padding-right: 0;
+}
+
+.radarMapClassMobile {
+  width: 82%;
+}
+
+.radarMapClassTablet {
+  flex-grow: 1;
+  margin-right: 8px;
+}
+
+.searchIconMapClassMobileAndTablet {
+  width: auto;
+  margin-top: 3px;
+  margin-right: 8px;
+}
+
+.mapContainer {
+  height: 90% !important;
+  min-height: 250px;
+  flex-grow: 1;
+  padding-right: 12px;
+}
+
+.mapContainerMobile {
+  height: 80% !important;
+  margin: 0px 12px 0px 12px;
+  display: block;
+}
+.mapContainerMobileHide {
+  height: 80% !important;
+  margin: 0px 12px 0px 12px;
+  display: none;
+}
+
+.mapCardListContainerMobile {
+  height: 88.5% !important;
+  margin: 0px 8px 0px 8px;
+  display: block;
+}
+.mapCardListContainerMobileHide {
+  height: 88.5% !important;
+  margin: 0px 8px 0px 8px;
+  display: none;
+}
+
+.cardListContainer {
+  min-height: 250px;
+  height: 90% !important;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  border-radius: 8px;
+  padding-top: 8px;
+  background-color: white;
+  width: 340px;
+  padding: 8px;
+}
+
+.cardListContainerMobile {
+  /* min-height: 250px; */
+  height: 90% !important;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  border-radius: 8px;
+  background-color: white;
+  width: 97%;
+  padding: 8px;
+  margin-left: 4px;
+  margin-right: 12px;
+}
+
+.mapOutline {
+  z-index: 0;
+  border: 2.5px solid white;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.mapTableRowTablet {
+  overflow-y: auto;
+  align-content: baseline;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.mapTableRowDesktop {
+  overflow-y: auto;
+  align-content: baseline;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: auto;
+}
+
+.mapJobCard {
+  background-color: white;
+  box-shadow: 0px 2px 2px 0px gray;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  max-height: fit-content;
+  background-position: "center";
+}
+.list-inline-item img {
+  vertical-align: text-bottom;
+}
+
+.mapSelectYourLocation {
+  z-index: 0;
+  height: 300px;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 8px;
+}
+
+.radarPinCard {
+  background-color: #073157;
+  color: transparent;
+  padding: 1px;
+  border-radius: 4px;
+}
+.radarPinCard:hover {
+  background-color: #008080;
+}
+
+.mapSearchLaptop {
+  padding: 0 32 px 0 11px;
+}
+
+.mapFloatingButtonForMobile {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0px 0px 8px 0px;
+  justify-self: center;
+}

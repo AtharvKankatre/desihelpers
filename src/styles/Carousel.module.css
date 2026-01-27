@@ -1,0 +1,35 @@
+
+.slickSlider img {
+  display: initial;
+}
+
+.carouselContainer {
+  position: relative;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5%; /* You can adjust this for the arrow width */
+}
+
+.carousel-control-prev {
+  left: -5%; /* Adjust to move arrow outside the left of the container */
+}
+
+.carousel-control-next {
+  right: -5%; /* Adjust to move arrow outside the right of the container */
+}
+
+/* You can also adjust the size of the icons if needed */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-size: 100%, 100%;
+  width: 50px;
+  height: 50px;
+}
+
+
+  

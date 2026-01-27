@@ -1,0 +1,90 @@
+.landingWrapper {
+  margin-top: 5rem;
+}
+
+.bannerText {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+/* Landing page related css */
+.landingMainBody {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.titleLargeCenterAlign {
+  font-weight: 400;
+  color: #0f5391;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.bodyCenterAlign {
+  font-weight: 400;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.missionMainContainer {
+  height: 409.75px;
+  width: 80%;
+  display: grid;
+  grid-template-rows: auto auto;
+  align-self: center;
+  align-content: space-evenly;
+  align-items: center;
+}
+
+.missionCardsRow {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  margin: auto;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.missionCardMainBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
+
+.missionCardImage {
+  height: 100px;
+  width: 100px;
+}
+
+.welcomeBanner {
+  justify-content: start;
+  text-align: left;
+}
+
+@media (min-width:2560px ) and ( max-width: 3440px) {
+  .welcomeBannerMsg {
+    margin-left: 20% !important;
+  }
+  .welcomeBannerImg {
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .landingWrapper {
+    margin: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .missionCardsRow {
+    display: inline;
+  }
+
+  .welcomeBanner {
+    justify-content: center;
+    text-align: center;
+  }
+}

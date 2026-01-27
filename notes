@@ -1,0 +1,46 @@
+First div should be a fluid container - it should have col-md-12
+Next div should be a row
+Post which all divs can be aligned accordingly using col-sm-x
+
+Flow for data
+1st Step : Make API call via CrudService
+2nd Step : If success then transform data -> Perform processing on a model if needed. Example store it in Zustand / Store tokens in Cookie
+3rd Step : Return a list where the first element is a boolean (true implies success) and the 2nd element is data or error message
+
+ashrita.raskatla@inpinitesolutions.com
+Pass@123
+
+Rows must be placed within a .container (fixed-width) or .container-fluid (full-width) for proper alignment and padding.
+Use rows to create horizontal groups of columns.
+Content should be placed within columns, and only columns may be immediate children of rows.
+Predefined grid classes like .row and .col-xs-4 are available for quickly making grid layouts. Less mixins can also be used for more semantic layouts.
+Columns create gutters (gaps between column content) via padding. That padding is offset in rows for the first and last column via negative margin on .rows.
+The negative margin is why the examples below are outdented. It's so that content within grid columns is lined up with non-grid content.
+Grid columns are created by specifying the number of twelve available columns you wish to span. For example, three equal columns would use three .col-xs-4.
+If more than 12 columns are placed within a single row, each group of extra columns will, as one unit, wrap onto a new line.
+Grid classes apply to devices with screen widths greater than or equal to the breakpoint sizes, and override grid classes targeted at smaller devices. Therefore, e.g. applying any .col-md-_ class to an element will not only affect its styling on medium devices but also on large devices if a .col-lg-_ class is not present.
+
+Center aligning other rows
+
+<div className="container-fluid">
+  <div className="row justify-content-center">
+    <div className="col-md-6 mx-auto">
+      
+    </div>
+  </div>
+</div>
+
+For forms
+
+<div className="container">
+  <div className="row justify-content-center">
+    <div className="col-md-6 mx-auto">
+      <form>
+        {/* Your form elements go here */}
+      </form>
+    </div>
+  </div>
+</div>
+
+Attribution for instruction manual
+<a href="https://storyset.com/people">People illustrations by Storyset</a>
