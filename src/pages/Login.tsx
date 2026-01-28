@@ -52,11 +52,13 @@ const Login = () => {
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [loginOtp, setLoginOtp] = useState(["", "", "", "", "", ""]);
   const [isLoginOtpSent, setIsLoginOtpSent] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
 
   // Fetch states on component mount
   useEffect(() => {
@@ -376,13 +378,16 @@ const Login = () => {
   };
 
   const performLogin = async (email: string, password: string) => {
+    setIsLoading(true);
     const loginRes = await ApiService.crud(
       APIDetails.login,
       JSON.stringify({ email: email, password: password })
     );
 
+    setIsLoading(false);
+    // Note: ProcessDataService.processLogin already calls CookieService.SetCookies
+    // loginRes[0] is the success boolean, loginRes[1] is [true] on success or error message on failure
     if (loginRes[0]) {
-      CookieService.SetCookies(loginRes[1]);
       Swal.fire({
         title: "Login Successful",
         icon: "success",
@@ -392,9 +397,18 @@ const Login = () => {
         router.push("/Landing");
       });
     } else {
-      setIsLoading(false);
-      Swal.fire({ title: "Login Failed", text: loginRes[1] || "Authentication failed", icon: "error" });
+      const errorMessage = typeof loginRes[1] === 'string' ? loginRes[1] : "Invalid credentials. Please check your email and password.";
+      Swal.fire({ title: "Login Failed", text: errorMessage, icon: "error" });
     }
+  };
+
+  // Handle normal password login
+  const handlePasswordLogin = async () => {
+    if (!loginEmail || !loginPassword) {
+      Swal.fire({ title: "Error", text: "Please enter email and password", icon: "error" });
+      return;
+    }
+    await performLogin(loginEmail.trim().toLowerCase(), loginPassword);
   };
 
   // Render left panel (shared between signup and login)
@@ -932,7 +946,9 @@ const Login = () => {
         <div className={style.signupTitleUnderline}></div>
 
         <div className={style.stepContent}>
-          <p className={style.stepSubtitle}>Enter below details to login your account.</p>
+          <p className={style.stepSubtitle}>
+            {isForgotPassword ? "Reset your password using OTP" : "Enter your credentials to login."}
+          </p>
 
           <div className={style.formGroup}>
             <label className={style.formLabel}>Email ID <span className={style.required}>*</span></label>
@@ -945,29 +961,82 @@ const Login = () => {
             />
           </div>
 
-          {isLoginOtpSent && (
-            <div className={style.signupOtpInputs}>
-              {loginOtp.map((digit, index) => (
+          {!isForgotPassword && (
+            <>
+              <div className={style.formGroup}>
+                <label className={style.formLabel}>Password <span className={style.required}>*</span></label>
                 <input
-                  key={index}
-                  id={`login-otp-${index}`}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(index, e.target.value, true)}
-                  className={style.signupOtpInput}
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className={style.formInput}
                 />
-              ))}
-            </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsForgotPassword(true)}
+                className={style.linkButton}
+                style={{ alignSelf: 'flex-end', marginBottom: '16px' }}
+              >
+                Forgot Password?
+              </button>
+              <button
+                onClick={handlePasswordLogin}
+                className={style.signupButton}
+                disabled={isLoading}
+              >
+                {isLoading ? "Logging in..." : "Log In"}
+              </button>
+            </>
           )}
 
-          <button
-            onClick={isLoginOtpSent ? verifyLoginOtp : sendLoginOtp}
-            className={style.signupButton}
-            disabled={isLoading}
-          >
-            {isLoginOtpSent ? "Verify & Login" : "Send OTP"}
-          </button>
+          {isForgotPassword && (
+            <>
+              {!isLoginOtpSent && (
+                <button
+                  onClick={sendLoginOtp}
+                  className={style.signupButton}
+                  disabled={isLoading || !loginEmail}
+                >
+                  {isLoading ? "Sending..." : "Send OTP"}
+                </button>
+              )}
+              {isLoginOtpSent && (
+                <>
+                  <p className={style.otpHint}>Enter the OTP sent to your email</p>
+                  <div className={style.signupOtpInputs}>
+                    {loginOtp.map((digit, index) => (
+                      <input
+                        key={index}
+                        id={`login-otp-${index}`}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(index, e.target.value, true)}
+                        className={style.signupOtpInput}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={verifyLoginOtp}
+                    className={style.signupButton}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Verifying..." : "Verify & Reset"}
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => { setIsForgotPassword(false); setIsLoginOtpSent(false); }}
+                className={style.linkButton}
+                style={{ marginTop: '12px' }}
+              >
+                ← Back to Login
+              </button>
+            </>
+          )}
 
           <div className={style.dividerWithText}>
             <span>OR</span>
