@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { CHeader } from "@/components/global/header/CHeader";
-import { CFooter } from "@/components/global/footer/Footer";
+import { FooterSection } from "@/components/page_related/landing/FooterSection";
 import styles from "@/styles/Common.module.css";
 import GuildLinesAccordian from "@/components/page_related/landing/GuideLinesAccordion";
 
@@ -20,7 +20,7 @@ export const CGlobalLayout: FunctionComponent<Props> = ({ children }) => {
       <div className={styles.body}>
         <div>{children}</div>
       </div>
-      <CFooter />
+      <FooterSection />
     </>
   );
 };

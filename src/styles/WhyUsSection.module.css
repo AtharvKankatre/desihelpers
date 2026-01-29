@@ -1,0 +1,185 @@
+/* ==================== */
+/* WHY US SECTION       */
+/* ==================== */
+
+.whyUsSection {
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    padding: 80px 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+/* Left Content */
+.leftContent {
+    flex: 1;
+    max-width: 500px;
+}
+
+.label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.heading {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.seekers {
+    color: #f97316;
+}
+
+.providers {
+    color: #0ea5e9;
+}
+
+.description {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.7;
+    margin-bottom: 40px;
+}
+
+/* Stats Grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.statNumber {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.stars {
+    font-size: 1rem;
+    color: #fbbf24;
+    margin-left: 8px;
+}
+
+.statLabel {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* Get Started Button */
+.getStartedButton {
+    background: #f97316;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+}
+
+.getStartedButton:hover {
+    background: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
+
+/* Right Content - Image */
+.rightContent {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.imageContainer {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.heroImage {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    display: block;
+    border-radius: 24px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .leftContent {
+        max-width: 100%;
+    }
+
+    .heading {
+        font-size: 2rem;
+    }
+
+    .statsGrid {
+        justify-items: center;
+    }
+
+    .statItem {
+        align-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .whyUsSection {
+        padding: 60px 20px;
+    }
+
+    .heading {
+        font-size: 1.6rem;
+    }
+
+    .statsGrid {
+        gap: 20px;
+    }
+
+    .statNumber {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .heading {
+        font-size: 1.4rem;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .statNumber {
+        font-size: 1.4rem;
+    }
+}

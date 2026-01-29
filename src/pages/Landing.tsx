@@ -1,10 +1,6 @@
-import { CDisplayJobPostersRow } from "@/components/jobs/CDisplayJobPosterListRow";
-import { CAboutUs } from "@/components/page_related/landing/AboutUs";
-import { IlustrationsImage } from "@/components/page_related/landing/IlustrationsImage";
-import { CMissionStatement } from "@/components/page_related/landing/MissionStatement";
-import { PostJobCarousel } from "@/components/page_related/landing/PostJobCarousel";
-import { WelcomeBanner } from "@/components/page_related/landing/WelcomeBanner";
-import { CDottedDivider } from "@/components/reusable/CDottedDivider";
+
+
+
 import styles from "@/styles/Common.module.css";
 import Ctestimonials from "@/components/page_related/landing/Testimonials";
 import { useEffect, useState } from "react";
@@ -12,13 +8,10 @@ import router from "next/router";
 import base64url from "base64url";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import ApiService from "@/services/data/crud/crud";
-import CStats from "@/components/page_related/landing/Stats";
-import bg from "/public/main_banner_bg.png";
-import { CDisplayJobSeekerRow } from "@/components/seekers/CDisplayJobSeekerListRow";
+
 import { userProfileStore } from "@/stores/UserProfileStore";
 import { IUserProfileModel } from "@/models/UserProfileModel";
 import { useAuth } from "@/services/authorization/AuthContext";
-import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import JobSeekerModal from "@/components/page_related/landing/PromptModalForSeeker";
 import { jobStore } from "@/stores/JobStore";
 import { seekerStore } from "@/stores/SeekerStore";
@@ -27,14 +20,22 @@ import { Routes } from "@/services/routes/Routes";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
-import landingStyles from "@/styles/Landing.module.css"; 
-import GoogleAdsBanner from "@/components/ads/GoogleAdsBanner";
+import { useRef } from "react";
+
+import { HeroSection } from "@/components/page_related/landing/HeroSection";
+import { WhyUsSection } from "@/components/page_related/landing/WhyUsSection";
+import { PopularServicesSection } from "@/components/page_related/landing/PopularServicesSection";
+import { TestimonialsSection } from "@/components/page_related/landing/TestimonialsSection";
+import { JoinMissionSection } from "@/components/page_related/landing/JoinMissionSection";
+import { BlogSection } from "@/components/page_related/landing/BlogSection";
+import { AdPlaceholders } from "@/components/page_related/landing/AdPlaceholders";
+import { FAQSection } from "@/components/page_related/landing/FAQSection";
+import { CTASection } from "@/components/page_related/landing/CTASection";
 
 const Landing: React.FC = () => {
   const userStore = userProfileStore();
   const userProfile = userProfileStore((state) => state.userProfile);
   const { isActive, isProfileBuild } = useAuth();
-  const { tablet } = useAppMediaQuery();
   const [open, setOpen] = useState(false);
   const [wantToBeSeeker, setWantToBeSeeker] = useState(false);
   let sStore = seekerStore();
@@ -61,10 +62,9 @@ const Landing: React.FC = () => {
           );
           if (res[0]) {
             setOnLoad(true);
-          setTimeout(() => {
-            const profileStatus = Cookies.get(cookieParams.isProfileBuild); // Retrieve the cookie value
-            if(profileStatus == "false")
-              {
+            setTimeout(() => {
+              const profileStatus = Cookies.get(cookieParams.isProfileBuild); // Retrieve the cookie value
+              if (profileStatus == "false") {
                 Swal.fire({
                   title: "Welcome to DesiHelpers.com",
                   text: "Let us find the help you need!",
@@ -74,20 +74,19 @@ const Landing: React.FC = () => {
                   imageWidth: 300,
                   imageHeight: "auto",
                   confirmButtonText: "Click here to build your profile",
-                  allowOutsideClick: false,  
-                  allowEscapeKey: false,     
+                  allowOutsideClick: false,
+                  allowEscapeKey: false,
                 }).then((result) => {
                   if (result.isConfirmed) {
-                    router.replace(Routes.editUserProfile); 
+                    router.replace(Routes.editUserProfile);
                   }
                 });
               }
-              else
-              {
+              else {
                 router.replace(Routes.landing);
               }
-            setOnLoad(false);// Set loading to false
-        }, 1000);
+              setOnLoad(false);// Set loading to false
+            }, 1000);
           } else {
             alert(res[1]);
           }
@@ -98,7 +97,7 @@ const Landing: React.FC = () => {
         //   setOpen(true);
         // } else 
         // {
-          
+
         //}
       } else {
       }
@@ -130,93 +129,39 @@ const Landing: React.FC = () => {
   }
 
   return (
-    <div
-      className={`container-fluid ${styles.displayDetailsWrapper} w-100 ${styles.bgImageLanding}`}
-      style={{
-        backgroundImage: `url(${bg.src})`,
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="row justify-content-center mx-auto">
-        <div className="col-md-12">
-          <div className="row align-items-center mt-5">
-            <div
-              className={`row ${
-                tablet ? "col-md-12" : "col-md-8"
-              } col-sm-12 mx-auto justify-content-center align-items-center`}
-            >
-              <div className="col-sm-6">
-                <WelcomeBanner />
-              </div>
-              <div className={`col-sm-6 ${landingStyles.welcomeBannerImg}`}>
-                <IlustrationsImage />
-              </div>
-            </div>
+    <div className={styles.displayDetailsWrapper} style={{ paddingTop: 0 }}>
+      {/* New Hero Section */}
+      <HeroSection />
 
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
+      {/* Why Us Section */}
+      <WhyUsSection />
 
-            {/* Post a job carnival */}
-            <div className="col-md-12 mt-2 mb-4">
-              <PostJobCarousel />
-            </div>
+      {/* Popular Services Section */}
+      <PopularServicesSection />
 
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
-            {/* Third row to show the available job seekers */}
-            <div className="col-md-12 text-center mt-2 mb-3">
-              <CDisplayJobSeekerRow />
-            </div>
+      {/* Join Mission Section */}
+      <JoinMissionSection />
 
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
+      {/* Blog Section */}
+      <BlogSection />
 
-            <div className="col-md-12 text-center mt-3 mb-5">
-              <CDisplayJobPostersRow />
-            </div>
+      {/* Ad Placeholders */}
+      <AdPlaceholders />
 
-            <div className="col-md-12 mt-3 mb-5">
-              <GoogleAdsBanner                       
-                    data-ad-slot="1794024513"
-                    data-matched-content-rows-num="2,1"
-                    data-matched-content-columns-num="1,2"
-                    data-matched-content-ui-type="image_stacked,image_stacked"
-                    data-ad-format="autorelaxed"
-                    data-ad-test="on"
-            />
-            </div>
+      {/* FAQ Section */}
+      <FAQSection />
 
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
-            <div className="col-sm-12 mt-5 mb-5">
-              <CMissionStatement />
-            </div>
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
-            <div className="mt-5 mb-5">
-              <CAboutUs />
-            </div>
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
-            <div>
-              <CStats />
-            </div>
-            <div className="col-md-12">
-              <CDottedDivider />
-            </div>
-            <div className="mt-4">
-              <Ctestimonials />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* CTA Section */}
+      <CTASection />
+
+
+
+
+
+
       {/* Use the new JobSeekerModal component */}
       <JobSeekerModal
         open={open}
@@ -229,3 +174,4 @@ const Landing: React.FC = () => {
 };
 
 export default Landing;
+

@@ -1,0 +1,302 @@
+/* ======================== */
+/* TESTIMONIALS CAROUSEL    */
+/* ======================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+.testimonialsSection {
+    background: #f8fafc;
+    padding: 80px 20px;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1e3a8a;
+    /* Deep blue title */
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #64748b;
+}
+
+.contentWrapper {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    position: relative;
+    /* Background quote could go here on the wrapper if desired */
+}
+
+/* Left Side - Image */
+.imageCard {
+    flex: 0 0 450px;
+    height: 500px;
+    perspective: 1000px;
+    /* Enable 3D space */
+}
+
+.decorativeBox {
+    position: absolute;
+    top: 20px;
+    left: -20px;
+    width: 100%;
+    height: 100%;
+    background-color: #557088;
+    /* Muted blue-grey from image */
+    border-radius: 24px;
+    z-index: 0;
+    animation: floatBox 6s ease-in-out infinite;
+}
+
+@keyframes floatBox {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(15px, -15px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+    z-index: 1;
+    background: #aab6c2;
+    /* Fallback */
+    animation: flipIn 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform-origin: center center;
+}
+
+@keyframes flipIn {
+    0% {
+        transform: rotateY(90deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotateY(0);
+        opacity: 1;
+    }
+}
+
+.mainImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.playButton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    background: white;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, background 0.2s;
+    animation: pulse 2s infinite;
+}
+
+.playButton:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: #f97316;
+    /* Orange on hover */
+    color: white;
+}
+
+.playButton:hover .playIcon {
+    color: white;
+}
+
+.playIcon {
+    width: 32px;
+    height: 32px;
+    color: #1e3a8a;
+    margin-left: 4px;
+    /* Optical centering */
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* Right Side - Text */
+.textContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    animation: fadeSlideIn 0.6s ease-out;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.stars {
+    color: #f59e0b;
+    font-size: 24px;
+    margin-bottom: 24px;
+    letter-spacing: 4px;
+}
+
+.quoteText {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #334155;
+    margin-bottom: 32px;
+    font-weight: 400;
+}
+
+.authorInfo {
+    margin-bottom: 40px;
+}
+
+.authorName {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 4px;
+}
+
+.location {
+    font-size: 13px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Navigation */
+.navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Or center dots, arrows right? design has dots center, arrows? image shows dots left, arrows separate? */
+    /* Looking at image: Dots are below image? No, dots are below image card in the layout? */
+    /* Actually in the image, dots are near the bottom center, arrows are near bottom right of text? */
+    /* Let's put them together for now */
+    gap: 60px;
+}
+
+.dots {
+    display: flex;
+    gap: 12px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s;
+}
+
+.activeDot {
+    background: #f97316;
+}
+
+.arrows {
+    display: flex;
+    gap: 16px;
+}
+
+.arrowBtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid #f97316;
+    background: transparent;
+    color: #f97316;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.arrowBtn:hover {
+    background: #f97316;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .contentWrapper {
+        flex-direction: column;
+        gap: 40px;
+        text-align: center;
+    }
+
+    .imageCard {
+        flex: none;
+        width: 100%;
+        max-width: 450px;
+        height: 400px;
+    }
+
+    .stars {
+        justify-content: center;
+        display: flex;
+    }
+
+    .location {
+        justify-content: center;
+    }
+
+    .navigation {
+        justify-content: center;
+        flex-direction: column;
+        gap: 20px;
+    }
+}
