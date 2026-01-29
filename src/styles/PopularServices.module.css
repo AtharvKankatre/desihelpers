@@ -1,0 +1,287 @@
+/* ======================== */
+/* POPULAR SERVICES SECTION */
+/* ======================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+.popularSection {
+    background: #ffffff;
+    padding: 60px 0;
+    /* Wide with top/bottom padding */
+    border: none;
+    border-radius: 0;
+    position: relative;
+    overflow: visible;
+    /* Allow shadows to bloom */
+}
+
+.container {
+    max-width: 100%;
+    /* Full width */
+    margin: 0;
+    padding: 0 10px;
+    /* Reduced padding to make it wider */
+}
+
+/* Header - 80px gap to cards */
+.header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: #1e3a8a;
+    /* Dark Blue */
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #64748b;
+    /* Grey text */
+    font-weight: 400;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Cards Grid - 24px gap */
+.cardsGrid {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 10px 5px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-bottom: 20px;
+    justify-content: center;
+    /* Center cards if they don't fill width */
+    /* Add space for shadow and hover lift */
+    perspective: 1000px;
+}
+
+.cardsGrid::-webkit-scrollbar {
+    display: none;
+}
+
+/* Card - 200px width, 8px radius */
+.card {
+    flex: 0 0 380px;
+    /* Even Bigger cards */
+    min-height: 360px;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.08);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.12);
+    z-index: 10;
+}
+
+/* Badges - top-right */
+.urgentBadge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #EF4444;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.advtBadge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #3b82f6;
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Job Card Image */
+.jobImageContainer {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    background: #e8f4fc;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.jobImage {
+    max-height: 76px;
+    max-width: 76px;
+    object-fit: contain;
+}
+
+/* Helper Card Image */
+.helperImageContainer {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #a8d8ea 0%, #d4f1f4 100%);
+}
+
+.helperImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Advertisement Card */
+.adContainer {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+}
+
+.adPlaceholder {
+    color: #94a3b8;
+}
+
+/* Card Content */
+.cardTitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.cardDescription {
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.cardLocation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #f97316;
+    margin-bottom: 8px;
+}
+
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.cardDate {
+    color: #9ca3af;
+}
+
+.cardRate {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* Skill Icons - 32x41px */
+.skillIcons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.skillIcon {
+    width: 32px;
+    height: 41px;
+    background: #fff5f5;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border: 1px solid #fee2e2;
+}
+
+/* CTA Container - 32px gap from cards */
+.ctaContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+/* Sign In Button - Orange gradient, pill shape */
+.signInButton {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+}
+
+.signInButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .popularSection {
+        padding: 40px 15px;
+    }
+
+    .header {
+        margin-bottom: 40px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .card {
+        flex: 0 0 180px;
+    }
+
+    .cardsGrid {
+        gap: 16px;
+    }
+}
