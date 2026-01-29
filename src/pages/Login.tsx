@@ -44,7 +44,7 @@ type ViewMode = "signup" | "login";
 
 const Login = () => {
   const router = useRouter();
-  const [viewMode, setViewMode] = useState<ViewMode>("signup");
+  const [viewMode, setViewMode] = useState<ViewMode>("login");
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [states, setStates] = useState<any[]>([]);
@@ -65,10 +65,37 @@ const Login = () => {
     fetchStates();
   }, []);
 
+  // Hardcoded US states as fallback when API requires auth
+  const US_STATES_FALLBACK = [
+    { id: "AL", name: "Alabama" }, { id: "AK", name: "Alaska" }, { id: "AZ", name: "Arizona" },
+    { id: "AR", name: "Arkansas" }, { id: "CA", name: "California" }, { id: "CO", name: "Colorado" },
+    { id: "CT", name: "Connecticut" }, { id: "DE", name: "Delaware" }, { id: "FL", name: "Florida" },
+    { id: "GA", name: "Georgia" }, { id: "HI", name: "Hawaii" }, { id: "ID", name: "Idaho" },
+    { id: "IL", name: "Illinois" }, { id: "IN", name: "Indiana" }, { id: "IA", name: "Iowa" },
+    { id: "KS", name: "Kansas" }, { id: "KY", name: "Kentucky" }, { id: "LA", name: "Louisiana" },
+    { id: "ME", name: "Maine" }, { id: "MD", name: "Maryland" }, { id: "MA", name: "Massachusetts" },
+    { id: "MI", name: "Michigan" }, { id: "MN", name: "Minnesota" }, { id: "MS", name: "Mississippi" },
+    { id: "MO", name: "Missouri" }, { id: "MT", name: "Montana" }, { id: "NE", name: "Nebraska" },
+    { id: "NV", name: "Nevada" }, { id: "NH", name: "New Hampshire" }, { id: "NJ", name: "New Jersey" },
+    { id: "NM", name: "New Mexico" }, { id: "NY", name: "New York" }, { id: "NC", name: "North Carolina" },
+    { id: "ND", name: "North Dakota" }, { id: "OH", name: "Ohio" }, { id: "OK", name: "Oklahoma" },
+    { id: "OR", name: "Oregon" }, { id: "PA", name: "Pennsylvania" }, { id: "RI", name: "Rhode Island" },
+    { id: "SC", name: "South Carolina" }, { id: "SD", name: "South Dakota" }, { id: "TN", name: "Tennessee" },
+    { id: "TX", name: "Texas" }, { id: "UT", name: "Utah" }, { id: "VT", name: "Vermont" },
+    { id: "VA", name: "Virginia" }, { id: "WA", name: "Washington" }, { id: "WV", name: "West Virginia" },
+    { id: "WI", name: "Wisconsin" }, { id: "WY", name: "Wyoming" }, { id: "DC", name: "District of Columbia" }
+  ];
+
   const fetchStates = async () => {
+    console.log("Fetching states...");
     const response = await ApiService.crud(APIDetails.fetchStates, null);
-    if (response[0]) {
-      setStates(response[1] || []);
+    console.log("States API response:", response);
+    if (response[0] && Array.isArray(response[1]) && response[1].length > 0) {
+      console.log("States data:", response[1]);
+      setStates(response[1]);
+    } else {
+      console.warn("Using fallback US states (API requires auth)");
+      setStates(US_STATES_FALLBACK);
     }
   };
 
@@ -77,8 +104,13 @@ const Login = () => {
       [APIDetails.fetchCities[0] + stateId, APIDetails.fetchCities[1], APIDetails.fetchCities[2]],
       null
     );
-    if (response[0]) {
-      setCities(response[1] || []);
+    if (response[0] && Array.isArray(response[1]) && response[1].length > 0) {
+      setCities(response[1]);
+    } else {
+      // Fallback: Allow user to type city name manually
+      // For now, show a message that cities couldn't be loaded
+      console.warn("Cities API requires auth, using empty list");
+      setCities([]);
     }
   };
 
@@ -755,37 +787,31 @@ const Login = () => {
 
       <div className={style.formRow}>
         <div className={style.formGroup}>
-          <label className={style.formLabel}>City <span className={style.required}>*</span></label>
-          <select
-            name="city"
-            value={formik.values.city}
-            onChange={formik.handleChange}
-            className={style.formSelect}
-          >
-            <option value="">Select</option>
-            {cities.map((city: any) => (
-              <option key={city.id} value={city.id}>{city.name}</option>
-            ))}
-          </select>
-          {formik.errors.city && <span className={style.errorText}>{formik.errors.city}</span>}
-        </div>
-        <div className={style.formGroup}>
           <label className={style.formLabel}>State <span className={style.required}>*</span></label>
           <select
             name="state"
             value={formik.values.state}
-            onChange={(e) => {
-              formik.handleChange(e);
-              fetchCities(e.target.value);
-            }}
+            onChange={formik.handleChange}
             className={style.formSelect}
           >
-            <option value="">Select</option>
+            <option value="">Select State</option>
             {states.map((state: any) => (
               <option key={state.id} value={state.id}>{state.name}</option>
             ))}
           </select>
           {formik.errors.state && <span className={style.errorText}>{formik.errors.state}</span>}
+        </div>
+        <div className={style.formGroup}>
+          <label className={style.formLabel}>City <span className={style.required}>*</span></label>
+          <input
+            type="text"
+            name="city"
+            value={formik.values.city}
+            onChange={formik.handleChange}
+            placeholder="Enter your city"
+            className={style.formInput}
+          />
+          {formik.errors.city && <span className={style.errorText}>{formik.errors.city}</span>}
         </div>
       </div>
 

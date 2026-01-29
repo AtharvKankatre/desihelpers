@@ -122,6 +122,8 @@ export const HeroSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"findJob" | "hireSomeone">("findJob");
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  const [isPaused, setIsPaused] = useState(false);
+
   const handleCardClick = (jobTitle: string) => {
     if (!isActive) {
       Swal.fire({
@@ -171,44 +173,49 @@ export const HeroSection: React.FC = () => {
     }
   };
 
-  // Auto-scroll effect for infinite feel
+  // Auto-scroll effect - infinite smooth scroll (pauses on hover)
   React.useEffect(() => {
     const interval = setInterval(() => {
-      if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      if (carouselRef.current && !isPaused) {
+        const { scrollLeft, scrollWidth } = carouselRef.current;
+        // Cards are duplicated, so halfway is where we reset to create seamless loop
+        const halfwayPoint = scrollWidth / 2;
 
-        // If reached the end, reset to beginning smoothly
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        // If reached halfway (end of first set), reset to beginning seamlessly
+        if (scrollLeft >= halfwayPoint) {
+          carouselRef.current.scrollTo({ left: 0, behavior: "auto" });
         } else {
-          // Auto-scroll one card
+          // Smooth scroll left
           carouselRef.current.scrollTo({
-            left: scrollLeft + 171,
-            behavior: "smooth",
+            left: scrollLeft + 1,
+            behavior: "auto",
           });
         }
       }
-    }, 4000); // Auto-scroll every 4 seconds
+    }, 30); // Fast interval for smooth continuous motion
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused]);
+
+  // Duplicate cards for infinite scroll effect
+  const infiniteCards = [...jobCards, ...jobCards];
 
   return (
     <div className={styles.heroContainer}>
-      {/* Word Cloud Background */}
-      <div className={styles.wordCloud}>
-        {wordCloudItems.map((word, index) => (
-          <span
-            key={index}
-            style={{
-              top: word.top,
-              left: word.left,
-              fontSize: word.size,
-            }}
-          >
-            {word.text}
-          </span>
-        ))}
+      {/* Background Text Images - Left and Right */}
+      <div className={styles.backgroundTextImages}>
+        <img
+          src="/newassets/LeftText.png"
+          alt=""
+          className={styles.leftTextImage}
+          aria-hidden="true"
+        />
+        <img
+          src="/newassets/RightText.png"
+          alt=""
+          className={styles.rightTextImage}
+          aria-hidden="true"
+        />
       </div>
 
       {/* Toggle Buttons with Horizontal Lines */}
@@ -242,11 +249,15 @@ export const HeroSection: React.FC = () => {
       </p>
 
       {/* Job Cards Carousel */}
-      <div className={styles.jobCardsWrapper}>
+      <div
+        className={styles.jobCardsWrapper}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
         <div className={styles.jobCardsContainer} ref={carouselRef}>
-          {jobCards.map((job) => (
+          {infiniteCards.map((job, index) => (
             <div
-              key={job.id}
+              key={`${job.id}-${index}`}
               className={styles.jobCard}
               onClick={() => handleCardClick(job.title)}
             >
