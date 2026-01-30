@@ -26,19 +26,29 @@ export const CFooter = () => {
 
   const socialLinks = [
     {
-      name: "Instagram",
-      href: "https://www.instagram.com/desihelpers/profilecard/?igsh=bzc4OHl3ZmJuaWJl",
-      icon: "/assets/icons/icon_instagram.svg",
-    },
-    {
       name: "Facebook",
       href: "https://facebook.com/people/Desi-Helpers/61571408365670/",
       icon: "/assets/icons/icon_facebook_logo.svg",
     },
     {
+      name: "Instagram",
+      href: "https://www.instagram.com/desihelpers/profilecard/?igsh=bzc4OHl3ZmJuaWJl",
+      icon: "/assets/icons/icon_instagram.svg",
+    },
+    {
       name: "Twitter",
       href: "https://x.com/@desihelpers",
       icon: "/assets/icons/icon_twitter.svg",
+    },
+    {
+      name: "LinkedIn",
+      href: "https://linkedin.com/company/desihelpers",
+      icon: "/assets/icons/icon_linkedin.svg",
+    },
+    {
+      name: "YouTube",
+      href: "https://youtube.com/@desihelpers",
+      icon: "/assets/icons/icon_youtube.svg",
     },
   ];
 
@@ -76,7 +86,17 @@ export const CFooter = () => {
           {/* Services Column */}
           <div className={styles.footerCol}>
             <h4 className={styles.footerColTitle}>SERVICES</h4>
-            <ul className={styles.footerColList}>
+            <ul
+              className={`${styles.footerColList} ${styles.servicesGrid}`}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px 30px',
+                listStyle: 'none',
+                padding: 0,
+                margin: 0
+              }}
+            >
               {services.map((service, index) => (
                 <li key={index}>
                   <Link href={service.href}>{service.name}</Link>
@@ -85,28 +105,45 @@ export const CFooter = () => {
             </ul>
           </div>
 
-          {/* Pages Column */}
-          <div className={styles.footerCol}>
-            <h4 className={styles.footerColTitle}>PAGES</h4>
-            <ul className={styles.footerColList}>
-              {pages.map((page, index) => (
-                <li key={index}>
-                  <Link href={page.href}>{page.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Pages and Quick Links - Side by Side on Mobile */}
+          <div
+            className={styles.footerLinksRow}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '20px',
+              width: '100%'
+            }}
+          >
+            {/* Pages Column */}
+            <div
+              className={styles.footerColHalf}
+              style={{ flex: 1, minWidth: 0 }}
+            >
+              <h4 className={styles.footerColTitle}>PAGES</h4>
+              <ul className={styles.footerColList}>
+                {pages.map((page, index) => (
+                  <li key={index}>
+                    <Link href={page.href}>{page.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Other Links Column */}
-          <div className={styles.footerCol}>
-            <h4 className={styles.footerColTitle}>Other lInks</h4>
-            <ul className={styles.footerColList}>
-              {otherLinks.map((link, index) => (
-                <li key={index}>
-                  <Link href={link.href}>{link.name}</Link>
-                </li>
-              ))}
-            </ul>
+            {/* Quick Links Column */}
+            <div
+              className={styles.footerColHalf}
+              style={{ flex: 1, minWidth: 0 }}
+            >
+              <h4 className={styles.footerColTitle}>QUICK LINKS</h4>
+              <ul className={styles.footerColList}>
+                {otherLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link href={link.href}>{link.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 

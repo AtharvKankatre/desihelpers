@@ -64,13 +64,22 @@ export const CHeader = () => {
   return (
     <nav className={styles.navbarMain}>
       <div className={styles.navbarContainer}>
-        {/* Logo */}
+        {/* Mobile Menu Trigger - Left Side */}
+        {(mobile || tablet) && (
+          <CMobileCanvas
+            handleClose={handleClose}
+            handleShow={handleShow}
+            show={show}
+          />
+        )}
+
+        {/* Logo - Centered on Mobile */}
         {!isAdmin && !isSubAdmin ? (
-          <Link className={styles.navbarBrand} href="/Landing">
+          <Link className={`${styles.navbarBrand} ${(mobile || tablet) ? styles.navbarBrandMobile : ''}`} href="/Landing">
             <DesiHelpersIcon />
           </Link>
         ) : (
-          <Link className={styles.navbarBrand} href="">
+          <Link className={`${styles.navbarBrand} ${(mobile || tablet) ? styles.navbarBrandMobile : ''}`} href="">
             <DesiHelpersIcon />
           </Link>
         )}
@@ -138,9 +147,9 @@ export const CHeader = () => {
             )}
           </div>
 
-          {/* Notification Button - Only show when active */}
-          {isActive && (
-            <button className={styles.navIconButton} style={{ marginRight: '8px' }}>
+          {/* Notification Button - Always show on mobile, only when active on desktop */}
+          {(mobile || tablet || isActive) && (
+            <button className={styles.navIconButton}>
               <Image
                 src="/newassets/notification.png"
                 alt="Notification"
@@ -150,18 +159,9 @@ export const CHeader = () => {
             </button>
           )}
 
-          {/* User Avatar */}
-          <CUserAvatar />
+          {/* User Avatar - Only on Desktop */}
+          {!mobile && !tablet && <CUserAvatar />}
         </div>
-
-        {/* Mobile Menu Trigger */}
-        {(mobile || tablet) && (
-          <CMobileCanvas
-            handleClose={handleClose}
-            handleShow={handleShow}
-            show={show}
-          />
-        )}
       </div>
     </nav>
   );

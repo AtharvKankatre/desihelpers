@@ -52,10 +52,8 @@ const Login = () => {
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
   const [loginOtp, setLoginOtp] = useState(["", "", "", "", "", ""]);
   const [isLoginOtpSent, setIsLoginOtpSent] = useState(false);
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
@@ -310,22 +308,25 @@ const Login = () => {
       if (profileRes[0]) {
         Swal.fire({
           title: "Success! Welcome to DesiHelpers",
-          text: "Your account has been created successfully!",
+          text: "Your account has been created successfully! Please login to continue.",
           icon: "success",
           imageUrl: "/DesiHelpersLogo.svg",
           imageWidth: 200,
-          confirmButtonText: "Get Started",
+          confirmButtonText: "Login Now",
         }).then(() => {
-          router.push("/Landing");
+          // Reset form and switch to login view
+          formik.resetForm();
+          setCurrentStep(1);
+          setViewMode("login");
         });
       } else {
         // Account created but profile failed - still consider success
         Swal.fire({
           title: "Account Created!",
-          text: "Please complete your profile later",
+          text: "Please login and complete your profile",
           icon: "success",
         }).then(() => {
-          router.push("/Landing");
+          setViewMode("login");
         });
       }
     } catch (error: any) {
@@ -382,18 +383,14 @@ const Login = () => {
     );
 
     if (verifyRes[0]) {
-      // 2. Login with temp password
-      await performLogin(sanitizedEmail, "TempPass123!");
-    } else {
-      // Fallback: Try Login directly with OTP (In case verifyOTP fails for existing users)
-      console.log("Verify failed, trying direct login with OTP...");
-      const loginWithOtpRes = await ApiService.crud(
+      // 2. OTP verified - Login with temp password (used during registration)
+      const loginRes = await ApiService.crud(
         APIDetails.login,
-        JSON.stringify({ email: sanitizedEmail, otp: otpString })
+        JSON.stringify({ email: sanitizedEmail, password: "TempPass123!" })
       );
 
-      if (loginWithOtpRes[0]) {
-        CookieService.SetCookies(loginWithOtpRes[1]);
+      setIsLoading(false);
+      if (loginRes[0]) {
         Swal.fire({
           title: "Login Successful",
           icon: "success",
@@ -403,44 +400,12 @@ const Login = () => {
           router.push("/Landing");
         });
       } else {
-        setIsLoading(false);
-        Swal.fire({ title: "Invalid OTP", text: verifyRes[1] || "Verification failed", icon: "error" });
+        Swal.fire({ title: "Login Failed", text: "Please try again", icon: "error" });
       }
-    }
-  };
-
-  const performLogin = async (email: string, password: string) => {
-    setIsLoading(true);
-    const loginRes = await ApiService.crud(
-      APIDetails.login,
-      JSON.stringify({ email: email, password: password })
-    );
-
-    setIsLoading(false);
-    // Note: ProcessDataService.processLogin already calls CookieService.SetCookies
-    // loginRes[0] is the success boolean, loginRes[1] is [true] on success or error message on failure
-    if (loginRes[0]) {
-      Swal.fire({
-        title: "Login Successful",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false
-      }).then(() => {
-        router.push("/Landing");
-      });
     } else {
-      const errorMessage = typeof loginRes[1] === 'string' ? loginRes[1] : "Invalid credentials. Please check your email and password.";
-      Swal.fire({ title: "Login Failed", text: errorMessage, icon: "error" });
+      setIsLoading(false);
+      Swal.fire({ title: "Invalid OTP", text: verifyRes[1] || "Verification failed", icon: "error" });
     }
-  };
-
-  // Handle normal password login
-  const handlePasswordLogin = async () => {
-    if (!loginEmail || !loginPassword) {
-      Swal.fire({ title: "Error", text: "Please enter email and password", icon: "error" });
-      return;
-    }
-    await performLogin(loginEmail.trim().toLowerCase(), loginPassword);
   };
 
   // Render left panel (shared between signup and login)
@@ -964,127 +929,96 @@ const Login = () => {
     <div className={style.signupContainer}>
       {renderLeftPanel()}
       <div className={style.signupRightPanel}>
-        <button className={style.closeButton} onClick={() => router.push("/Landing")}>
-          ✕
-        </button>
+        <div className={style.signupFormContainer}>
+          <button className={style.closeButton} onClick={() => router.push("/Landing")}>
+            ✕
+          </button>
 
-        <h2 className={style.signupTitle}>Log In</h2>
-        <div className={style.signupTitleUnderline}></div>
+          <h2 className={style.signupTitle}>Log In</h2>
+          <div className={style.signupTitleUnderline}></div>
 
-        <div className={style.stepContent}>
-          <p className={style.stepSubtitle}>
-            {isForgotPassword ? "Reset your password using OTP" : "Enter your credentials to login."}
-          </p>
+          <div className={style.stepContent}>
+            <p className={style.stepSubtitle}>
+              Enter your email to receive a login OTP.
+            </p>
 
-          <div className={style.formGroup}>
-            <label className={style.formLabel}>Email ID <span className={style.required}>*</span></label>
-            <input
-              type="email"
-              value={loginEmail}
-              onChange={(e) => setLoginEmail(e.target.value)}
-              placeholder="Enter email ID"
-              className={style.formInput}
-            />
-          </div>
+            <div className={style.formGroup}>
+              <label className={style.formLabel}>Email ID <span className={style.required}>*</span></label>
+              <input
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="Enter email ID"
+                className={style.formInput}
+              />
+            </div>
 
-          {!isForgotPassword && (
-            <>
-              <div className={style.formGroup}>
-                <label className={style.formLabel}>Password <span className={style.required}>*</span></label>
-                <input
-                  type="password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="Enter password"
-                  className={style.formInput}
-                />
-              </div>
+            {!isLoginOtpSent && (
               <button
-                type="button"
-                onClick={() => setIsForgotPassword(true)}
-                className={style.linkButton}
-                style={{ alignSelf: 'flex-end', marginBottom: '16px' }}
-              >
-                Forgot Password?
-              </button>
-              <button
-                onClick={handlePasswordLogin}
+                onClick={sendLoginOtp}
                 className={style.signupButton}
-                disabled={isLoading}
+                disabled={isLoading || !loginEmail}
               >
-                {isLoading ? "Logging in..." : "Log In"}
+                {isLoading ? "Sending..." : "Send OTP"}
               </button>
-            </>
-          )}
+            )}
 
-          {isForgotPassword && (
-            <>
-              {!isLoginOtpSent && (
+            {isLoginOtpSent && (
+              <>
+                <p className={style.otpHint}>Enter the OTP sent to your email</p>
+                <div className={style.signupOtpInputs}>
+                  {loginOtp.map((digit, index) => (
+                    <input
+                      key={index}
+                      id={`login-otp-${index}`}
+                      type="text"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value, true)}
+                      className={style.signupOtpInput}
+                    />
+                  ))}
+                </div>
                 <button
-                  onClick={sendLoginOtp}
+                  onClick={verifyLoginOtp}
                   className={style.signupButton}
-                  disabled={isLoading || !loginEmail}
+                  disabled={isLoading}
                 >
-                  {isLoading ? "Sending..." : "Send OTP"}
+                  {isLoading ? "Verifying..." : "Verify & Login"}
                 </button>
-              )}
-              {isLoginOtpSent && (
-                <>
-                  <p className={style.otpHint}>Enter the OTP sent to your email</p>
-                  <div className={style.signupOtpInputs}>
-                    {loginOtp.map((digit, index) => (
-                      <input
-                        key={index}
-                        id={`login-otp-${index}`}
-                        type="text"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) => handleOtpChange(index, e.target.value, true)}
-                        className={style.signupOtpInput}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    onClick={verifyLoginOtp}
-                    className={style.signupButton}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Verifying..." : "Verify & Reset"}
-                  </button>
-                </>
-              )}
-              <button
-                type="button"
-                onClick={() => { setIsForgotPassword(false); setIsLoginOtpSent(false); }}
-                className={style.linkButton}
-                style={{ marginTop: '12px' }}
-              >
-                ← Back to Login
+                <button
+                  type="button"
+                  onClick={() => { setIsLoginOtpSent(false); setLoginOtp(["", "", "", "", "", ""]); }}
+                  className={style.linkButton}
+                  style={{ marginTop: '12px' }}
+                >
+                  ← Change Email
+                </button>
+              </>
+            )}
+
+            <div className={style.dividerWithText}>
+              <span>OR</span>
+            </div>
+
+            <div className={style.signupSocialButtons}>
+              <button type="button" onClick={googleLoginFn} className={style.socialButton}>
+                <Image src="/assets/icons/icon_google-logo.svg" alt="Google" width={20} height={20} />
+                Log in with Google
               </button>
-            </>
-          )}
+              <button type="button" onClick={facebookLoginFn} className={style.socialButton}>
+                <Image src="/assets/icons/icon_facebook_logo.svg" alt="Facebook" width={20} height={20} />
+                Log in with Facebook
+              </button>
+            </div>
 
-          <div className={style.dividerWithText}>
-            <span>OR</span>
+            <p className={style.switchModeText}>
+              Don't have an account?{" "}
+              <button type="button" onClick={() => setViewMode("signup")} className={style.linkButton}>
+                Sign Up
+              </button>
+            </p>
           </div>
-
-          <div className={style.signupSocialButtons}>
-            <button type="button" onClick={googleLoginFn} className={style.socialButton}>
-              <Image src="/assets/icons/icon_google-logo.svg" alt="Google" width={20} height={20} />
-              Log in with Google
-            </button>
-            <button type="button" onClick={facebookLoginFn} className={style.socialButton}>
-              <Image src="/assets/icons/icon_facebook_logo.svg" alt="Facebook" width={20} height={20} />
-              Log in with Facebook
-            </button>
-          </div>
-
-          <p className={style.switchModeText}>
-            Don't have an account?{" "}
-            <button type="button" onClick={() => setViewMode("signup")} className={style.linkButton}>
-              Sign Up
-            </button>
-          </p>
         </div>
       </div>
     </div>
@@ -1095,20 +1029,22 @@ const Login = () => {
     <div className={style.signupContainer}>
       {renderLeftPanel()}
       <div className={style.signupRightPanel}>
-        <button className={style.closeButton} onClick={() => router.push("/Landing")}>
-          ✕
-        </button>
+        <div className={style.signupFormContainer}>
+          <button className={style.closeButton} onClick={() => router.push("/Landing")}>
+            ✕
+          </button>
 
-        <h2 className={style.signupTitle}>Sign up</h2>
-        {renderProgressBar()}
-        <p className={style.stepIndicator}>Step {currentStep}/4</p>
+          <h2 className={style.signupTitle}>Sign up</h2>
+          {renderProgressBar()}
+          <p className={style.stepIndicator}>Step {currentStep}/4</p>
 
-        <form onSubmit={formik.handleSubmit} className={style.signupForm}>
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
-        </form>
+          <form onSubmit={formik.handleSubmit} className={style.signupForm}>
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 3 && renderStep3()}
+            {currentStep === 4 && renderStep4()}
+          </form>
+        </div>
       </div>
     </div>
   );
