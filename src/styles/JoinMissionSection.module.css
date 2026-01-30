@@ -162,7 +162,8 @@
 .submitButton {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(90deg, #ea580c 0%, #f97316 100%);
+    background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
+    box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
     color: white;
     font-size: 16px;
     font-weight: 600;

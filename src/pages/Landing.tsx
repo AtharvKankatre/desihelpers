@@ -26,6 +26,7 @@ import { HeroSection } from "@/components/page_related/landing/HeroSection";
 import { WhyUsSection } from "@/components/page_related/landing/WhyUsSection";
 import { PopularServicesSection } from "@/components/page_related/landing/PopularServicesSection";
 import { TestimonialsSection } from "@/components/page_related/landing/TestimonialsSection";
+import { TestimonialsGrid } from "@/components/page_related/landing/TestimonialsGrid";
 import { JoinMissionSection } from "@/components/page_related/landing/JoinMissionSection";
 import { BlogSection } from "@/components/page_related/landing/BlogSection";
 import { AdPlaceholders } from "@/components/page_related/landing/AdPlaceholders";
@@ -139,8 +140,8 @@ const Landing: React.FC = () => {
       {/* Popular Services Section */}
       <PopularServicesSection />
 
-      {/* Testimonials Section */}
-      <TestimonialsSection />
+      {/* Testimonials Grid Section - Figma Design */}
+      <TestimonialsGrid />
 
       {/* Join Mission Section */}
       <JoinMissionSection />
