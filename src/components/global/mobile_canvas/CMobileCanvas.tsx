@@ -49,14 +49,22 @@ export const CMobileCanvas: FunctionComponent<Props> = ({ ...Props }) => {
 
   return (
     <>
-      <div className="d-flex flex-row justify-content-end align-items-center">
-        <CgMenuGridR
-          onClick={Props.handleShow}
-          size={34}
-          className="textSecondary ms-4"
-          style={{ cursor: "pointer" }}
-        />
-      </div>
+      <button
+        className="d-flex flex-column justify-content-center align-items-center"
+        onClick={Props.show ? Props.handleClose : Props.handleShow}
+        style={{
+          cursor: "pointer",
+          background: "transparent",
+          border: "none",
+          padding: "8px",
+          gap: "5px"
+        }}
+        aria-label={Props.show ? "Close menu" : "Open menu"}
+      >
+        <span style={{ width: "22px", height: "2px", backgroundColor: "white", borderRadius: "1px" }}></span>
+        <span style={{ width: "22px", height: "2px", backgroundColor: "white", borderRadius: "1px" }}></span>
+        <span style={{ width: "22px", height: "2px", backgroundColor: "white", borderRadius: "1px" }}></span>
+      </button>
 
       <Offcanvas show={Props.show} onHide={Props.handleClose}>
         <Offcanvas.Header closeButton>

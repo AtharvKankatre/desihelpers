@@ -96,4 +96,24 @@
     .container {
         flex-direction: column;
     }
+
+    /* Services Grid - 2 columns on mobile */
+    .servicesGrid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px 30px !important;
+    }
+
+    /* Links Row - PAGES and QUICK LINKS side by side on mobile */
+    .linksRow {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 20px !important;
+        width: 100%;
+    }
+
+    .linksRow .linkColumn {
+        flex: 1;
+        min-width: 0;
+    }
 }

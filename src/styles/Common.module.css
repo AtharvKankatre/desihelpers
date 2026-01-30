@@ -1083,8 +1083,40 @@
     padding: 12px 16px;
   }
 
+  .navbarContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .navbarBrandMobile {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .navbarLinks {
     display: none;
+  }
+
+  .navbarActions {
+    gap: 8px;
+  }
+
+  .langButton {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
+  .navIconButton {
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .navIconButton img {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -1454,17 +1486,341 @@
   border-color: #FF6B35;
 }
 
-/* Responsive Multi-Step Form */
+/* =================================== */
+/* MOBILE RESPONSIVE - Login/Signup    */
+/* =================================== */
 @media (max-width: 768px) {
+
+  /* Form Row - Single Column */
   .formRow {
     grid-template-columns: 1fr;
   }
 
-  .signupSocialButtons {
+  /* Signup Container - Full Width Modal Style */
+  .signupContainer {
     flex-direction: column;
+    min-height: 100vh;
+    margin-top: 0;
+    padding: 0;
+    background-color: #f5f5f5;
   }
 
-  .socialButton {
-    min-width: 100%;
+  /* Hide Left Panel on Mobile */
+  .signupLeftPanel {
+    display: none;
+  }
+
+  /* Right Panel - Modal Card Style */
+  .signupRightPanel {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #f5f5f5;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  /* Modal Card Container */
+  .signupFormContainer {
+    background: white;
+    border-radius: 16px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    max-width: 360px;
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  /* Close Button - Top Right of Modal */
+  .closeButton {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 20px;
+    color: #333;
+    width: 32px;
+    height: 32px;
+    z-index: 10;
+  }
+
+  /* Title Styling */
+  .signupTitle {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    margin-top: 10px;
+  }
+
+  /* Orange Underline */
+  .signupTitleUnderline {
+    width: 50px;
+    height: 3px;
+    margin: 0 auto 16px;
+  }
+
+  /* Step Indicator */
+  .signupStepIndicator {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    text-align: left;
+    width: 100%;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+
+  /* Section Subtitle (Create Account, Build Profile, etc.) */
+  .signupSubtitle {
+    color: #005DE1;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  /* Section Description */
+  .signupDescription {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  /* Social Buttons - Stacked */
+  .signupSocialButtons {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .signupSocialBtn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border: 1px solid #e0e0e0;
+  }
+
+  /* OR Divider */
+  .signupDivider {
+    margin: 16px 0;
+    font-size: 0.8rem;
+  }
+
+  /* Form Labels */
+  .signupLabel {
+    font-size: 0.85rem;
+    text-align: left;
+    margin-bottom: 4px;
+  }
+
+  /* Email Input Section */
+  .signupEmailSection {
+    margin-bottom: 12px;
+  }
+
+  /* Input Wrapper */
+  .signupEmailInputWrapper {
+    border-radius: 8px;
+    border: 1px solid #FF8C00;
+  }
+
+  .signupEmailInputWrapper input {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+  }
+
+  /* Verify Button in Input */
+  .signupEmailInputWrapper .verifyBtn {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    color: #005DE1;
+    font-weight: 600;
+  }
+
+  /* OTP Input Section */
+  .otpInputContainer {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .otpInput {
+    width: 40px;
+    height: 44px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+
+  /* OTP Helper Text */
+  .otpHelperText {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  /* Form Input Fields */
+  .signupInput,
+  .signupSelect {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    background: white;
+  }
+
+  .signupInput:focus,
+  .signupSelect:focus {
+    border-color: #FF8C00;
+    outline: none;
+  }
+
+  .signupInput::placeholder {
+    color: #999;
+    font-size: 0.85rem;
+  }
+
+  /* Checkbox Styles */
+  .signupCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  .signupCheckbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #00BFA5;
+  }
+
+  /* Primary Button - Orange Gradient */
+  .signupPrimaryBtn,
+  .signupSubmitBtn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(90deg, #FF8C00, #FF6B00);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .signupPrimaryBtn:hover,
+  .signupSubmitBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+  }
+
+  /* Back Button - Text Link */
+  .signupBackBtn {
+    background: none;
+    border: none;
+    color: #005DE1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 12px;
+    padding: 8px;
+  }
+
+  /* Switch Account Link */
+  .signupSwitchText {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 16px;
+  }
+
+  .signupSwitchText a,
+  .signupSwitchText span {
+    color: #005DE1;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* Profile Picture Upload */
+  .profilePictureUpload {
+    border: 2px dashed #FF8C00;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .profilePictureUpload .uploadIcon {
+    color: #FF8C00;
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .profilePictureUpload p {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .profilePictureUpload .browseLink {
+    color: #005DE1;
+    font-weight: 500;
+  }
+
+  /* Social Links Section (Step 4) */
+  .socialLinkItem {
+    margin-bottom: 12px;
+  }
+
+  .socialLinkLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+
+  .socialLinkLabel img {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Stats Section - Hide on Mobile */
+  .signupStats {
+    display: none;
+  }
+
+  /* Navigation Buttons Container */
+  .signupButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+
+/* Extra Small Screens */
+@media (max-width: 380px) {
+  .signupFormContainer {
+    padding: 20px 16px;
+    margin: 16px 8px;
+  }
+
+  .signupTitle {
+    font-size: 1.3rem;
+  }
+
+  .otpInput {
+    width: 36px;
+    height: 40px;
+  }
+
+  .signupPrimaryBtn,
+  .signupSubmitBtn {
+    padding: 12px;
+    font-size: 0.95rem;
   }
 }
