@@ -698,7 +698,8 @@
 .signupTitleUnderline {
   width: 60px;
   height: 3px;
-  background: linear-gradient(90deg, #FF6B00, #FF8C00);
+  background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
+  box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
   margin: 0 auto 20px;
   border-radius: 2px;
 }
@@ -830,7 +831,8 @@
 .signupButton {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(90deg, #FF6B00, #FF8C00);
+  background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
+  box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
   border: none;
   border-radius: 25px;
   color: white;
@@ -1134,7 +1136,7 @@
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, #FF6B35 0%, #FF8C5A 100%);
+  background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -1702,7 +1704,8 @@
   .signupSubmitBtn {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(90deg, #FF8C00, #FF6B00);
+    background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
+    box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
     border: none;
     border-radius: 25px;
     color: white;
