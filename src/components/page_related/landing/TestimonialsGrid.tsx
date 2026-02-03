@@ -118,14 +118,15 @@ const testimonialsData = [
 
 export const TestimonialsGrid: React.FC = () => {
     const sectionRef = useRef<HTMLElement>(null);
-    const [scrollProgress, setScrollProgress] = useState(0);
+    const column1Ref = useRef<HTMLDivElement>(null);
+    const column2Ref = useRef<HTMLDivElement>(null);
 
     // Maximum pixels to translate columns during the scroll through the section
     const maxTranslate = 1000;
 
     useEffect(() => {
         const handleScroll = () => {
-            if (!sectionRef.current) return;
+            if (!sectionRef.current || !column1Ref.current || !column2Ref.current) return;
 
             const section = sectionRef.current;
             const rect = section.getBoundingClientRect();
@@ -148,7 +149,13 @@ export const TestimonialsGrid: React.FC = () => {
 
                 // Clamp between 0 and 1
                 const clampedProgress = Math.max(0, Math.min(1, currentProgress));
-                setScrollProgress(clampedProgress);
+
+                // Direct DOM manipulation - no React re-render
+                const column1Transform = clampedProgress * maxTranslate;
+                const column2Transform = -clampedProgress * maxTranslate;
+
+                column1Ref.current.style.transform = `translateY(${column1Transform}px)`;
+                column2Ref.current.style.transform = `translateY(${column2Transform}px)`;
             }
         };
 
@@ -172,11 +179,6 @@ export const TestimonialsGrid: React.FC = () => {
             window.removeEventListener('scroll', throttledScroll);
         };
     }, []);
-
-    // Calculate transforms based on scroll progress
-    // Column 1 moves down (positive Y), Column 2 moves up (negative Y)
-    const column1Transform = scrollProgress * maxTranslate;
-    const column2Transform = -scrollProgress * maxTranslate;
 
     return (
         <section ref={sectionRef} className={styles.testimonialsSection}>
@@ -202,10 +204,11 @@ export const TestimonialsGrid: React.FC = () => {
                 <div className={styles.rightPanel}>
                     {/* Column 1 - Slides Down */}
                     <div
+                        ref={column1Ref}
                         className={styles.column}
                         style={{
-                            transform: `translateY(${column1Transform}px)`,
-                            marginTop: `-${maxTranslate}px`
+                            marginTop: `-${maxTranslate}px`,
+                            willChange: 'transform'
                         }}
                     >
                         {testimonialsData.slice(0, 7).map((testimonial) => (
@@ -232,9 +235,10 @@ export const TestimonialsGrid: React.FC = () => {
 
                     {/* Column 2 - Slides Up */}
                     <div
+                        ref={column2Ref}
                         className={styles.column}
                         style={{
-                            transform: `translateY(${column2Transform}px)`
+                            willChange: 'transform'
                         }}
                     >
                         {testimonialsData.slice(7, 14).map((testimonial) => (
