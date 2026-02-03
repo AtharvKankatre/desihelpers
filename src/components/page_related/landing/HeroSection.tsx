@@ -5,8 +5,23 @@ import { Routes } from "@/services/routes/Routes";
 import { useAuth } from "@/services/authorization/AuthContext";
 import Swal from "sweetalert2";
 
-// Job card data matching the design
-const jobCards = [
+import JobServices from "@/services/jobs/JobService";
+import { IJobs } from "@/models/Jobs";
+
+// Helper Interface for Hero Card
+interface IHeroCard {
+  id: string | number;
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  rate: string;
+  image: string;
+  urgent: boolean;
+}
+
+// Fallback Job card data
+const fallbackJobCards: IHeroCard[] = [
   {
     id: 1,
     title: "Nanny",
@@ -79,7 +94,7 @@ const jobCards = [
   },
 ];
 
-// Word cloud words for background effect - matching design exactly with multilingual text
+// Word cloud words... (kept nicely)
 const wordCloudItems = [
   // Top row
   { text: "Caterer", top: "5%", left: "3%", size: "22px" },
@@ -122,7 +137,44 @@ export const HeroSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"findJob" | "hireSomeone">("findJob");
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  const [jobs, setJobs] = useState<IHeroCard[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
+
+  const jobService = new JobServices();
+
+  // Fetch Jobs Logic
+  React.useEffect(() => {
+    const fetchJobs = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedJobs = await jobService.fetchLandingPageJobs();
+
+        if (fetchedJobs && fetchedJobs.length > 0) {
+          const mappedJobs: IHeroCard[] = fetchedJobs.map((job: IJobs) => ({
+            id: job._id || Math.random(),
+            title: job.jobType?.name || "Job",
+            description: job.aboutRequirement || "No description availalbe",
+            location: `${job.city || "Unknown"}, ${job.state || ""}`,
+            date: job.startDate ? new Date(job.startDate).toLocaleDateString() : (job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Date N/A"),
+            rate: job.payRange ? `$${job.payRange}` : "Rate Negotiable",
+            image: "/assets/illustrations/nanny.png", // Fallback image for now
+            urgent: job.urgent || false
+          }));
+          setJobs(mappedJobs);
+        } else {
+          setJobs(fallbackJobCards);
+        }
+      } catch (error) {
+        console.error("Error fetching hero jobs:", error);
+        setJobs(fallbackJobCards);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const handleCardClick = (jobTitle: string) => {
     if (!isActive) {
@@ -161,44 +213,12 @@ export const HeroSection: React.FC = () => {
     router.push(Routes.mapSearch);
   };
 
-  const scrollCarousel = (direction: "left" | "right") => {
-    if (carouselRef.current) {
-      const cardWidth = 171; // card width + gap
-      const scrollAmount = cardWidth * 2; // Scroll 2 cards at a time
+  // Determine which cards to show
+  const displayCards = jobs.length > 0 ? jobs : [];
 
-      carouselRef.current.scrollTo({
-        left: carouselRef.current.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount),
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Auto-scroll effect - infinite smooth scroll (pauses on hover)
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      if (carouselRef.current && !isPaused) {
-        const { scrollLeft, scrollWidth } = carouselRef.current;
-        // Cards are duplicated, so halfway is where we reset to create seamless loop
-        const halfwayPoint = scrollWidth / 2;
-
-        // If reached halfway (end of first set), reset to beginning seamlessly
-        if (scrollLeft >= halfwayPoint) {
-          carouselRef.current.scrollTo({ left: 0, behavior: "auto" });
-        } else {
-          // Smooth scroll left
-          carouselRef.current.scrollTo({
-            left: scrollLeft + 1,
-            behavior: "auto",
-          });
-        }
-      }
-    }, 30); // Fast interval for smooth continuous motion
-
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
-  // Duplicate cards for infinite scroll effect
-  const infiniteCards = [...jobCards, ...jobCards];
+  // Duplicate cards for infinite scroll effect (x4)
+  // This ensures that when we translate -25% (one set width), the visual state is identical to start
+  const infiniteCards = [...displayCards, ...displayCards, ...displayCards, ...displayCards];
 
   return (
     <div className={styles.heroContainer}>
@@ -248,14 +268,10 @@ export const HeroSection: React.FC = () => {
         Join a growing network where your skills meet real demand, and start earning by helping others in your community.
       </p>
 
-      {/* Job Cards Carousel */}
-      <div
-        className={styles.jobCardsWrapper}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        <div className={styles.jobCardsContainer} ref={carouselRef}>
-          {infiniteCards.map((job, index) => (
+      {/* Job Cards Carousel - CSS Marquee */}
+      <div className={styles.jobCardsWrapper}>
+        <div className={styles.marqueeTrack}>
+          {infiniteCards.length > 0 ? infiniteCards.map((job, index) => (
             <div
               key={`${job.id}-${index}`}
               className={styles.jobCard}
@@ -282,7 +298,10 @@ export const HeroSection: React.FC = () => {
                 <span className={styles.cardRate}>{job.rate}</span>
               </div>
             </div>
-          ))}
+          )) : (
+            // Fallback empty state if absolutely no data (should theoretically use fallbackJobCards)
+            <div style={{ color: 'white' }}>Loading services...</div>
+          )}
         </div>
       </div>
 
