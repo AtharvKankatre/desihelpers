@@ -2,6 +2,7 @@ import React from "react";
 import styles from "@/styles/FooterSection.module.css";
 // Using react-icons since @fortawesome/free-brands-svg-icons is not installed
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube, FaTwitter } from "react-icons/fa";
+import Link from "next/link";
 
 export const FooterSection: React.FC = () => {
     return (
@@ -38,8 +39,8 @@ export const FooterSection: React.FC = () => {
                     <div className={styles.linkColumn}>
                         <h4 className={styles.columnTitle}>PAGES</h4>
                         <ul className={styles.linkList}>
-                            <li className={styles.linkItem}><a href="#" className={styles.link}>About Us</a></li>
-                            <li className={styles.linkItem}><a href="#" className={styles.link}>Resources</a></li>
+                            <li className={styles.linkItem}><Link href="/about" className={styles.link}>About Us</Link></li>
+                            <li className={styles.linkItem}><Link href="/resources" className={styles.link}>Resources</Link></li>
                         </ul>
                     </div>
 
@@ -47,8 +48,8 @@ export const FooterSection: React.FC = () => {
                     <div className={styles.linkColumn}>
                         <h4 className={styles.columnTitle}>QUICK LINKS</h4>
                         <ul className={styles.linkList}>
-                            <li className={styles.linkItem}><a href="#" className={styles.link}>Privacy Policy</a></li>
-                            <li className={styles.linkItem}><a href="#" className={styles.link}>Contact Us</a></li>
+                            <li className={styles.linkItem}><Link href="/PrivacyPolicy" className={styles.link}>Privacy Policy</Link></li>
+                            <li className={styles.linkItem}><Link href="/ContactUs" className={styles.link}>Contact Us</Link></li>
                         </ul>
                     </div>
                 </div>

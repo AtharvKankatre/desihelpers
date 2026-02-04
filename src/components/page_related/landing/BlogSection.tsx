@@ -2,6 +2,8 @@ import React from "react";
 import styles from "@/styles/BlogSection.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { styled } from '@mui/system';
+import Link from 'next/link';
 
 const blogPosts = [
     {
@@ -62,7 +64,9 @@ export const BlogSection: React.FC = () => {
                     ))}
                 </div>
 
-                <button className={styles.viewAllButton}>View All</button>
+                <Link href="/resources" style={{ textDecoration: 'none' }}>
+                    <button className={styles.viewAllButton} style={{ cursor: "pointer" }}>View All</button>
+                </Link>
             </div>
         </section>
     );

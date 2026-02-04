@@ -17,22 +17,45 @@ const CustomNavbarStyles = (
         width: "100% !important",
         borderBottom: "1px solid rgba(255, 255, 255, 0.1)", // Subtle separator line matching the screenshot
       },
-      "header a": {
+      "header a:not(.notification-popup *):not(.notification-popup):not(.language-dropdown *):not(.language-dropdown)": {
         color: "#ffffff !important",
       },
-      "header button": {
+      "header button:not(.notification-popup *):not(.notification-popup):not(.language-dropdown *):not(.language-dropdown)": {
         color: "#ffffff !important",
       },
       // Target the language selector button specifically if needed
       "header .langButton": {
         color: "#ffffff !important",
       },
+      // Force notification popup text to be visible
+      ".notification-popup": {
+        color: "#000000 !important",
+      },
+      ".notification-popup *": {
+        color: "#000000 !important",
+      },
+      ".notification-popup .MuiTypography-root": {
+        color: "#000000 !important",
+      },
+      ".notification-popup b": {
+        color: "#000000 !important",
+      },
+      // Force language dropdown text to be visible
+      ".language-dropdown": {
+        color: "#000000 !important",
+      },
+      ".language-dropdown *": {
+        color: "#000000 !important",
+      },
+      ".language-dropdown button": {
+        color: "#000000 !important",
+      },
     }}
   />
 );
 
 const HeroSection = styled(Box)(({ theme }) => ({
-  background: "linear-gradient(180deg, #003d7a 0%, #002142 100%)", // Gradient matching the screenshot depth
+  background: "linear-gradient(180deg, #00132F 0%, #003E95 100%)",
   color: "#ffffff",
   paddingTop: "180px", // Increased space for navbar and centering
   paddingBottom: "100px",
@@ -60,6 +83,7 @@ const OrangeButton = styled(Button)(({ theme }) => ({
 }));
 
 const AboutUs = () => {
+  const [modalOpen, setModalOpen] = React.useState(false);
   return (
     <>
       {CustomNavbarStyles}
@@ -252,7 +276,7 @@ const AboutUs = () => {
                 <Typography variant="body1" sx={{ color: "#666", mb: 4, lineHeight: 1.6 }}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.
                 </Typography>
-                <OrangeButton variant="contained">
+                <OrangeButton variant="contained" onClick={() => setModalOpen(true)}>
                   Connect Us
                 </OrangeButton>
               </Box>
@@ -371,6 +395,7 @@ const AboutUs = () => {
           </Grid>
         </Container>
       </Box>
+      <SignRegisterModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
 };
@@ -405,5 +430,116 @@ const TestimonialCard = ({ name, location, text, image }: { name: string, locati
     </Box>
   </Paper>
 );
+
+const SignRegisterModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  return (
+    <Box
+      sx={{
+        display: open ? "flex" : "none",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 1300,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Paper
+        sx={{
+          width: "400px",
+          p: 4,
+          borderRadius: "16px",
+          position: "relative",
+          textAlign: "center",
+          boxShadow: 24,
+        }}
+      >
+        <Button
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            minWidth: "auto",
+            p: 0,
+            color: "#666",
+          }}
+        >
+          ✕
+        </Button>
+        <Typography variant="h5" sx={{ fontWeight: 700, color: "#003366", mb: 4, textAlign: "left" }}>
+          Sign/Register
+        </Typography>
+
+        <Box sx={{ position: "relative", width: "100px", height: "100px", mx: "auto", mb: 2 }}>
+          <Avatar
+            src="/assets/img_nanny1.png" // Using a sample image as placeholder
+            sx={{
+              width: "100%",
+              height: "100%",
+              filter: "blur(2px)",
+            }}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              backgroundColor: "black",
+              borderRadius: "50%",
+              p: 0.5,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* Simple lock symbol */}
+            <span style={{ color: "white", fontSize: "16px" }}>🔒</span>
+          </Box>
+        </Box>
+
+        <Typography variant="subtitle1" sx={{ color: "#00bfa5", fontWeight: 700, mb: 2 }}>
+          Unlock Contact Details
+        </Typography>
+
+        <Typography variant="body2" sx={{ color: "#666", mb: 4 }}>
+          Sign in to view phone numbers, WhatsApp, and social links.
+        </Typography>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={{
+              borderRadius: "24px",
+              textTransform: "none",
+              borderColor: "#003366",
+              color: "#003366",
+              fontWeight: 600,
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{
+              borderRadius: "24px",
+              textTransform: "none",
+              backgroundColor: "#fd7e14",
+              fontWeight: 600,
+              "&:hover": { backgroundColor: "#e36d0c" },
+            }}
+          >
+            Register Free
+          </Button>
+        </Box>
+      </Paper>
+    </Box>
+  );
+};
 
 export default AboutUs;

@@ -93,3 +93,16 @@
         font-size: 36px;
     }
 }
+
+.blueVariant {
+    background: #002142 !important;
+    /* Force override gradient */
+}
+
+.blueVariant .heading {
+    color: #ffffff;
+}
+
+.blueVariant .description {
+    color: rgba(255, 255, 255, 0.8);
+}
