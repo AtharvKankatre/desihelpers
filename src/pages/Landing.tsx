@@ -70,7 +70,7 @@ const Landing: React.FC = () => {
                   title: "Welcome to DesiHelpers.com",
                   text: "Let us find the help you need!",
                   icon: "success",
-                  imageUrl: "/DesiHelpersLogo.svg",
+                  imageUrl: "/DesiHelpers_without-tag-line.svg",
                   imageAlt: "Custom image",
                   imageWidth: 300,
                   imageHeight: "auto",

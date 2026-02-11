@@ -59,5 +59,10 @@ export const APIDetails = {
   AdminJobPost: ["admin/create-job", ApiType.post, true],
   AdminMyJobPost: ["admin/user-jobs/", ApiType.get, true],
   AdminUpdateSeekerStatus: ["admin/job-seeker-status/", ApiType.put, true],
-  ShareProfileSeeker: ["user-profile/", ApiType.get, false]
+  ShareProfileSeeker: ["user-profile/", ApiType.get, false],
+  postFeedback: ["feedback", ApiType.post, true],
+  getFeedback: ["feedback/seeker/", ApiType.get, false],
+  getJobsByUser: ["jobs/user/", ApiType.get, false],
+  updateFeedback: ["feedback/", ApiType.put, true],
+  deleteFeedback: ["feedback/", ApiType.delete, true],
 };

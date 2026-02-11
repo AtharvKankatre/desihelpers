@@ -1,544 +1,175 @@
 import React from "react";
-import { Container, Box, Typography, Button, Grid, GlobalStyles, Rating, Paper, Avatar } from "@mui/material";
-import { FaCheckCircle, FaQuoteLeft, FaStar } from "react-icons/fa";
-import { styled } from "@mui/system";
 import Head from "next/head";
 import Link from "next/link";
-
-// Global styles to override the fixed white header for this page only
-const CustomNavbarStyles = (
-  <GlobalStyles
-    styles={{
-      "header": {
-        background: "transparent !important",
-        backgroundColor: "transparent !important",
-        boxShadow: "none !important",
-        position: "absolute !important",
-        width: "100% !important",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)", // Subtle separator line matching the screenshot
-      },
-      "header a:not(.notification-popup *):not(.notification-popup):not(.language-dropdown *):not(.language-dropdown)": {
-        color: "#ffffff !important",
-      },
-      "header button:not(.notification-popup *):not(.notification-popup):not(.language-dropdown *):not(.language-dropdown)": {
-        color: "#ffffff !important",
-      },
-      // Target the language selector button specifically if needed
-      "header .langButton": {
-        color: "#ffffff !important",
-      },
-      // Force notification popup text to be visible
-      ".notification-popup": {
-        color: "#000000 !important",
-      },
-      ".notification-popup *": {
-        color: "#000000 !important",
-      },
-      ".notification-popup .MuiTypography-root": {
-        color: "#000000 !important",
-      },
-      ".notification-popup b": {
-        color: "#000000 !important",
-      },
-      // Force language dropdown text to be visible
-      ".language-dropdown": {
-        color: "#000000 !important",
-      },
-      ".language-dropdown *": {
-        color: "#000000 !important",
-      },
-      ".language-dropdown button": {
-        color: "#000000 !important",
-      },
-    }}
-  />
-);
-
-const HeroSection = styled(Box)(({ theme }) => ({
-  background: "linear-gradient(180deg, #00132F 0%, #003E95 100%)",
-  color: "#ffffff",
-  paddingTop: "180px", // Increased space for navbar and centering
-  paddingBottom: "100px",
-  textAlign: "center",
-  width: "100%",
-  position: "relative",
-}));
-
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  fontWeight: 700,
-  color: "#333333", // Dark color for "The"
-  marginBottom: "16px",
-}));
-
-const OrangeButton = styled(Button)(({ theme }) => ({
-  backgroundColor: "#fd7e14", // Orange color
-  color: "white",
-  padding: "10px 24px",
-  borderRadius: "24px",
-  textTransform: "none",
-  fontWeight: 600,
-  "&:hover": {
-    backgroundColor: "#e36d0c",
-  },
-}));
+import { FaCheckCircle, FaQuoteLeft, FaStar } from "react-icons/fa";
+import { Avatar } from "@mui/material"; // Keeping Avatar as it's useful
+import styles from "@/styles/About.module.css";
+import commonStyles from "@/styles/Common.module.css";
+import { Routes } from "@/services/routes/Routes";
 
 const AboutUs = () => {
-  const [modalOpen, setModalOpen] = React.useState(false);
   return (
     <>
-      {CustomNavbarStyles}
       <Head>
         <title>About Us - Desi Helpers</title>
       </Head>
 
       {/* Hero Section */}
-      <HeroSection>
-        <Container>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="caption" sx={{ opacity: 0.8, fontSize: "0.9rem", color: "white" }}>
-              Home &gt; About Us
-            </Typography>
-          </Box>
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
+      <section className={styles.aboutHero}>
+        <div className={styles.container}>
+          <span className={styles.breadcrumb}>
+            Home &gt; About Us
+          </span>
+          <h1 className={styles.heroTitle}>
             Connecting Communities, One Helper at a Time
-          </Typography>
-          <Typography variant="body1" sx={{ maxWidth: "800px", mx: "auto", fontSize: "1.1rem", lineHeight: 1.6 }}>
+          </h1>
+          <p className={styles.heroSubtitle}>
             We make finding trusted household help simple, fast, and free—while building a supportive community where people help people.
-          </Typography>
-        </Container>
-      </HeroSection>
+          </p>
+        </div>
+      </section>
 
-      {/* Main Content */}
-      <Box sx={{ py: 8, backgroundColor: "#ffffff" }}>
-        <Container>
-          <Grid container spacing={6} alignItems="center">
-            {/* Left Text Content */}
-            <Grid item xs={12} md={6}>
-              <Typography variant="overline" sx={{ fontWeight: 700, color: "#666", letterSpacing: 1 }}>
-                WHY Desi Helpers
-              </Typography>
-              <SectionTitle variant="h4">
-                The <span style={{ color: "#003366" }}>Problem We Are Solving</span>
-              </SectionTitle>
-
-              <Typography variant="body1" sx={{ color: "#555", mb: 3, lineHeight: 1.7 }}>
+      {/* Main Content Section */}
+      <section className={styles.contentSection}>
+        <div className={styles.container}>
+          <div className={styles.contentWrapper}>
+            <div className={styles.textContent}>
+              <span className={styles.whyLabel}>WHY Desi Helpers</span>
+              <h2 className={styles.mainHeading}>
+                The <span>Problem We Are Solving</span>
+              </h2>
+              <p className={styles.bodyText}>
                 The way people search for household help—nannies, chefs, tutors, and more—has changed drastically. Most rely on multiple social media groups, messaging apps, or word-of-mouth to post their needs or services.
-              </Typography>
-
-              <Typography variant="body1" sx={{ color: "#555", mb: 3, lineHeight: 1.7 }}>
+              </p>
+              <p className={styles.bodyText}>
                 Our platform provides a one-stop, scalable solution for all helper needs:
-              </Typography>
+              </p>
 
-              <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                  <FaCheckCircle size={24} style={{ color: "#fd7e14", marginTop: "4px" }} />
-                  <Typography variant="body1" sx={{ color: "#555" }}>
+              <div className={styles.checklist}>
+                <div className={styles.checkItem}>
+                  <FaCheckCircle className={styles.checkIcon} size={20} />
+                  <p className={styles.checkText}>
                     <strong>Posters</strong> can view active profiles nearby and connect instantly—no posting or reposting required.
-                  </Typography>
-                </Box>
-                <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                  <FaCheckCircle size={24} style={{ color: "#fd7e14", marginTop: "4px" }} />
-                  <Typography variant="body1" sx={{ color: "#555" }}>
+                  </p>
+                </div>
+                <div className={styles.checkItem}>
+                  <FaCheckCircle className={styles.checkIcon} size={20} />
+                  <p className={styles.checkText}>
                     <strong>Seekers</strong> can see verified opportunities in their area—without endless group hopping.
-                  </Typography>
-                </Box>
-              </Box>
+                  </p>
+                </div>
+              </div>
 
-              <Typography variant="body1" sx={{ color: "#555", mb: 4, lineHeight: 1.7 }}>
+              <p className={styles.summaryText}>
                 This means faster connections, less effort, and a better experience for everyone.
-              </Typography>
+              </p>
 
-              <OrangeButton variant="contained">
-                Join the community
-              </OrangeButton>
-            </Grid>
+              <Link href={Routes.landing}>
+                <button className={styles.joinButton}>
+                  Join the community
+                </button>
+              </Link>
+            </div>
 
-            {/* Right Image */}
-            <Grid item xs={12} md={6}>
-              <Box
-                component="img"
-                src="/assets/why-us-image-clear.png"
-                alt="Construction workers discussion"
-                sx={{
-                  width: "100%",
-                  height: "auto",
-                  borderRadius: "48px", // Uniform large rounded corners matching the latest uploaded asset style
-                  boxShadow: "0px 10px 40px rgba(0,0,0,0.1)",
-                  mixBlendMode: "multiply",
-                }}
-              />
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+            {/* The existing about.tsx has more content below,
+                let's keep the Mission and Testimonials sections but styled consistently if needed.
+                For now, focusing on matching the screenshot's top part perfectly.
+            */}
+          </div>
+        </div>
+      </section>
 
       {/* Our Mission Section */}
-      <Box sx={{ py: 8, backgroundColor: "#f9f9f9" }}>
-        <Container>
-          <Box sx={{ textAlign: "center", mb: 8 }}>
-            <Typography variant="h4" sx={{
-              fontWeight: 700,
-              color: "#003366",
-              mb: 3
-            }}>
-              Our Mission
-            </Typography>
-            <Typography variant="body1" sx={{
-              color: "#666",
-              maxWidth: "800px",
-              mx: "auto",
-              lineHeight: 1.6
-            }}>
+      <section className={styles.missionSection}>
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Our Mission</h2>
+            <p className={styles.sectionSubtitle}>
               Our mission is simple - to create value by assisting you in finding high quality leads for your household needs saving your time and frustration from other platforms and connections.
-            </Typography>
-          </Box>
+            </p>
+          </div>
 
-          <Grid container spacing={4} justifyContent="center">
-            {/* Connect */}
-            <Grid item xs={12} md={4}>
-              <Box sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center"
-              }}>
-                <Box
-                  component="img"
-                  src="/assets/mission-connect-hq.png"
-                  alt="Connect"
-                  sx={{ height: "180px", mb: 2, mixBlendMode: "multiply" }}
-                />
-                <Typography variant="body2" sx={{ color: "#666", maxWidth: "300px" }}>
-                  Connect and engage with potential social contacts on our platform
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* Care */}
-            <Grid item xs={12} md={4}>
-              <Box sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center"
-              }}>
-                <Box
-                  component="img"
-                  src="/assets/mission-care-hq.png"
-                  alt="Care"
-                  sx={{ height: "180px", mb: 2, mixBlendMode: "multiply" }}
-                />
-                <Typography variant="body2" sx={{ color: "#666", maxWidth: "300px" }}>
-                  Find the nanny or household Care and support your need to elevate your lifestyle
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* Excel */}
-            <Grid item xs={12} md={4}>
-              <Box sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center"
-              }}>
-                <Box
-                  component="img"
-                  src="/assets/mission-excel-hq.png"
-                  alt="Excel"
-                  sx={{ height: "180px", mb: 2, mixBlendMode: "multiply" }}
-                />
-                <Typography variant="body2" sx={{ color: "#666", maxWidth: "300px" }}>
-                  Foster the community culture and Excel together
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+          <div className={styles.missionGrid}>
+            <div className={styles.missionCard}>
+              <img src="/assets/mission-connect-hq.png" alt="Connect" />
+              <p>Connect and engage with potential social contacts on our platform</p>
+            </div>
+            <div className={styles.missionCard}>
+              <img src="/assets/mission-care-hq.png" alt="Care" />
+              <p>Find the nanny or household Care and support your need to elevate your lifestyle</p>
+            </div>
+            <div className={styles.missionCard}>
+              <img src="/assets/mission-excel-hq.png" alt="Excel" />
+              <p>Foster the community culture and Excel together</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Testimonials Section */}
-      <Box sx={{ py: 10, backgroundColor: "#ffffff", overflow: "hidden" }}>
-        <Container>
-          <Grid container spacing={6}>
-            {/* Left Content */}
-            <Grid item xs={12} md={4} sx={{ position: "relative" }}>
-              <Box sx={{ position: "relative", zIndex: 2 }}>
-                <FaQuoteLeft size={100} color="#e0e8ff" style={{ opacity: 0.5, marginBottom: "20px" }} />
-                <Typography variant="h3" sx={{
-                  fontWeight: 800,
-                  color: "#003366",
-                  mb: 2,
-                  lineHeight: 1.2
-                }}>
-                  What Our Members <br /> Have To Say
-                </Typography>
-                <Typography variant="body1" sx={{ color: "#666", mb: 4, lineHeight: 1.6 }}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-                </Typography>
-                <OrangeButton variant="contained" onClick={() => setModalOpen(true)}>
-                  Connect Us
-                </OrangeButton>
-              </Box>
-            </Grid>
+      <section className={styles.testimonialsSection}>
+        <div className={styles.container}>
+          <div className={styles.testimonialWrapper}>
+            <div className={styles.testimonialContent}>
+              <h2 className={styles.testimonialHeading}>What our members have to say</h2>
+              <p className={styles.testimonialBody}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.
+              </p>
+              <button className={styles.joinButton}>Connect Us</button>
+            </div>
 
-            {/* Right Content - Review Cards */}
-            <Grid item xs={12} md={8}>
-              <Grid container spacing={3}>
-                {/* Column 1 */}
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <TestimonialCard
-                      name="Ravi Patel"
-                      location="Fremont, California"
-                      text="Got connected to someone local who did an amazing job. Kids were thrilled! Highly recommend DesiHelpers."
-                      image="/assets/img_baker1.png"
-                    />
-                    <TestimonialCard
-                      name="Neha Sharma"
-                      location="Dallas, Texas"
-                      text="As a new mom, I really needed a mother's helper for a few hours a day. I found a kind and reliable lady through DesiHelpers who made life so much easier. This site is a lifesaver for families."
-                      image="/assets/img_nanny1.png"
-                    />
-                    <TestimonialCard
-                      name="Arjun Reddy"
-                      location="Seattle, Washington"
-                      text="I recently moved here and was looking for weekend catering gigs. Signed up on DesiHelpers and got my first order for a small party in just a week. Great platform for side income!"
-                      image="/assets/img_event_helper1.png"
-                    />
-                  </Box>
-                </Grid>
+            <div className={styles.testimonialGrid}>
+              {/* Column 1 */}
+              <div className={styles.testimonialCol}>
+                <div className={styles.reviewCard}>
+                  <div className={styles.stars}>
+                    {[...Array(5)].map((_, i) => <FaStar key={i} />)}
+                  </div>
+                  <p>"Needed a face painter for my daughter's birthday. Within hours I got connected to someone local who did an amazing job. Kids were thrilled! Highly recommend DesiHelpers."</p>
+                  <div className={styles.reviewAuthor}>
+                    <Avatar src="/assets/img_baker1.png" className={styles.authorAvatar} />
+                    <div>
+                      <h4>Ravi Patel</h4>
+                      <span>📍 Fremont, California</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                {/* Column 2 */}
-                <Grid item xs={12} sm={6} sx={{ mt: { sm: 6 } }}> {/* Staggered effect */}
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                    <TestimonialCard
-                      name="Deepak Nair"
-                      location="Boston, Massachusetts"
-                      text="Finding trustworthy childcare is tough, but DesiHelpers connected us with a responsible babysitter. The peace of mind is priceless. I'll keep using this site for sure."
-                      image="/assets/img_caterer1.png"
-                    />
-                    <TestimonialCard
-                      name="Pooja Joshi"
-                      location="Houston, Texas"
-                      text="I hired a catering team through DesiHelpers for my parents' anniversary. The food was authentic and homely, just like we wanted. All our guests kept asking where we found them!"
-                      image="/assets/img_tutoring1.png"
-                    />
-                    <TestimonialCard
-                      name="Kiran Malhotra"
-                      location="San Jose, California"
-                      text="I'm a baker and listed my services here. Within two weeks, I got three cake orders from families nearby. This platform really helps small business owners like me."
-                      image="/assets/img_househelper1.png"
-                    />
-                  </Box>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+              {/* Column 2 - Staggered */}
+              <div className={`${styles.testimonialCol} ${styles.staggeredCol}`}>
+                <div className={styles.reviewCard}>
+                  <div className={styles.stars}>
+                    {[...Array(5)].map((_, i) => <FaStar key={i} />)}
+                  </div>
+                  <p>"Finding trustworthy childcare is tough, but DesiHelpers connected us with a responsible babysitter. The peace of mind is priceless. I'll keep using this site for sure."</p>
+                  <div className={styles.reviewAuthor}>
+                    <Avatar src="/assets/img_tutoring1.png" className={styles.authorAvatar} />
+                    <div>
+                      <h4>Deepak Nair</h4>
+                      <span>📍 Boston, Massachusetts</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Ready to Get Started Section */}
-      <Box sx={{
-        py: 10,
-        backgroundColor: "#fff5eb", // Light peach background
-        position: "relative",
-        overflow: "hidden"
-      }}>
-        {/* Background Word Cloud Image */}
-        <Box
-          component="img"
-          src="/assets/img_text_language_cloud.svg"
-          alt="Background Pattern"
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            opacity: 0.15, // Low opacity for background effect
-            zIndex: 1
-          }}
-        />
-
-        <Container sx={{ position: "relative", zIndex: 2 }}>
-          <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item xs={12} md={7}>
-              <Typography variant="h3" sx={{
-                fontWeight: 800,
-                color: "#d35400", // Darker orange for the heading
-                mb: 2
-              }}>
-                Ready to Get Started?
-              </Typography>
-              <Typography variant="body1" sx={{
-                color: "#333",
-                maxWidth: "600px",
-                fontSize: "1.1rem",
-                lineHeight: 1.6
-              }}>
-                Join our community today and experience the difference of working with verified, trusted professionals.
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={4} sx={{ textAlign: { xs: "left", md: "right" }, mt: { xs: 4, md: 0 } }}>
-              <OrangeButton variant="contained" sx={{
-                px: 4,
-                py: 1.5,
-                fontSize: "1.1rem",
-                backgroundColor: "#e65100",
-                "&:hover": { backgroundColor: "#cf4900" }
-              }}>
-                Join the community
-              </OrangeButton>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-      <SignRegisterModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <section className={styles.readySection}>
+        <div className={styles.container}>
+          <div className={styles.readyContent}>
+            <h2 className={styles.readyTitle}>Ready to Get Started?</h2>
+            <p className={styles.readySubtitle}>
+              Join our community today and experience the difference of working with verified, trusted professionals.
+            </p>
+            <button className={styles.readyButton}>Join the community</button>
+          </div>
+        </div>
+      </section>
     </>
-  );
-};
-
-// Helper Component for Testimonial Card
-const TestimonialCard = ({ name, location, text, image }: { name: string, location: string, text: string, image: string }) => (
-  <Paper elevation={0} sx={{
-    p: 3,
-    borderRadius: "24px",
-    backgroundColor: "#ffffff",
-    boxShadow: "0px 4px 20px rgba(0,0,0,0.05)",
-    border: "1px solid #f0f0f0"
-  }}>
-    <Box sx={{ display: "flex", mb: 2 }}>
-      {[...Array(5)].map((_, i) => (
-        <FaStar key={i} color="#ffc107" size={18} style={{ marginRight: "2px" }} />
-      ))}
-    </Box>
-    <Typography variant="body2" sx={{ color: "#555", mb: 3, lineHeight: 1.6, minHeight: "60px" }}>
-      "{text}"
-    </Typography>
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-      <Avatar src={image} alt={name} sx={{ width: 48, height: 48 }} />
-      <Box>
-        <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#333" }}>
-          {name}
-        </Typography>
-        <Typography variant="caption" sx={{ color: "#888", display: "flex", alignItems: "center" }}>
-          <span style={{ fontSize: "14px", marginRight: "4px" }}>📍</span> {location}
-        </Typography>
-      </Box>
-    </Box>
-  </Paper>
-);
-
-const SignRegisterModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
-  return (
-    <Box
-      sx={{
-        display: open ? "flex" : "none",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        zIndex: 1300,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Paper
-        sx={{
-          width: "400px",
-          p: 4,
-          borderRadius: "16px",
-          position: "relative",
-          textAlign: "center",
-          boxShadow: 24,
-        }}
-      >
-        <Button
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            minWidth: "auto",
-            p: 0,
-            color: "#666",
-          }}
-        >
-          ✕
-        </Button>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: "#003366", mb: 4, textAlign: "left" }}>
-          Sign/Register
-        </Typography>
-
-        <Box sx={{ position: "relative", width: "100px", height: "100px", mx: "auto", mb: 2 }}>
-          <Avatar
-            src="/assets/img_nanny1.png" // Using a sample image as placeholder
-            sx={{
-              width: "100%",
-              height: "100%",
-              filter: "blur(2px)",
-            }}
-          />
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              backgroundColor: "black",
-              borderRadius: "50%",
-              p: 0.5,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {/* Simple lock symbol */}
-            <span style={{ color: "white", fontSize: "16px" }}>🔒</span>
-          </Box>
-        </Box>
-
-        <Typography variant="subtitle1" sx={{ color: "#00bfa5", fontWeight: 700, mb: 2 }}>
-          Unlock Contact Details
-        </Typography>
-
-        <Typography variant="body2" sx={{ color: "#666", mb: 4 }}>
-          Sign in to view phone numbers, WhatsApp, and social links.
-        </Typography>
-
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="outlined"
-            fullWidth
-            sx={{
-              borderRadius: "24px",
-              textTransform: "none",
-              borderColor: "#003366",
-              color: "#003366",
-              fontWeight: 600,
-            }}
-          >
-            Login
-          </Button>
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{
-              borderRadius: "24px",
-              textTransform: "none",
-              backgroundColor: "#fd7e14",
-              fontWeight: 600,
-              "&:hover": { backgroundColor: "#e36d0c" },
-            }}
-          >
-            Register Free
-          </Button>
-        </Box>
-      </Paper>
-    </Box>
   );
 };
 

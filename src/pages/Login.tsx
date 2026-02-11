@@ -58,10 +58,14 @@ const Login = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
 
-  // Fetch states on component mount
+  // Fetch states on component mount and check query params
   useEffect(() => {
     fetchStates();
-  }, []);
+    if (router.query.mode === "signup") {
+      setViewMode("signup");
+      setCurrentStep(1);
+    }
+  }, [router.query.mode]);
 
   // Hardcoded US states as fallback when API requires auth
   const US_STATES_FALLBACK = [
@@ -367,6 +371,7 @@ const Login = () => {
   };
 
   const verifyLoginOtp = async () => {
+    console.log("Current loginOtp state:", loginOtp);
     const otpString = loginOtp.join("");
     if (otpString.length !== 6) {
       Swal.fire({ title: "Error", text: "Please enter complete OTP", icon: "error" });
@@ -377,10 +382,12 @@ const Login = () => {
     setIsLoading(true);
 
     // 1. Verify OTP
+    console.log("Verifying OTP for email:", sanitizedEmail, "OTP:", otpString);
     const verifyRes = await ApiService.crud(
       APIDetails.verifyOTP,
       JSON.stringify({ email: sanitizedEmail, otp: otpString })
     );
+    console.log("Verify OTP Response:", verifyRes);
 
     if (verifyRes[0]) {
       // 2. OTP verified - Login with temp password (used during registration)
@@ -391,6 +398,19 @@ const Login = () => {
 
       setIsLoading(false);
       if (loginRes[0]) {
+        // Debugging Token Structure
+        console.log("Login Response Data:", loginRes[1]);
+
+        if (loginRes[1] && loginRes[1].access_token) {
+          // Set cookies with the response data (tokens, user info)
+          CookieService.SetCookies(loginRes[1]);
+        } else {
+          console.error("Login successful but no access_token found in response:", loginRes[1]);
+          // Show error but don't redirect if critical auth data is missing
+          Swal.fire({ title: "Login Error", text: "Invalid server response. Please try again.", icon: "error" });
+          return;
+        }
+
         Swal.fire({
           title: "Login Successful",
           icon: "success",

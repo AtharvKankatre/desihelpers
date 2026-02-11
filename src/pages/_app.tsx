@@ -6,11 +6,12 @@ import { CGlobalLayout } from "@/components/global/header/CGlobalLayout";
 import { useEffect } from "react";
 import { AuthProvider } from "@/services/authorization/AuthContext";
 import Head from 'next/head';
+import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { HelmetProvider } from "react-helmet-async";
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GOOGLEANALYTICS_TRACKINGID;
 
-export default function App({ Component, pageProps}: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
@@ -32,15 +33,19 @@ export default function App({ Component, pageProps}: AppProps) {
   }, []);
   return (
     <>
-    <Head>
-    {/* Global Site Tag (gtag.js) - Google Analytics */}
-    <script
-      async
-      src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-    />
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
+      <Head>
+        <title>DesiHelpers | Find Help Fast &amp; Easy In Your Community | Nanny, Caterers, Bakers, Tutors and many more</title>
+      </Head>
+      {/* Global Site Tag (gtag.js) - Google Analytics */}
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -48,14 +53,13 @@ export default function App({ Component, pageProps}: AppProps) {
             page_path: window.location.pathname,
           });
         `,
-      }}
-    />
-  </Head>
-    <AuthProvider>
-      <CGlobalLayout>
-      <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
-      </CGlobalLayout>{" "}
-    </AuthProvider>
+        }}
+      />
+      <AuthProvider>
+        <CGlobalLayout>
+          <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
+        </CGlobalLayout>{" "}
+      </AuthProvider>
     </>
   );
 }

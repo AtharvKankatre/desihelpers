@@ -33,8 +33,8 @@ export const CUserAvatar: FunctionComponent = () => {
 
   // Close popup if clicked outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setPopupOpen(false);
       }
     };
@@ -72,9 +72,9 @@ export const CUserAvatar: FunctionComponent = () => {
 
         <CProfilePopup
           open={popupOpen}
-          onClose={() => setPopupOpen(false)}
           user={userData}
           onLogout={logOut}
+          onClose={() => setPopupOpen(false)}
           anchorEl={avatarRef.current}
         />
       </div>

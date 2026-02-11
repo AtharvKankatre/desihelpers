@@ -1,12 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/HeroSection.module.css";
 import { Routes } from "@/services/routes/Routes";
 import { useAuth } from "@/services/authorization/AuthContext";
 import Swal from "sweetalert2";
+import ApiService from "@/services/data/crud/crud";
+import { APIDetails } from "@/services/data/constants/ApiDetails";
+import { IJobs } from "@/models/Jobs";
 
-// Job card data matching the design
-const jobCards = [
+// Fallback Job card data matching the design
+const fallbackJobCards = [
   {
     id: 1,
     title: "Nanny",
@@ -44,7 +47,7 @@ const jobCards = [
     location: "Oakland, California",
     date: "Oct 1, 2025",
     rate: "-",
-    image: "/assets/illustrations/tiffin.png",
+    image: "https://cdn-icons-png.flaticon.com/512/3014/3014520.png",
     urgent: true,
   },
   {
@@ -121,8 +124,33 @@ export const HeroSection: React.FC = () => {
   const { isActive, isProfileBuild } = useAuth();
   const [activeTab, setActiveTab] = useState<"findJob" | "hireSomeone">("findJob");
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [jobs, setJobs] = useState<any[]>(fallbackJobCards);
 
   const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await ApiService.crud(APIDetails.getJobs, "");
+        if (response[0] && response[1] && response[1].length > 0) {
+          const apiJobs = response[1].map((job: IJobs) => ({
+            id: job._id || job.id,
+            title: job.jobType?.name || job.subCategory || "Job Opportunity",
+            description: job.aboutRequirement || "Looking for help",
+            location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location not specified",
+            date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
+            rate: job.payRange || "-",
+            image: job.jobType?.image || "/assets/illustrations/nanny.png", // Use job type image or default
+            urgent: job.urgent || false,
+          }));
+          setJobs(apiJobs);
+        }
+      } catch (error) {
+        console.error("Error fetching jobs for hero section:", error);
+      }
+    };
+    fetchJobs();
+  }, []);
 
   const handleCardClick = (jobTitle: string) => {
     if (!isActive) {
@@ -161,44 +189,8 @@ export const HeroSection: React.FC = () => {
     router.push(Routes.mapSearch);
   };
 
-  const scrollCarousel = (direction: "left" | "right") => {
-    if (carouselRef.current) {
-      const cardWidth = 171; // card width + gap
-      const scrollAmount = cardWidth * 2; // Scroll 2 cards at a time
-
-      carouselRef.current.scrollTo({
-        left: carouselRef.current.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount),
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Auto-scroll effect - infinite smooth scroll (pauses on hover)
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      if (carouselRef.current && !isPaused) {
-        const { scrollLeft, scrollWidth } = carouselRef.current;
-        // Cards are duplicated, so halfway is where we reset to create seamless loop
-        const halfwayPoint = scrollWidth / 2;
-
-        // If reached halfway (end of first set), reset to beginning seamlessly
-        if (scrollLeft >= halfwayPoint) {
-          carouselRef.current.scrollTo({ left: 0, behavior: "auto" });
-        } else {
-          // Smooth scroll left
-          carouselRef.current.scrollTo({
-            left: scrollLeft + 1,
-            behavior: "auto",
-          });
-        }
-      }
-    }, 30); // Fast interval for smooth continuous motion
-
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
   // Duplicate cards for infinite scroll effect
-  const infiniteCards = [...jobCards, ...jobCards];
+  const infiniteCards = [...jobs, ...jobs];
 
   return (
     <div className={styles.heroContainer}>
@@ -218,18 +210,18 @@ export const HeroSection: React.FC = () => {
         />
       </div>
 
-      {/* Toggle Buttons with Horizontal Lines */}
+      {/* Toggle Buttons with Horizontal Lines (Moved Above Headline) */}
       <div className={styles.toggleWrapper}>
         <div className={styles.toggleLine}></div>
         <div className={styles.toggleContainer}>
           <button
-            className={`${styles.toggleButton} ${activeTab === "findJob" ? styles.active : ""}`}
+            className={`${styles.toggleButton} ${activeTab === "findJob" ? styles.findJobActive : ""}`}
             onClick={() => setActiveTab("findJob")}
           >
             Find Job
           </button>
           <button
-            className={`${styles.toggleButton} ${activeTab === "hireSomeone" ? styles.active : ""}`}
+            className={`${styles.toggleButton} ${activeTab === "hireSomeone" ? styles.hireSomeoneActive : ""}`}
             onClick={() => setActiveTab("hireSomeone")}
           >
             Hire Someone
@@ -238,24 +230,38 @@ export const HeroSection: React.FC = () => {
         <div className={styles.toggleLine}></div>
       </div>
 
-      {/* Headline */}
-      <h1 className={styles.headline}>
-        Discover Opportunities That Match Your Skills
-      </h1>
+      {/* Desktop Version - Headline & Subtitle */}
+      <div className={styles.desktopOnly}>
+        <h1 className={styles.headline}>
+          Discover Opportunities That Match Your Skills
+        </h1>
+        <p className={styles.subtitle}>
+          Join a growing network where your skills meet real demand, and start earning by helping others in your community.
+        </p>
+      </div>
 
-      {/* Subtitle */}
-      <p className={styles.subtitle}>
-        Join a growing network where your skills meet real demand, and start earning by helping others in your community.
-      </p>
+      {/* Mobile Version - Headline & Subtitle */}
+      <div className={styles.mobileOnly}>
+        <h1 className={styles.headline}>
+          Find Trusted Help for Desi Need
+        </h1>
+        <p className={styles.subtitle}>
+          NRI's trusted platform for Jobs, Clients and Connections ! सब कुछ यही मिलेगा
+        </p>
+      </div>
 
-      {/* Job Cards Carousel */}
+
+
+      {/* Shared Job Cards Carousel (Now for both Desktop and Mobile as requested) */}
       <div
-        className={styles.jobCardsWrapper}
+        className={`${styles.jobCardsWrapper} ${isPaused ? styles.paused : ""}`}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
       >
-        <div className={styles.jobCardsContainer} ref={carouselRef}>
-          {infiniteCards.map((job, index) => (
+        <div className={styles.jobCardsContainer}>
+          {infiniteCards.length > 0 && infiniteCards.map((job, index) => (
             <div
               key={`${job.id}-${index}`}
               className={styles.jobCard}
@@ -286,17 +292,21 @@ export const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className={styles.ctaSection}>
-        <a className={styles.exploreLink} onClick={handleExploreJobs}>
-          Explore available jobs Now
-        </a>
-        <button className={styles.registerButton} onClick={handleRegister}>
-          Register Now
-        </button>
+      {/* Desktop Version - Additional CTA Links from Screenshot */}
+      <div className={styles.desktopOnly}>
+        <div className={styles.exploreLinkWrapper} onClick={handleExploreJobs}>
+          <span className={styles.exploreAvailableLink}>Explore available jobs Now</span>
+        </div>
+        <div className={styles.registerCtaWrapper}>
+          <button className={styles.registerButton} onClick={handleRegister}>
+            Register Now
+          </button>
+        </div>
       </div>
+
     </div>
   );
 };
 
 export default HeroSection;
+

@@ -29,7 +29,7 @@ const PopupContainer = styled(Paper)(({ theme }) => ({
     boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
     overflow: "hidden",
     zIndex: 1500,
-    marginTop: "12px",
+    marginTop: "20px",
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({
@@ -74,17 +74,19 @@ export const CProfilePopup: React.FC<CProfilePopupProps> = ({ user, onLogout, op
 
                 <Box sx={{ p: 2 }}>
                     {/* My Profile Link */}
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
-                        <Box sx={{
-                            width: 32, height: 32, borderRadius: "50%", backgroundColor: "#fff0e0",
-                            display: "flex", alignItems: "center", justifyContent: "center"
-                        }}>
-                            <FaUserCircle color="#fd7e14" size={18} />
+                    <Link href="/profile" style={{ textDecoration: "none" }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2, cursor: "pointer", "&:hover": { backgroundColor: "#f9f9f9" }, p: 1, borderRadius: "8px", mx: -1 }}>
+                            <Box sx={{
+                                width: 32, height: 32, borderRadius: "50%", backgroundColor: "#fff0e0",
+                                display: "flex", alignItems: "center", justifyContent: "center"
+                            }}>
+                                <FaUserCircle color="#fd7e14" size={18} />
+                            </Box>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: "#333" }}>
+                                My Profile
+                            </Typography>
                         </Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#333" }}>
-                            My Profile
-                        </Typography>
-                    </Box>
+                    </Link>
 
                     {/* Progress Bar */}
                     <Box sx={{ backgroundColor: "#f8f9fa", p: 1.5, borderRadius: "8px", mb: 3 }}>

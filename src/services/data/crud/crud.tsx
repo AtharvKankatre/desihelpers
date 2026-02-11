@@ -9,7 +9,7 @@ import ProcessDataService from "@/services/data/process_data/ProcessData";
 import CookieService from "@/services/authorization/CookieService";
 import { IToken } from "@/models/TokenModel";
 import { Routes } from "@/services/routes/Routes";
-import AWS from "aws-sdk";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import Cookies from "js-cookie";
 
 // Define the base URL for your API
@@ -23,16 +23,14 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 class ApiService {
   private axiosInstance: AxiosInstance;
-  private s3: AWS.S3;
+  private s3Client: S3Client;
 
   constructor() {
-    AWS.config.update({
-      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEYID,
-      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESSKEY,
-    });
-
-    this.s3 = new AWS.S3({
-      params: { Bucket: S3_BUCKET },
+    this.s3Client = new S3Client({
+      credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEYID || '',
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESSKEY || '',
+      },
       region: REGION,
     });
 
@@ -235,6 +233,10 @@ class ApiService {
       case APIDetails.AdminUpdateSeekerStatus:
       case APIDetails.getJobById:
       case APIDetails.ShareProfileSeeker:
+      case APIDetails.getFeedback:
+      case APIDetails.getJobsByUser:
+      case APIDetails.updateFeedback:
+      case APIDetails.deleteFeedback:
         return `${api[0]}${data}`;
 
       default:
@@ -246,44 +248,35 @@ class ApiService {
     let file: File = data[0];
     let fileName: string = data[1];
 
-    const params: AWS.S3.PutObjectRequest = {
+    // Convert File to ArrayBuffer for SDK v3
+    const fileBuffer = await file.arrayBuffer();
+
+    const command = new PutObjectCommand({
       Bucket: S3_BUCKET ?? "",
       Key: fileName,
-      Body: file,
+      Body: new Uint8Array(fileBuffer),
       ContentType: file.type,
-    };
-
-    AWS.S3.ManagedUpload;
-
-    var res;
+    });
 
     try {
-      res = await new Promise((resolve, reject) => {
-        this.s3.upload(params, (err, data) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(data.Location);
-        });
-      });
+      await this.s3Client.send(command);
+      // Return the S3 URL
+      return `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${fileName}`;
     } catch (error) {
-      res = error;
+      throw error;
     }
-
-    return res;
   };
 
   private deleteFile = async (data: [File, string]) => {
-    let file: File = data[0];
     let fileName: string = data[1];
 
-    const params: AWS.S3.DeleteObjectRequest = {
+    const command = new DeleteObjectCommand({
       Bucket: S3_BUCKET ?? "",
       Key: fileName,
-    };
+    });
 
     try {
-      const res = await this.s3.deleteObject(params).promise();
+      const res = await this.s3Client.send(command);
       return res;
     } catch (error: any) {
       console.error(`Failed to delete ${fileName} from ${S3_BUCKET}`, error);

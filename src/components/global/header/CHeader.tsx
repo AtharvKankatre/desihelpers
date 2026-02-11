@@ -63,7 +63,7 @@ export const CHeader = () => {
   }, []);
 
   const navLinks = [
-    { label: "Find Job", href: Routes.landing },
+    { label: "Find Job", href: Routes.viewAllJobs },
     { label: "Hire Help", href: Routes.landing },
     { label: "About Us", href: "/about" },
     { label: "Resources", href: "/resources" },

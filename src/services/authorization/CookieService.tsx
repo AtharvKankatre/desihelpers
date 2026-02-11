@@ -23,14 +23,14 @@ class CookieService {
 
     Cookies.set(cookieParams.accessToken, data.access_token, params);
     Cookies.set(cookieParams.refreshToken, data.refresh_token, params);
-    if(parsedPayload.roles?.includes(Roles.Admin)){
+    if (parsedPayload.roles?.includes(Roles.Admin)) {
       Cookies.set(cookieParams.role, parsedPayload.roles?.includes(Roles.Admin) ? Roles.Admin : "", params);
     }
-    if(parsedPayload.roles?.includes(Roles.SubAdmin)){
+    if (parsedPayload.roles?.includes(Roles.SubAdmin)) {
       Cookies.set(cookieParams.role, parsedPayload.roles?.includes(Roles.SubAdmin) ? Roles.SubAdmin : "", params);
     }
-  
-   
+
+
     Cookies.set(cookieParams.isActive, "true", params);
     Cookies.set(
       cookieParams.isSeeker,

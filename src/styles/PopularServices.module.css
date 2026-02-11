@@ -118,21 +118,24 @@
 
 /* Job Card Image */
 .jobImageContainer {
-    width: 100%;
+    width: 100px;
     height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
+    margin: 0 auto 16px auto;
     background: #e8f4fc;
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 50%;
+    padding: 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
 }
 
 .jobImage {
-    max-height: 76px;
-    max-width: 76px;
+    max-height: 100%;
+    max-width: 100%;
     object-fit: contain;
+    mix-blend-mode: multiply;
 }
 
 /* Helper Card Image */
@@ -244,8 +247,29 @@
     margin-top: 32px;
 }
 
-/* Sign In Button - Orange gradient, pill shape */
-.signInButton {
+.ctaContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.exploreLink {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1e40af; /* Matches card title blue */
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.exploreLink:hover {
+    color: #f97316; /* Orange hover */
+}
+
+/* Register Button - Orange gradient, pill shape */
+.registerButton {
     background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
     box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
     color: white;
@@ -260,7 +284,7 @@
     box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
 }
 
-.signInButton:hover {
+.registerButton:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
 }
@@ -268,22 +292,33 @@
 /* Responsive */
 @media (max-width: 768px) {
     .popularSection {
-        padding: 40px 15px;
+        padding: 40px 10px;
     }
 
     .header {
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+        padding: 0 15px;
     }
 
     .title {
-        font-size: 32px;
+        font-size: 28px;
     }
 
-    .card {
-        flex: 0 0 180px;
+    .subtitle {
+        font-size: 14px;
     }
 
     .cardsGrid {
-        gap: 16px;
+        gap: 12px;
+        justify-content: flex-start;
+        padding-left: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .card {
+        flex: 0 0 280px;
+        min-height: 320px;
+        padding: 16px;
     }
 }

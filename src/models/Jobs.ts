@@ -27,6 +27,7 @@ export interface IJobs {
   updatedAt?: Date;
   __v?: number;
   userProfile?: UserProfile;
+  distance?: number;
 }
 
 export interface JobType {
@@ -45,4 +46,6 @@ export interface UserProfile {
   showPhone?: boolean;
   showMobile?: boolean;
   profilePhoto?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

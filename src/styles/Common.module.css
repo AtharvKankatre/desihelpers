@@ -951,7 +951,7 @@
 
 /* ===================== NAVBAR STYLES ===================== */
 .navbarMain {
-  background-color: #001738;
+  background: #001838;
   width: 100%;
   height: 74px;
   padding: 16px 30px;
@@ -1004,7 +1004,7 @@
 .navbarActions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
 }
 
 .langSelector {
@@ -1058,8 +1058,12 @@
   background-color: #f5f5f5;
 }
 
+.navIconButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .navIconButton {
-  background: transparent;
+  background-color: rgba(255, 255, 255, 0.1);
   border: none;
   cursor: pointer;
   padding: 8px;
@@ -1068,10 +1072,6 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
-}
-
-.navIconButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .navIconButton img {
@@ -1092,9 +1092,13 @@
   }
 
   .navbarBrandMobile {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    /* Changed from absolute to prevent overlap */
+    left: auto;
+    transform: none;
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
 
   .navbarLinks {
@@ -1119,6 +1123,13 @@
   .navIconButton img {
     width: 20px;
     height: 20px;
+    filter: brightness(0) invert(1);
+  }
+
+  .logoImageMobile {
+    max-height: 24px !important;
+    /* Even smaller for absolute safety */
+    width: auto;
   }
 }
 
@@ -1259,7 +1270,8 @@
   padding: 6px 12px;
   background: transparent;
   border: none;
-  color: #FF6B35;
+  color: #00bfaf;
+  /* Teal color from screenshots */
   font-weight: 600;
   font-size: 12px;
   cursor: pointer;
@@ -1805,6 +1817,15 @@
   }
 }
 
+/* Medium Screens */
+@media (max-width: 768px) {
+  .heroContainer {
+    padding: 110px 15px 50px !important;
+    /* Force extra clearance for mobile header */
+    min-height: auto;
+  }
+}
+
 /* Extra Small Screens */
 @media (max-width: 380px) {
   .signupFormContainer {
@@ -1837,7 +1858,8 @@
 .langButton {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  color: white; /* Default text color for transparent header */
+  color: white;
+  /* Default text color for transparent header */
   padding: 6px 12px;
   border-radius: 20px;
   cursor: pointer;
@@ -1856,7 +1878,7 @@
   right: 0;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 8px;
   min-width: 120px;
   z-index: 1000;
@@ -1872,8 +1894,10 @@
   background: none;
   border: none;
   font-size: 0.9rem;
-  color: #333; /* Dark text for visibility on white background */
+  color: #333;
+  /* Dark text for visibility on white background */
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .langOption:hover {

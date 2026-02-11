@@ -10,7 +10,7 @@ export const FooterSection: React.FC = () => {
             <div className={styles.container}>
                 {/* Brand Column */}
                 <div className={styles.brandColumn}>
-                    <img src="/DesiHelpersLogo.svg" alt="Desi Helpers" className={styles.logoImage} />
+                    <img src="/DesiHelpers_without-tag-line.svg" alt="DesiHelpers" className={styles.logoImage} style={{ maxHeight: "40px", width: "auto" }} />
                     <div className={styles.socialIcons}>
                         <a href="#" className={styles.iconLink}><FaFacebookF /></a>
                         <a href="#" className={styles.iconLink}><FaInstagram /></a>

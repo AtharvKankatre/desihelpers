@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/PopularServices.module.css";
+import ApiService from "@/services/data/crud/crud";
+import { APIDetails } from "@/services/data/constants/ApiDetails";
+import { IJobs } from "@/models/Jobs";
+import { IUserProfileModel } from "@/models/UserProfileModel";
 
-// Sample data for popular services - mix of jobs, helpers, and ads
-const popularServices = [
+// Sample data for popular services - fallback if API fails
+const fallbackServices = [
     {
         id: 1,
         type: "job",
@@ -31,7 +35,7 @@ const popularServices = [
         location: "Oakland, California",
         date: "Oct 1, 2025",
         rate: "$15-$20 / meal",
-        image: "https://cdn-icons-png.flaticon.com/512/3014/3014520.png", // Transparent lunchbox icon
+        image: "https://cdn-icons-png.flaticon.com/512/3014/3014520.png",
         urgent: true,
     },
     {
@@ -82,11 +86,88 @@ const skillIcons: { [key: string]: string } = {
     tutoring: "📚",
 };
 
+import { Routes } from "@/services/routes/Routes";
+import { useAuth } from "@/services/authorization/AuthContext";
+import CookieService from "@/services/authorization/CookieService";
+
+// ... existing imports ...
+
 export const PopularServicesSection: React.FC = () => {
     const router = useRouter();
+    const { isActive, setIsActive } = useAuth();
+    const [popularServices, setPopularServices] = useState<any[]>(fallbackServices);
 
-    const handleSignIn = () => {
-        router.push("/Login");
+    // Force check login status on mount to ensure button visibility is correct
+    useEffect(() => {
+        const checkLogin = () => {
+            const token = CookieService.accessToken();
+            // If token exists but context says not active, update context
+            if (token && !isActive) {
+                setIsActive(true);
+            }
+        };
+        checkLogin();
+        // Also listen for event in case it changes while on this page
+        window.addEventListener("isActiveChanged", checkLogin);
+        return () => window.removeEventListener("isActiveChanged", checkLogin);
+    }, [isActive, setIsActive]);
+
+    useEffect(() => {
+        const fetchPopularContent = async () => {
+            try {
+                console.log("Using API Base URL:", process.env.NEXT_PUBLIC_API_URL);
+                // Fetch both jobs and seekers
+                const [jobsRes, seekersRes] = await Promise.all([
+                    ApiService.crud(APIDetails.getJobs, ""),
+                    ApiService.crud(APIDetails.getSeekers, "")
+                ]);
+
+                console.log("API Response Jobs:", jobsRes);
+                console.log("API Response Seekers:", seekersRes);
+
+                let combinedRes: any[] = [];
+
+                if (jobsRes[0] && jobsRes[1]) {
+                    const apiJobs = jobsRes[1].slice(0, 4).map((job: IJobs) => ({
+                        id: `job-${job._id || job.id}`,
+                        type: "job",
+                        title: job.jobType?.name || job.subCategory || "Job Opportunity",
+                        description: job.aboutRequirement || "Looking for help",
+                        location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location specified",
+                        date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
+                        rate: job.payRange || "-",
+                        image: job.jobType?.image || "/assets/illustrations/nanny.png",
+                        urgent: job.urgent || false,
+                    }));
+                    combinedRes = [...combinedRes, ...apiJobs];
+                }
+
+                if (seekersRes[0] && seekersRes[1]) {
+                    const apiSeekers = seekersRes[1].slice(0, 3).map((seeker: IUserProfileModel) => ({
+                        id: `seeker-${seeker._id || seeker.id}`,
+                        type: "helper",
+                        name: seeker.displayName || `${seeker.firstName || ""} ${seeker.lastName || ""}`.trim() || "Helper",
+                        location: `${seeker.city || ""}, ${seeker.state || ""}`.trim() || "Location specified",
+                        image: seeker.profilePhoto || "/assets/helpers/helper1.jpg",
+                        skills: seeker.jobDetails?.map((jd: any) => jd.jobType).filter(Boolean).slice(0, 4) || ["babysitting", "cooking"]
+                    }));
+                    combinedRes = [...combinedRes, ...apiSeekers];
+                }
+
+                if (combinedRes.length > 0) {
+                    // Try to alternate if possible, or just shuffle/sort
+                    setPopularServices(combinedRes);
+                }
+            } catch (error) {
+                console.error("Error fetching popular services:", error);
+            }
+        };
+
+        fetchPopularContent();
+    }, []);
+
+    const handleRegister = () => {
+        router.push(Routes.register);
     };
 
     return (
@@ -143,9 +224,9 @@ export const PopularServicesSection: React.FC = () => {
                                         {item.location}
                                     </div>
                                     <div className={styles.skillIcons}>
-                                        {item.skills?.map((skill, idx) => (
+                                        {item.skills?.map((skill: string, idx: number) => (
                                             <span key={idx} className={styles.skillIcon}>
-                                                {skillIcons[skill] || "✨"}
+                                                {skillIcons[skill.toLowerCase()] || "✨"}
                                             </span>
                                         ))}
                                     </div>
@@ -171,15 +252,23 @@ export const PopularServicesSection: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Sign In Button */}
-                <div className={styles.ctaContainer}>
-                    <button className={styles.signInButton} onClick={handleSignIn}>
-                        Sign In for More
-                    </button>
-                </div>
+                {/* Register / Explore Section - Only for non-logged in users */}
+                {!isActive && (
+                    <div className={styles.ctaContainer}>
+                        <div className={styles.ctaContent}>
+                            <a href={Routes.viewAllJobs} className={styles.exploreLink}>
+                                Explore available jobs Now
+                            </a>
+                            <button className={styles.registerButton} onClick={handleRegister}>
+                                Register Now
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );
 };
 
 export default PopularServicesSection;
+

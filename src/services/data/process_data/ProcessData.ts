@@ -130,29 +130,29 @@ class ProcessDataService {
         case APIDetails.AdminViewUser[0]:
           res = data;
           break;
-          case APIDetails.AdminUpdateUserProfile[0]:
-            res = data;
-            break;
-            case APIDetails.AdminSignUp[0]:
-              res = data;
-              break;
-              case APIDetails.AdminBuildProfile[0]:
-                res = data;
-                break;
-                case APIDetails.AdminJobPost[0]:
-                  res = data;
-                  break;
-                  case APIDetails.AdminMyJobPost[0]:
-                    res = data;
-                    break;
-                    case APIDetails.AdminUpdateSeekerStatus[0]:
-                      res = data;
-                      break;
-                      case APIDetails.ShareProfileSeeker[0]:
-                        res = data;
-                        break;
+        case APIDetails.AdminUpdateUserProfile[0]:
+          res = data;
+          break;
+        case APIDetails.AdminSignUp[0]:
+          res = data;
+          break;
+        case APIDetails.AdminBuildProfile[0]:
+          res = data;
+          break;
+        case APIDetails.AdminJobPost[0]:
+          res = data;
+          break;
+        case APIDetails.AdminMyJobPost[0]:
+          res = data;
+          break;
+        case APIDetails.AdminUpdateSeekerStatus[0]:
+          res = data;
+          break;
+        case APIDetails.ShareProfileSeeker[0]:
+          res = data;
+          break;
         default:
-            return [false, "Something went wrong"];
+          return [false, "Something went wrong"];
       }
 
       // Return the final values
@@ -165,7 +165,7 @@ class ProcessDataService {
 
   private processLogin(data: IToken) {
     CookieService.SetCookies(data);
-    return [true];
+    return data;
   }
 }
 

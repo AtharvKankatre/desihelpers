@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { Button, Container, Form, Modal } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import { useRouter } from "next/router";
@@ -34,11 +37,11 @@ const JobSeekerModal: React.FC<JobSeekerModalProps> = ({
       JSON.stringify({ isJobSeeker: wantToBeSeeker })
     );
     if (res[0]) {
-      if(wantToBeSeeker){
-        Cookies.set(cookieParams.isSeeker,"true",params);
+      if (wantToBeSeeker) {
+        Cookies.set(cookieParams.isSeeker, "true", params);
       }
       handleClose();
-      window.location.href= Routes.landing;
+      window.location.href = Routes.landing;
     } else {
       alert(res[1]);
     }
@@ -46,11 +49,11 @@ const JobSeekerModal: React.FC<JobSeekerModalProps> = ({
 
   return (
     <Modal show={open} centered>
-    <Modal.Header className="justify-content-center">
-  <Modal.Title className="w-100 text-center">
-    Welcome to Desihelpers.com
-  </Modal.Title>
-</Modal.Header>
+      <Modal.Header className="justify-content-center">
+        <Modal.Title className="w-100 text-center">
+          Welcome to Desihelpers.com
+        </Modal.Title>
+      </Modal.Header>
 
       <Modal.Body>
         <Container className="text-center">

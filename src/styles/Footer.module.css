@@ -1,13 +1,249 @@
+/* ===================== CTA SECTION STYLES ===================== */
+.ctaSection {
+    background-color: #fff5eb;
+    /* Light peach background from screenshot */
+    position: relative;
+    padding: 80px 20px;
+    /* More vertical space */
+    text-align: center;
+    overflow: hidden;
+}
+
+.ctaBackgroundLeft {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Single large watermark */
+    height: 100%;
+    background-image: url("/assets/img_text_language_cloud.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.12;
+    /* Subtle watermark */
+    pointer-events: none;
+}
+
+.ctaBackgroundRight {
+    display: none;
+    /* Merged into one background */
+}
+
+.ctaContent {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.ctaTitle {
+    font-size: 36px;
+    /* Slightly larger */
+    font-weight: 800;
+    color: #ff6a00;
+    /* Vibrant vibrant orange */
+    margin: 0;
+}
+
+.ctaSubtitle {
+    font-size: 16px;
+    color: #333333;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+.ctaButton {
+    background-color: #FF6B35;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.ctaButton:hover {
+    background-color: #E85A2A;
+    transform: translateY(-2px);
+}
+
 /* ===================== FOOTER STYLES ===================== */
 .footerMain {
-    background-color: #001738;
+    background-color: #001838;
     width: 100%;
     padding: 64px 100px 24px 100px;
+    color: white;
 }
 
 .footerContainer {
     max-width: 1440px;
     margin: 0 auto;
+}
+
+.footerContent {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+/* Brand Column */
+.footerBrandCol {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.socialIcons {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.socialLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+    background-color: white;
+    transform: translateY(-2px);
+}
+
+.socialLink:hover img {
+    filter: invert(1);
+    /* Assuming icons are white by default, this makes them dark on hover if using img tags. 
+       Adjust based on actual icon color. If icons are already colored, remove filter. */
+}
+
+/* Columns */
+.footerCol {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 160px;
+}
+
+.footerColTitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 0 10px 0;
+}
+
+.footerColList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.footerColList li a {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.footerColList li a:hover {
+    color: #FF6B35;
+}
+
+/* Footer Bottom */
+.footerDivider {
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 60px 0 30px 0;
+}
+
+.footerCopyright {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Layout Utilities from previous file preserved/adapted */
+.servicesGrid {
+    /* Standard list for desktop, grid for mobile if needed */
+    display: flex;
+    flex-direction: column;
+}
+
+.footerLinksRow {
+    display: contents;
+    /* Allow children to be part of the main flex container usually, or use flex row */
+}
+
+/* Responsive Footer */
+@media (max-width: 1024px) {
+    .footerMain {
+        padding: 48px 40px 24px 40px;
+    }
+
+    .footerContent {
+        gap: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footerMain {
+        padding: 40px 24px 24px 24px;
+    }
+
+    .footerContent {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .footerBrandCol {
+        width: 100%;
+        align-items: center;
+        /* Center brand on mobile? or keep left */
+        text-align: center;
+        gap: 24px;
+    }
+
+    .socialIcons {
+        justify-content: center;
+    }
+
+    /* Grid layout for links on mobile */
+    .footerLinksRow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        width: 100%;
+    }
+
+    .footerCol {
+        min-width: auto;
+    }
+
+    .footerDivider {
+        margin: 40px 0 24px 0;
+    }
 }
 
 .footerContent {
@@ -45,9 +281,6 @@
     opacity: 0.8;
 }
 
-.socialLink img {
-    /* filter: brightness(0) invert(1); Link removed to show color */
-}
 
 .footerCol {
     display: flex;
@@ -203,7 +436,9 @@
     .servicesGrid {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
-        gap: 10px 30px !important;
+        gap: 12px 20px !important;
+        list-style: none;
+        padding: 0;
     }
 
     /* Pages and Quick Links Row - Force side by side */

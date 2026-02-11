@@ -1,0 +1,376 @@
+.aboutHero {
+    background: #001838;
+    /* Consistent dark blue */
+    color: #ffffff;
+    padding: 100px 20px 60px;
+    text-align: center;
+    position: relative;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.heroTitle {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.heroSubtitle {
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.contentSection {
+    background: #ffffff;
+    padding: 40px 20px;
+    color: #333333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.whyLabel {
+    display: block;
+    font-weight: 800;
+    font-size: 12px;
+    color: #666666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mainHeading {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.mainHeading span {
+    color: #005DE1;
+    /* Blue from screenshot */
+}
+
+.bodyText {
+    font-size: 15px;
+    color: #555555;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.checklist {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.checkItem {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.checkIcon {
+    color: #ff8c00;
+    /* Orange checkmark */
+    min-width: 20px;
+    margin-top: 3px;
+}
+
+.checkText {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+}
+
+.checkText strong {
+    font-weight: 700;
+}
+
+.summaryText {
+    font-size: 15px;
+    color: #555555;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.joinButton {
+    background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(235, 95, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.joinButton:hover {
+    transform: translateY(-2px);
+}
+
+.contentWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.textContent {
+    max-width: 100%;
+}
+
+.missionSection {
+    background: #f9f9f9;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.sectionHeader {
+    margin-bottom: 40px;
+}
+
+.sectionTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #001838;
+    margin-bottom: 15px;
+}
+
+.sectionSubtitle {
+    font-size: 15px;
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.missionGrid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.missionCard {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+}
+
+.missionCard img {
+    height: 140px;
+    margin-bottom: 15px;
+    mix-blend-mode: multiply;
+}
+
+.missionCard p {
+    font-size: 14px;
+    color: #666;
+}
+
+.testimonialsSection {
+    background: #f8faff;
+    /* Light blue tint matching screenshot */
+    padding: 80px 20px;
+}
+
+.testimonialWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.testimonialContent {
+    max-width: 500px;
+}
+
+.testimonialHeading {
+    font-size: 32px;
+    font-weight: 800;
+    color: #003366;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.testimonialBody {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.testimonialGrid {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    scrollbar-width: none;
+}
+
+.testimonialGrid::-webkit-scrollbar {
+    display: none;
+}
+
+.testimonialCol {
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.staggeredCol {
+    margin-top: 40px;
+    /* Essential for the screenshot's offset look */
+}
+
+.reviewCard {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.stars {
+    color: #ffc107;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 2px;
+}
+
+.reviewCard p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.reviewAuthor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.authorAvatar {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.reviewAuthor h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.reviewAuthor span {
+    font-size: 12px;
+    color: #888;
+}
+
+.readySection {
+    padding: 80px 20px;
+    background-color: #fff5eb;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+/* Background Word Cloud Mockup (using overlay for now if SVG not present) */
+.readySection::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/assets/img_text_language_cloud.svg");
+    background-size: cover;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.readyContent {
+    position: relative;
+    z-index: 1;
+}
+
+.readyTitle {
+    font-size: 36px;
+    font-weight: 800;
+    color: #ff6a00;
+    /* Vibrant orange */
+    margin-bottom: 15px;
+}
+
+.readySubtitle {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.readyButton {
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-weight: 700;
+    background: #ff6a00;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(255, 106, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .aboutHero {
+        padding-top: 120px;
+    }
+
+    .heroTitle {
+        font-size: 28px;
+    }
+
+    .heroSubtitle {
+        font-size: 14px;
+    }
+
+    .mainHeading {
+        font-size: 24px;
+    }
+
+    .ctaCard {
+        padding: 30px 20px;
+    }
+
+    .readyTitle {
+        font-size: 28px;
+    }
+
+    .staggeredCol {
+        margin-top: 0;
+        /* Stack normally on mobile to save space */
+    }
+}
