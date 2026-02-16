@@ -437,8 +437,20 @@
 .avatar {
   margin-left: 8px;
   margin-right: 8px;
-  color: #06b9a3;
-  padding: 0px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  /* Square type (8px) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.avatar:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .titlePlusLabelForTitle {
@@ -1013,20 +1025,22 @@
 
 .langButton {
   background: transparent;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  padding: 8px 18px;
+  border-radius: 8px;
+  /* Square type (8px) */
+  transition: all 0.2s ease;
 }
 
 .langButton:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  border-color: #FF6B35;
 }
 
 .langDropdown {
@@ -1067,11 +1081,14 @@
   border: none;
   cursor: pointer;
   padding: 8px;
-  border-radius: 50%;
+  border-radius: 8px;
+  /* Square type (8px) */
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
+  width: 40px;
+  height: 40px;
 }
 
 .navIconButton img {

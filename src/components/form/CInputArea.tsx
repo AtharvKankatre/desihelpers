@@ -55,9 +55,11 @@ export const CInputArea: FunctionComponent<Props> = ({ wordLimit = 500, ...Props
         readOnly={Props.readonly}
         maxLength={Props.maxLength} // Max length removed, word count is enforced instead
       />
-      <small className="text-muted">
-        {remainingWords >= 0 ? `${remainingWords} words remaining` : "Word limit exceeded"}
-      </small>
+      <div className="text-end">
+        <small className="text-muted">
+          {wordCount}/{wordLimit} words
+        </small>
+      </div>
       {!Props.hideError && (
         <CErrorString
           error={Props.error}

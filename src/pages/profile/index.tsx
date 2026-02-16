@@ -82,7 +82,7 @@ const sampleProfile = {
     whatsappNumber: "425-555-0156",
     rating: 5,
     location: "Bellevue, Washington",
-    photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
+    photo: "/assets/images/profile_pic.jpg",
     aboutMe: "Snaps by Shelley is a professional photography service that specializes in capturing memorable moments. Whether it's a wedding...",
     languages: "Punjabi, Hindi, and Marathi",
     commutePreference: "Have a ride",
@@ -619,9 +619,6 @@ const Profile: React.FC = () => {
                         {activeTab === "jobs" && (
                             <div className={styles.addServicesBtn} onClick={() => setJobsModalOpen(true)}>
                                 <PlusIcon /> Add Jobs
-                                <span style={{ marginLeft: '8px', cursor: 'pointer' }}>
-                                    <EditIcon />
-                                </span>
                             </div>
                         )}
                         {activeTab === "testimonials" && (

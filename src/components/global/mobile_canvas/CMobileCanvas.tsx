@@ -1,167 +1,121 @@
-import { CExpandablePanel } from "@/components/reusable/CExpandablePanel";
-import { CH4Label } from "@/components/reusable/labels/CH4Label";
-import { CH5Label } from "@/components/reusable/labels/CH5Label";
-import DesiHelpersIcon from "@/components/static/DesiHelpersIcon";
-import { ISubCategory } from "@/models/JobCategories";
-import { useAuth } from "@/services/authorization/AuthContext";
-import { Routes } from "@/services/routes/Routes";
-import Link from "next/link";
+import React from "react";
+import { Offcanvas } from "react-bootstrap";
 import { useRouter } from "next/router";
-import { FunctionComponent } from "react";
-import { Container, Image, ListGroup, ListGroupItem } from "react-bootstrap";
-import Offcanvas from "react-bootstrap/Offcanvas";
-import { CgMenuGridR } from "react-icons/cg";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { userProfileStore } from "@/stores/UserProfileStore";
-import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
-import CookieService from "@/services/authorization/CookieService";
+import Link from "next/link";
+import { useAuth } from "@/services/authorization/AuthContext";
+import styles from "./CMobileCanvas.module.css";
+import { FaPen, FaUser, FaShareAlt, FaSignOutAlt, FaMapMarkerAlt, FaAt } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
-import Roles from "@/constants/ERoles";
+import { Routes } from "@/services/routes/Routes";
 
-type Props = {
-  handleShow: () => void;
-  handleClose: () => void;
-  show: boolean;
-};
+interface CMobileCanvasProps {
+    show: boolean;
+    handleClose: () => void;
+    handleShow: () => void;
+}
 
-export const CMobileCanvas: FunctionComponent<Props> = ({ ...Props }) => {
-  const { jobCategories, isActive, setIsActive } = useAuth();
-  const router = useRouter();
-  const { mobile } = useAppMediaQuery();
-  const { isProfileBuild } = useAuth();
-  const roleStatus = Cookies.get(cookieParams.role);
-  const isAdmin = roleStatus === Roles.Admin;
+export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose }) => {
+    const router = useRouter();
+    const { email } = useAuth(); // Only get available props
 
-  const onClick = (e: ISubCategory, job: string) => {
-    let data: any = { queryCat: job, querySubCat: e.name };
-    router.push({ pathname: Routes.mapSearch, query: data });
-    Props.handleClose();
-  };
+    // Fallback for user data since it's not in context
+    const displayName = "Desi Helper"; // User name not in context/cookies easily available without API call
+    // We could try to get it from cookies if it exists, or just use default.
+    // Previous code implied it might be there.
 
-  const { reset } = userProfileStore();
-  const logOut = () => {
-    reset();
-    window.location.href = Routes.login;
-    CookieService.clearCookies();
-    setIsActive(false);
-  };
+    // Location not in context, using default or placeholder
+    const location = "Bellevue, Washington";
+    const lastLogin = "Last Login: Today";
 
-  return (
-    <>
-      <button
-        className="d-flex flex-column justify-content-center align-items-center"
-        onClick={Props.show ? Props.handleClose : Props.handleShow}
-        style={{
-          cursor: "pointer",
-          background: "transparent",
-          border: "none",
-          padding: "8px",
-          gap: "5px"
-        }}
-        aria-label={Props.show ? "Close menu" : "Open menu"}
-      >
-        <span style={{ width: "22px", height: "2px", backgroundColor: "white", borderRadius: "1px" }}></span>
-        <span style={{ width: "22px", height: "2px", backgroundColor: "white", borderRadius: "1px" }}></span>
-        <span style={{ width: "22px", height: "2px", backgroundColor: "white", borderRadius: "1px" }}></span>
-      </button>
+    const handleLogout = () => {
+        // Basic logout logic matching typical patterns
+        Cookies.remove(cookieParams.accessToken);
+        Cookies.remove(cookieParams.refreshToken);
+        Cookies.remove(cookieParams.role);
+        Cookies.remove(cookieParams.isActive);
+        Cookies.remove(cookieParams.isSeeker);
+        Cookies.remove(cookieParams.isProfileBuild);
+        Cookies.remove(cookieParams.email);
 
-      <Offcanvas show={Props.show} onHide={Props.handleClose}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>
-            <Link
-              className="navbar-brand"
-              href="/Landing"
-              onClick={Props.handleClose}
-            >
-              <DesiHelpersIcon />
-            </Link>
-          </Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body className="bgPrimary">
-          {!isAdmin ? (
-            <>
-              {" "}
-              <ListGroup horizontal className="text-center">
-                <ListGroup.Item className="p-3 w-100 me-1 mobileOffCanvasButtons">
-                  <Link
-                    className="mobileOffCanvasButtonsLink"
-                    href={Routes.landing}
-                    onClick={Props.handleClose}
-                  >
-                    Home
-                  </Link>
-                </ListGroup.Item>
-                <ListGroup.Item className="p-3 w-100 mobileOffCanvasButtons">
-                  <Link
-                    className="mobileOffCanvasButtonsLink"
-                    href={Routes.userProfile}
-                    onClick={Props.handleClose}
-                  >
-                    My Profile
-                  </Link>
-                </ListGroup.Item>
-              </ListGroup>
-              <ListGroup horizontal className="text-center mt-1">
-                <ListGroup.Item className="p-3 w-100 me-1 mobileOffCanvasButtons">
-                  <Link
-                    className="mobileOffCanvasButtonsLink"
-                    href={Routes.myPostedJobs}
-                    onClick={Props.handleClose}
-                  >
-                    My Posted Jobs
-                  </Link>
-                </ListGroup.Item>
-                <ListGroup.Item className="p-3 w-100 mobileOffCanvasButtons bgSecondary text-light">
-                  <Link
-                    className="mobileOffCanvasButtonsLink text-light"
-                    href={Routes.postJob}
-                    onClick={Props.handleClose}
-                  >
-                    Post A Job
-                  </Link>
-                </ListGroup.Item>
-              </ListGroup>
-              <ListGroup className="mt-4">
-                <ListGroup.Item variant="light" className="p-3">
-                  <CH4Label label="Quick Search" />
-                  <ListGroup>
-                    {jobCategories.map((job, index) => (
-                      <CExpandablePanel
-                        title={job.name ?? ""}
-                        id={`job${index}`}
-                        key={`job${index}`}
-                      >
-                        <ListGroup>
-                          {job.subCategories?.map((cat, ind) => (
-                            <ListGroup.Item
-                              className="p-3"
-                              key={`cat${ind}`}
-                              onClick={() => onClick(cat, job.name ?? "")}
-                            >
-                              <div className="d-flex flex-row justify-content-between w-100">
-                                {cat.name ?? "-"}
-                                <MdOutlineKeyboardArrowRight />
-                              </div>
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
-                      </CExpandablePanel>
-                    ))}
-                  </ListGroup>
-                </ListGroup.Item>
-              </ListGroup>
-            </>
-          ) : null}
-          <div
-            className="d-flex flex-row w-100 align-items-center p-2"
-            onClick={() => logOut()}
-          >
-            <Image src="/assets/icons/form_icons/icon_logout.svg" height={34} />
-            <div className="ms-2 text-light">{"Log out"}</div>
-          </div>
-        </Offcanvas.Body>
-      </Offcanvas>
-    </>
-  );
+        router.push(Routes.login);
+        handleClose();
+    };
+
+    const navigateToProfile = () => {
+        router.push(Routes.userProfile);
+        handleClose();
+    };
+
+    return (
+        <Offcanvas show={show} onHide={handleClose} placement="start" className={styles.offcanvasContainer}>
+            <Offcanvas.Header closeButton className={styles.offcanvasHeader}>
+                <div className={styles.userInfo}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                        <h5 className={styles.userName}>{displayName}</h5>
+                        <FaPen className={styles.editIcon} onClick={navigateToProfile} />
+                    </div>
+                    <div className={styles.locationInfo}>
+                        <FaMapMarkerAlt />
+                        <span>{location}</span>
+                    </div>
+                    <div className={styles.lastLogin}>{lastLogin}</div>
+                </div>
+            </Offcanvas.Header>
+            <Offcanvas.Body style={{ padding: 0 }}>
+                <div className={styles.menuContainer}>
+
+                    <Link href={Routes.userProfile} className={styles.menuItem} onClick={handleClose}>
+                        <div className={styles.iconBox}>
+                            <FaUser />
+                        </div>
+                        <span>My Profile</span>
+                    </Link>
+
+                    <div className={styles.completionCard}>
+                        <span className={styles.cardTitle}>Complete Your Profile</span>
+                        <div className={styles.progressBar}>
+                            <div className={styles.progressFill} style={{ width: "65%" }}></div>
+                        </div>
+                        <div className={styles.cardDesc}>
+                            Complete your profile to get more visibility and better matches.
+                        </div>
+                    </div>
+
+                    <div className={styles.dropdownSection}>
+                        <label style={{ fontSize: "0.9rem", fontWeight: 600, color: "#333", marginBottom: "5px" }}>
+                            List Your Profile As
+                        </label>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <div className={styles.iconBox}>
+                                <FaAt />
+                            </div>
+                            <select className={styles.profileDropdown} defaultValue="both">
+                                <option value="both">Both</option>
+                                <option value="seeker">Job Seeker</option>
+                                <option value="provider">Service Provider</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className={styles.separator}></div>
+
+                    <button className={styles.menuItem} style={{ background: "none", border: "none", width: "100%", justifyContent: "flex-start" }}>
+                        <div className={styles.iconBox}>
+                            <FaShareAlt />
+                        </div>
+                        <span>Share Your Profile</span>
+                    </button>
+
+                    <button className={styles.menuItem} onClick={handleLogout} style={{ background: "none", border: "none", width: "100%", justifyContent: "flex-start" }}>
+                        <div className={`${styles.iconBox} ${styles.logoutIconBox}`}>
+                            <FaSignOutAlt />
+                        </div>
+                        <span className={styles.logoutBtn}>Logout</span>
+                    </button>
+
+                </div>
+            </Offcanvas.Body>
+        </Offcanvas>
+    );
 };

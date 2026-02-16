@@ -126,41 +126,31 @@ const ContactUs: React.FC = () => {
           "header .langButton": {
             color: "#ffffff !important",
           },
-          // Force notification popup text to be visible
-          ".notification-popup": {
-            color: "#000000 !important",
-          },
-          ".notification-popup *": {
-            color: "#000000 !important",
-          },
-          ".notification-popup .MuiTypography-root": {
-            color: "#000000 !important",
-          },
-          ".notification-popup b": {
-            color: "#000000 !important",
-          },
-          // Force language dropdown text to be visible
-          ".language-dropdown": {
-            color: "#000000 !important",
-          },
-          ".language-dropdown *": {
-            color: "#000000 !important",
-          },
-          ".language-dropdown button": {
-            color: "#000000 !important",
-          },
-          // Orange accent for radio buttons and select
+          ".notification-popup": { color: "#000000 !important" },
+          ".notification-popup *": { color: "#000000 !important" },
+          ".language-dropdown": { color: "#000000 !important" },
+          ".language-dropdown *": { color: "#000000 !important" },
           ".form-check-input:checked": {
-            backgroundColor: "#fd7e14 !important",
-            borderColor: "#fd7e14 !important",
+            backgroundColor: "#f07c00 !important",
+            borderColor: "#f07c00 !important",
           },
           ".form-check-input:focus": {
-            borderColor: "#fd7e14 !important",
-            boxShadow: "0 0 0 0.25rem rgba(253, 126, 20, 0.25) !important",
+            borderColor: "#f07c00 !important",
+            boxShadow: "0 0 0 0.25rem rgba(240, 124, 0, 0.25) !important",
           },
-          ".form-select:focus": {
-            borderColor: "#fd7e14 !important",
-            boxShadow: "0 0 0 0.25rem rgba(253, 126, 20, 0.25) !important",
+          ".form-select:focus, .form-control:focus": {
+            borderColor: "#f07c00 !important",
+            boxShadow: "0 0 0 0.25rem rgba(240, 124, 0, 0.1) !important",
+          },
+          ".form-control, .form-select": {
+            borderRadius: "12px !important",
+            padding: "10px 15px !important",
+            border: "1px solid #dee2e6 !important",
+            backgroundColor: "#fff !important",
+          },
+          ".form-control::placeholder": {
+            color: "#adb5bd !important",
+            opacity: 1
           },
         }}
       />
@@ -169,114 +159,88 @@ const ContactUs: React.FC = () => {
 
       {/* Hero Section */}
       <Box sx={{
-        background: 'linear-gradient(180deg, #00132F 0%, #003E95 100%)',
+        background: 'radial-gradient(73.06% 73.06% at 50% 37%, #005DE1 0%, #001738 100%)',
         color: '#ffffff',
-        pt: 15,
-        pb: 5,
+        pt: { xs: 12, md: 15 },
+        pb: { xs: 8, md: 12 },
         textAlign: 'center'
       }}>
         <div className="container">
           {/* Breadcrumbs */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 3, opacity: 0.8 }}>
-            <span>Home</span>
-            <span>›</span>
-            <span>Contact Us</span>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 3, fontSize: '0.9rem' }}>
+            <span style={{ opacity: 0.8 }}>Home</span>
+            <span style={{ fontSize: '1.2rem', opacity: 0.8 }}>›</span>
+            <span style={{ opacity: 1, fontWeight: 500 }}>Contact Us</span>
           </Box>
 
           {/* Heading */}
           <h1 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem' }}>Contact us</h1>
-          <p style={{ opacity: 0.9, maxWidth: '600px', margin: '0 auto' }}>
-            Have questions or need help? We're here to assist you. Reach out to us anytime!
+          <p style={{ opacity: 0.9, maxWidth: '600px', margin: '0 auto', fontSize: '1.1rem', lineHeight: 1.6, fontWeight: 400 }}>
+            Questions? Feedback? We're here to help you every step of the way. Reach out to the DesiHelpers team today!
           </p>
         </div>
       </Box>
 
-      <Box sx={{ backgroundColor: '#ffffff', minHeight: '100vh', py: 3 }}>
-        <div className={`container ${styles.formAlternateBody}`}>
+      <Box sx={{ backgroundColor: '#F4F7FA', minHeight: '60vh', py: { xs: 4, md: 8 }, mt: -6 }}>
+        <div className="container">
           <div className="row justify-content-center">
-            <div className={`row col-md-6 mx-auto ${styles.formBody}`}>
-              <CH3Label label="Contact Us" className="text-center mb-2" />
+            <div className={`col-sm-10 col-md-8 col-lg-7`} style={{
+              borderRadius: '24px',
+              padding: '40px',
+              backgroundColor: '#fff',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+              position: 'relative'
+            }}>
               <form onSubmit={formik.handleSubmit}>
-                {/* Name and Email Side by Side */}
-                <div className="row mb-3">
-                  <div className="col-md-6">
+                <div className="row">
+                  <div className="col-md-6 mb-4 text-start">
+                    <label htmlFor="name" className="fw-bold mb-2" style={{ color: '#333' }}>Name <span className="text-danger">*</span></label>
                     <CInput
                       id="name"
-                      name="Name"
+                      name="name"
                       value={formik.values.name}
                       onChange={formik.handleChange}
                       key="name"
                       hint="Enter"
                       error={formik.errors.name}
                       className="text-start"
-                      isEnabled={onLoad}
-                      isMandatory={true}
+                      isEnabled={!onLoad}
+                      showTitle={false}
                     />
                   </div>
-                  <div className="col-md-6">
+
+                  <div className="col-md-6 mb-4 text-start">
+                    <label htmlFor="email" className="fw-bold mb-2" style={{ color: '#333' }}>Email <span className="text-danger">*</span></label>
                     <CInput
                       id="email"
-                      name="Email"
+                      name="email"
                       value={formik.values.email}
                       onChange={formik.handleChange}
                       key="email"
                       hint="Enter"
                       error={formik.errors.email}
                       className="text-start"
-                      isEnabled={onLoad}
-                      isMandatory={true}
+                      isEnabled={!onLoad}
+                      showTitle={false}
                     />
                   </div>
                 </div>
 
-
-                <div className="col-md-12 text-start mb-3 ">
-                  <label className="fw-bold control-label mb-2">Role <span className="text-danger"> *</span></label>
-                  <div className="row text-start mb-3 ">
-                    <Form.Group className="d-flex">
-                      <div className="col-auto ">
-                        <FormCheck
-                          type="radio"
-                          id="jobPoster"
-                          name="role"
-                          value="Job Poster"
-                          checked={formik.values.role === "Job Poster"}
-                          onChange={formik.handleChange}
-                          label="Job Poster"
-
-                        />
-                      </div>
-                      <div className="col-auto ms-3">
-                        <FormCheck
-                          type="radio"
-                          id="jobSeeker"
-                          name="role"
-                          value="Job Seeker"
-                          checked={formik.values.role === "Job Seeker"}
-                          onChange={formik.handleChange}
-                          label="Job Seeker"
-                        />
-                      </div>
-                    </Form.Group>
-                    {formik.errors.role && (
-                      <div className="text-danger">{formik.errors.role}</div>
-                    )}
-                  </div>
-                </div>
-
-
-                <div className="col-md-12 text-start mb-3">
-                  <label htmlFor="issueType" className="fw-bold mb-2">Query Type <span className="text-danger"> *</span></label>
+                {/* Query Type */}
+                <div className="text-start mb-4">
+                  <label htmlFor="issueType" className="fw-bold mb-2">Query Type <span className="text-danger">*</span></label>
                   <Form.Select
                     id="issueType"
                     name="issueType"
+                    className="py-2 px-3"
                     value={formik.values.issueType}
                     onChange={formik.handleChange}
                     isInvalid={!!formik.errors.issueType}
                     disabled={onLoad}
+                    style={{ borderRadius: '12px', backgroundColor: '#F8F9FA', border: '1px solid #dee2e6', padding: '12px 16px', fontSize: '0.95rem' }}
                   >
                     <option value="" disabled>
-                      Select a query type
+                      Select
                     </option>
                     <option value="Improvement">Improvement</option>
                     <option value="Application Issues">Application Query</option>
@@ -284,49 +248,89 @@ const ContactUs: React.FC = () => {
                     <option value="ReferABusiness">Refer A Business</option>
                   </Form.Select>
                   {formik.errors.issueType && (
-                    <div className="text-danger">{formik.errors.issueType}</div>
+                    <div className="text-danger small mt-1">{formik.errors.issueType}</div>
                   )}
                 </div>
 
+                {/* Role */}
+                <div className="text-start mb-4">
+                  <label className="fw-bold mb-2 d-block">Role <span className="text-danger">*</span></label>
+                  <div className="d-flex flex-row align-items-center gap-4">
+                    <div className="d-flex align-items-center">
+                      <FormCheck
+                        type="radio"
+                        id="jobPoster"
+                        name="role"
+                        value="Job Poster"
+                        checked={formik.values.role === "Job Poster"}
+                        onChange={formik.handleChange}
+                        className="m-0 custom-radio"
+                      />
+                      <label htmlFor="jobPoster" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Job Poster</label>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <FormCheck
+                        type="radio"
+                        id="jobSeeker"
+                        name="role"
+                        value="Job Seeker"
+                        checked={formik.values.role === "Job Seeker"}
+                        onChange={formik.handleChange}
+                        className="m-0 custom-radio"
+                      />
+                      <label htmlFor="jobSeeker" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Service Provider</label>
+                    </div>
+                  </div>
+                  {formik.errors.role && (
+                    <div className="text-danger small mt-1">{formik.errors.role}</div>
+                  )}
+                </div>
 
-                <div className="col-md-12 text-start mb-3">
-                  <label htmlFor="issueType" className="fw-bold mb-2">Describe Your Query <span className="text-danger"> *</span></label>
+                {/* Describe Your Query */}
+                <div className="text-start mb-4">
+                  <label htmlFor="issueDescription" className="fw-bold mb-2">Describe Your Query <span className="text-danger">*</span></label>
                   <CInputArea
                     id="issueDescription"
                     name="issueDescription"
                     value={formik.values.issueDescription}
                     onChange={formik.handleChange}
                     error={formik.errors.issueDescription}
-                    hint="Describe your query here"
+                    hint="Type your message..."
                     readonly={onLoad}
-                    isMandatory={true}
+                    isMandatory={false}
                     showTitle={false}
-                    wordLimit={500}
+                    wordLimit={250}
+                    style={{ backgroundColor: '#F8F9FA' }}
                   />
                 </div>
 
-                {/* reCAPTCHA widget */}
-                <div className="col-md-12 text-start mb-3">
-                  <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
-                    onChange={onRecaptchaChange}
-                    theme="light"
-                  />
+                {/* reCAPTCHA */}
+                <div className="mb-4 d-flex justify-content-center justify-content-md-start" style={{ overflow: 'hidden' }}>
+                  <div style={{ transform: 'scale(1)', transformOrigin: 'left top' }}>
+                    <ReCAPTCHA
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
+                      onChange={onRecaptchaChange}
+                      theme="light"
+                    />
+                  </div>
                 </div>
 
-                {/* Submit Button - Orange */}
-                <div className="col-md-12 text-start mb-3">
+                {/* Submit Button */}
+                <div className="text-start">
                   <Button
                     variant="primary"
                     type="submit"
                     disabled={onLoad}
                     style={{
-                      backgroundColor: '#fd7e14',
+                      background: 'linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%)',
                       border: 'none',
-                      padding: '12px 40px',
-                      borderRadius: '24px',
-                      fontWeight: 600,
-                      fontSize: '1rem'
+                      padding: '14px 60px',
+                      borderRadius: '30px',
+                      fontWeight: 700,
+                      fontSize: '1.1rem',
+                      width: '200px',
+                      boxShadow: '0 4px 15px rgba(235, 95, 0, 0.3)',
+                      transition: 'all 0.3s'
                     }}
                   >
                     Submit

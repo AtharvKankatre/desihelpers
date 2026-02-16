@@ -1,9 +1,10 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { Container } from "@mui/material"; // Optional, keeping for structure if needed
 import styles from "@/styles/PrivacyPolicy.module.css";
 import { Routes } from "@/services/routes/Routes";
+import { Box, GlobalStyles } from "@mui/material";
+import { CHeader } from "@/components/global/header/CHeader";
 
 const PrivacyPolicy = () => {
   return (
@@ -12,18 +13,44 @@ const PrivacyPolicy = () => {
         <title>Privacy Policy - Desi Helpers</title>
       </Head>
 
+      <GlobalStyles
+        styles={{
+          header: {
+            background: "transparent !important",
+            backgroundColor: "transparent !important",
+            boxShadow: "none !important",
+            position: "absolute !important",
+            width: "100% !important",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+          },
+          "header a:not(.notification-popup *):not(.notification-popup):not(.language-dropdown *):not(.language-dropdown)": {
+            color: "#ffffff !important",
+          },
+          "header button:not(.notification-popup *):not(.notification-popup):not(.language-dropdown *):not(.language-dropdown)": {
+            color: "#ffffff !important",
+          },
+          "header .langButton": {
+            color: "#ffffff !important",
+          },
+        }}
+      />
+
+      <CHeader />
+
       {/* Hero Section */}
-      <section className={styles.heroSection}>
+      <Box className={styles.heroSection}>
         <div className={styles.container}>
-          <span className={styles.breadcrumb}>
-            Home &gt; Privacy Policy
-          </span>
+          <Box className={styles.breadcrumb}>
+            <span>Home</span>
+            <span className={styles.separator}>›</span>
+            <span>Privacy Policy</span>
+          </Box>
           <h1 className={styles.heroTitle}>Privacy Policy</h1>
           <p className={styles.lastUpdated}>
             Last Updated : 10 October 2024
           </p>
         </div>
-      </section>
+      </Box>
 
       {/* Content Section */}
       <section className={styles.contentSection}>
@@ -122,13 +149,14 @@ const PrivacyPolicy = () => {
 
       {/* Ready to Get Started Section */}
       <section className={styles.readySection}>
+        <div className={styles.ctaBackground}></div>
         <div className={styles.container}>
           <div className={styles.readyContent}>
             <h2 className={styles.readyTitle}>Ready to Get Started?</h2>
             <p className={styles.readySubtitle}>
               Join our community today and experience the difference of working with verified, trusted professionals.
             </p>
-            <button className={styles.readyButton}>Join the community</button>
+            <Link href="/auth/signup" className={styles.readyButton}>Join the community</Link>
           </div>
         </div>
       </section>

@@ -80,7 +80,7 @@ export const TestimonialsSection: React.FC = () => {
                         <div className={styles.stars}>
                             {"★".repeat(activeTestimonial.rating)}
                         </div>
-                        <p className={styles.quoteText}>"{activeTestimonial.text}"</p>
+                        <p className={styles.quoteText}>{activeTestimonial.text}</p>
 
                         <div className={styles.authorInfo}>
                             <h4 className={styles.authorName}>{activeTestimonial.name}</h4>

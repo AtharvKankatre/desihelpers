@@ -20,7 +20,7 @@ export const CGlobalLayout: FunctionComponent<Props> = ({ children }) => {
       {!hideGlobalHeader && (
         <header
           className={`container-fluid bg-body ${styles.headerMain}`}
-          style={{ position: "relative", zIndex: 10000 }}
+          style={{ zIndex: 10000 }}
         >
           <CHeader />
         </header>

@@ -1166,12 +1166,13 @@
     color: #888;
     font-size: 13px;
     line-height: 1.5;
-    margin: 0 0 25px 0;
-    max-width: 90%;
+    margin: 0 10px 25px;
+    max-width: 100%;
 }
 
 .formSection {
     margin-bottom: 20px;
+    padding: 0 10px;
 }
 
 .fieldLabel {
@@ -1189,7 +1190,7 @@
 .textarea {
     width: 100%;
     min-height: 120px;
-    padding: 15px;
+    padding: 20px 25px;
     border: 1px solid #e0e6ed;
     border-radius: 12px;
     font-size: 14px;
@@ -1216,7 +1217,7 @@
 
 .multiSelect {
     width: 100%;
-    padding: 8px 12px;
+    padding: 12px 20px;
     border: 1px solid #e0e6ed;
     border-radius: 12px;
     display: flex;
@@ -1609,7 +1610,8 @@
 .modalSubtitle {
     color: #666;
     font-size: 13px;
-    margin: 0;
+    margin: 0 25px 20px;
+    line-height: 1.5;
 }
 
 .addServicesLink {

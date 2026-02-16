@@ -1,8 +1,7 @@
 .heroSection {
-    background: #001838;
-    /* Consistent dark blue with About Us */
+    background: radial-gradient(73.06% 73.06% at 50% 37%, #005DE1 0%, #001738 100%);
     color: #ffffff;
-    padding: 100px 20px 60px;
+    padding: 120px 20px 80px;
     text-align: center;
     position: relative;
 }
@@ -13,10 +12,18 @@
 }
 
 .breadcrumb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
     opacity: 0.8;
-    margin-bottom: 20px;
-    display: block;
+    margin-bottom: 24px;
+}
+
+.separator {
+    font-size: 18px;
+    opacity: 0.8;
 }
 
 .heroTitle {
@@ -69,21 +76,21 @@
 }
 
 .readySection {
-    padding: 80px 20px;
     background-color: #fff5eb;
     position: relative;
-    overflow: hidden;
+    padding: 80px 20px;
     text-align: center;
+    overflow: hidden;
 }
 
-.readySection::before {
-    content: "";
+.ctaBackground {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-image: url("/assets/img_text_language_cloud.svg");
+    background-repeat: no-repeat;
     background-size: cover;
     opacity: 0.12;
     pointer-events: none;
@@ -91,41 +98,54 @@
 
 .readyContent {
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
 }
 
 .readyTitle {
     font-size: 36px;
     font-weight: 800;
     color: #ff6a00;
-    margin-bottom: 15px;
+    margin: 0;
 }
 
 .readySubtitle {
     font-size: 16px;
-    color: #333;
-    margin-bottom: 30px;
+    color: #333333;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
     max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .readyButton {
-    background: #ff6a00;
+    background-color: #FF6B35;
     color: white;
-    border: none;
-    padding: 15px 40px;
-    border-radius: 30px;
-    font-weight: 700;
+    padding: 12px 32px;
+    border-radius: 25px;
+    font-weight: 600;
     font-size: 16px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
     cursor: pointer;
-    box-shadow: 0 5px 20px rgba(255, 106, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.readyButton:hover {
+    background-color: #E85A2A;
+    transform: translateY(-2px);
+    color: white;
 }
 
 @media (max-width: 768px) {
     .heroSection {
-        padding-top: 120px;
-        /* Clearance for fixed header */
+        padding-top: 100px;
+        padding-bottom: 60px;
     }
 
     .heroTitle {
@@ -142,5 +162,9 @@
 
     .readyTitle {
         font-size: 28px;
+    }
+
+    .readySection {
+        padding: 60px 20px;
     }
 }

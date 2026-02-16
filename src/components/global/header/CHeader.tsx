@@ -3,11 +3,11 @@ import { CUserAvatar } from "./header_components/CUserAvatar";
 import { Routes } from "@/services/routes/Routes";
 import Link from "next/link";
 import { useAuth } from "@/services/authorization/AuthContext";
-import { useEffect, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
+import { Fade, Zoom } from "@mui/material";
 import { useRouter } from "next/router";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
-import { CMobileCanvas } from "../mobile_canvas/CMobileCanvas";
-import React from "react";
+import { CMobileCanvas } from "@/components/global/mobile_canvas/CMobileCanvas";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import Roles from "@/constants/ERoles";
@@ -83,11 +83,11 @@ export const CHeader = () => {
 
         {/* Logo - Centered on Mobile */}
         {!isAdmin && !isSubAdmin ? (
-          <Link className={`${styles.navbarBrand} ${(mobile || tablet) ? styles.navbarBrandMobile : ''}`} href="/Landing">
+          <Link className={`${styles.navbarBrand} ${(mobile || tablet) ? styles.navbarBrandMobile : ''} `} href="/Landing">
             <DesiHelpersIcon />
           </Link>
         ) : (
-          <Link className={`${styles.navbarBrand} ${(mobile || tablet) ? styles.navbarBrandMobile : ''}`} href="">
+          <Link className={`${styles.navbarBrand} ${(mobile || tablet) ? styles.navbarBrandMobile : ''} `} href="">
             <DesiHelpersIcon />
           </Link>
         )}
@@ -117,7 +117,10 @@ export const CHeader = () => {
           <div className={styles.langSelector}>
             <button
               className={styles.langButton}
-              onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+              onClick={() => {
+                setNotificationOpen(false);
+                setLangDropdownOpen(!langDropdownOpen);
+              }}
             >
               Eng
               <svg
@@ -137,8 +140,8 @@ export const CHeader = () => {
                 />
               </svg>
             </button>
-            {langDropdownOpen && (
-              <div className={`${styles.langDropdown} language-dropdown`}>
+            <Zoom in={langDropdownOpen} style={{ transformOrigin: 'top right' }}>
+              <div className={styles.langDropdown}>
                 <button
                   className={styles.langOption}
                   onClick={() => setLangDropdownOpen(false)}
@@ -152,7 +155,7 @@ export const CHeader = () => {
                   Hindi
                 </button>
               </div>
-            )}
+            </Zoom>
           </div>
 
           {/* Notification Button - Always show on mobile, only when active on desktop */}
@@ -165,6 +168,7 @@ export const CHeader = () => {
               <button
                 className={styles.navIconButton}
                 onClick={() => setNotificationOpen(!notificationOpen)}
+                style={{ position: 'relative' }}
               >
                 <Image
                   src="/newassets/notification.png"
@@ -172,6 +176,16 @@ export const CHeader = () => {
                   width={24}
                   height={24}
                 />
+                <span style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '2px',
+                  width: '8px',
+                  height: '8px',
+                  backgroundColor: '#ff0000',
+                  borderRadius: '50%',
+                  border: '1.5px solid #001838'
+                }}></span>
               </button>
               <CNotificationPopup
                 open={notificationOpen}

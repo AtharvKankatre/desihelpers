@@ -102,9 +102,8 @@ export const CMapAndCardList: FunctionComponent<Props> = ({
 
         <CButton
           className={`d-flex flex-row justify-content-center w-100 ${mapStyles.mapFloatingButtonForMobile}`}
-          buttonClassName={`btn ${
-            showMapMobile ? "btn-warning" : "btn-primary"
-          }  btn-sm`}
+          buttonClassName={`btn ${showMapMobile ? "btn-warning" : "btn-primary"
+            }  btn-sm`}
           label={`${showMapMobile ? "Show Map " : "Show Cards"}`}
           onClick={() => setShowMapMobile(!showMapMobile)}
         />

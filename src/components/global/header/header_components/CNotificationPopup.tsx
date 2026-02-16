@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Paper, Button, IconButton, Fade } from "@mui/material";
+import { Box, Typography, Paper, Button, IconButton, Fade, Zoom } from "@mui/material";
 import { styled } from "@mui/system";
 import { FaBell } from "react-icons/fa";
 import Link from "next/link";
@@ -35,10 +35,8 @@ interface CNotificationPopupProps {
 }
 
 export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, onClose, onFeedbackClick }) => {
-    // if (!open) return null; // Removed as Fade handles visibility
-
     return (
-        <Fade in={open}>
+        <Zoom in={open} style={{ transformOrigin: 'top right' }}>
             <Paper
                 elevation={4}
                 className="notification-popup"
@@ -140,6 +138,6 @@ export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, on
                     </Link>
                 </Box>
             </Paper>
-        </Fade>
+        </Zoom>
     );
 };

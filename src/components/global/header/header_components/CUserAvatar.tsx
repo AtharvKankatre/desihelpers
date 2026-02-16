@@ -60,13 +60,13 @@ export const CUserAvatar: FunctionComponent = () => {
           className={`${styles.avatar}`}
           type="button"
           onClick={() => setPopupOpen(!popupOpen)}
-          style={{ padding: 0, border: "none", background: "transparent", cursor: "pointer" }}
+          style={{ width: '40px', height: '40px' }}
         >
           <Image
             src="/newassets/account_circle.png"
             alt="Profile"
-            width={34}
-            height={34}
+            width={28}
+            height={28}
           />
         </button>
 

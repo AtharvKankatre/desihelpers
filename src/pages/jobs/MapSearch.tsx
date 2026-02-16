@@ -38,18 +38,18 @@ const MapSearch: FunctionComponent = () => {
 
   const [isLoading, setLoading] = useState<boolean>(true);
 
-    // Load filters from localStorage if available
-    const loadSavedFilters = (): IMapSearchFilters | null => {
-      if (typeof window !== "undefined") {
-        const savedFilters = localStorage.getItem("mapSearchFilters");
-        if (savedFilters) {
-          return JSON.parse(savedFilters);
-        }
+  // Load filters from localStorage if available
+  const loadSavedFilters = (): IMapSearchFilters | null => {
+    if (typeof window !== "undefined") {
+      const savedFilters = localStorage.getItem("mapSearchFilters");
+      if (savedFilters) {
+        return JSON.parse(savedFilters);
       }
-      return null;
-    };
+    }
+    return null;
+  };
 
-      // Save filters to localStorage
+  // Save filters to localStorage
   const saveFilters = (filters: IMapSearchFilters) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("mapSearchFilters", JSON.stringify(filters));
@@ -69,9 +69,9 @@ const MapSearch: FunctionComponent = () => {
     coordinates:
       userProfile != null
         ? [
-            userProfile.location?.coordinates?.[1],
-            userProfile.location?.coordinates?.[0],
-          ]
+          userProfile.location?.coordinates?.[1],
+          userProfile.location?.coordinates?.[0],
+        ]
         : [32.779167, -96.808891],
   } as IMapSearchFilters;
 
@@ -97,7 +97,7 @@ const MapSearch: FunctionComponent = () => {
 
       onChangeFilter(values);
     },
-    onSubmit: () => {},
+    onSubmit: () => { },
   });
 
   // Initial loading of the page
@@ -147,11 +147,11 @@ const MapSearch: FunctionComponent = () => {
       | [IJobs[], IJobs[]]
       | [IUserProfileModel[], IUserProfileModel[]]
       | boolean = await mapServices.processMapFilters(
-      previousValues.current,
-      newFilter,
-      jobs,
-      seekers
-    );
+        previousValues.current,
+        newFilter,
+        jobs,
+        seekers
+      );
     if (data == false) {
       // Handle error over here
     } else if (newFilter.role == ViewTypesForMap.viewJobSeekers) {
