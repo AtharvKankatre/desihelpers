@@ -143,7 +143,10 @@
     align-items: center;
     width: 100%;
     margin-top: 12px;
-    /* Increased space between rows */
+    flex-wrap: wrap;
+    /* Allow wrapping */
+    gap: 40px;
+    /* Add gap for when items wrap */
 }
 
 .locationInput::placeholder,
@@ -275,7 +278,8 @@
 .searchContainer {
     position: relative;
     width: 320px;
-    /* Fixed width for search bar */
+    max-width: 100%;
+    /* Ensure it doesn't overflow container */
 }
 
 .searchIcon {
@@ -365,6 +369,7 @@
     width: 100%;
     border-collapse: collapse;
     min-width: 800px;
+    margin-top: 20px;
     /* Force scroll on small screens */
 }
 
@@ -376,7 +381,9 @@
     font-weight: 700;
     font-size: 14px;
     text-align: left;
+    /* Fixed invalid 'start-left' */
     padding: 16px;
+    /* Matched with td padding for alignment */
     border-bottom: 2px solid #edf2f7;
     cursor: pointer;
     user-select: none;
@@ -446,6 +453,7 @@
 /* ========== Card View (Grid) ========== */
 .cardGrid {
     display: grid;
+    padding-top: 50px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     padding-bottom: 32px;
@@ -457,6 +465,7 @@
 
 .seekerGrid {
     display: grid;
+    padding-top: 35px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
     padding-bottom: 32px;
@@ -762,6 +771,7 @@
 }
 
 .seekerServices {
+
     margin-top: 4px;
 }
 
@@ -774,12 +784,14 @@
 }
 
 .seekerServiceTags {
+
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
 .seekerServiceTag {
+
     background-color: #fff3e0;
     color: #e65100;
     font-size: 11px;
