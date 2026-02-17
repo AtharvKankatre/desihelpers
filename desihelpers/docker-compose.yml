@@ -1,0 +1,12 @@
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: frontend_desihelpers
+    container_name: frontend_desihelpers
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: always
