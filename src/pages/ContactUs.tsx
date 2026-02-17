@@ -6,6 +6,7 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import styles from "@/styles/Forms.module.css";
 import style from "@/styles/Common.module.css";
+import contactStyles from "@/styles/Contact.module.css"; // Imported new styles
 import { Button, Form, FormCheck } from "react-bootstrap";
 import commonStyles from "@/styles/Common.module.css";
 import Swal from "sweetalert2";
@@ -158,13 +159,13 @@ const ContactUs: React.FC = () => {
       <CHeader />
 
       {/* Hero Section */}
-      <Box sx={{
-        background: 'radial-gradient(73.06% 73.06% at 50% 37%, #005DE1 0%, #001738 100%)',
-        color: '#ffffff',
-        pt: { xs: 12, md: 15 },
-        pb: { xs: 8, md: 12 },
-        textAlign: 'center'
-      }}>
+      <Box
+        className={contactStyles.heroSection}
+        sx={{
+          pt: { xs: 12, md: 15 },
+          pb: { xs: 8, md: 12 },
+        }}
+      >
         <div className="container">
           {/* Breadcrumbs */}
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 3, fontSize: '0.9rem' }}>
@@ -174,7 +175,7 @@ const ContactUs: React.FC = () => {
           </Box>
 
           {/* Heading */}
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem' }}>Contact us</h1>
+          <h1 className={contactStyles.heroHeading} style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem' }}>Contact us</h1>
           <p style={{ opacity: 0.9, maxWidth: '600px', margin: '0 auto', fontSize: '1.1rem', lineHeight: 1.6, fontWeight: 400 }}>
             Questions? Feedback? We're here to help you every step of the way. Reach out to the DesiHelpers team today!
           </p>
@@ -184,159 +185,145 @@ const ContactUs: React.FC = () => {
       <Box sx={{ backgroundColor: '#F4F7FA', minHeight: '60vh', py: { xs: 4, md: 8 }, mt: -6 }}>
         <div className="container">
           <div className="row justify-content-center">
-            <div className={`col-sm-10 col-md-8 col-lg-7`} style={{
-              borderRadius: '24px',
-              padding: '40px',
-              backgroundColor: '#fff',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-              position: 'relative'
-            }}>
-              <form onSubmit={formik.handleSubmit}>
-                <div className="row">
-                  <div className="col-md-6 mb-4 text-start">
-                    <label htmlFor="name" className="fw-bold mb-2" style={{ color: '#333' }}>Name <span className="text-danger">*</span></label>
-                    <CInput
-                      id="name"
-                      name="name"
-                      value={formik.values.name}
-                      onChange={formik.handleChange}
-                      key="name"
-                      hint="Enter"
-                      error={formik.errors.name}
-                      className="text-start"
-                      isEnabled={!onLoad}
-                      showTitle={false}
-                    />
-                  </div>
-
-                  <div className="col-md-6 mb-4 text-start">
-                    <label htmlFor="email" className="fw-bold mb-2" style={{ color: '#333' }}>Email <span className="text-danger">*</span></label>
-                    <CInput
-                      id="email"
-                      name="email"
-                      value={formik.values.email}
-                      onChange={formik.handleChange}
-                      key="email"
-                      hint="Enter"
-                      error={formik.errors.email}
-                      className="text-start"
-                      isEnabled={!onLoad}
-                      showTitle={false}
-                    />
-                  </div>
-                </div>
-
-                {/* Query Type */}
-                <div className="text-start mb-4">
-                  <label htmlFor="issueType" className="fw-bold mb-2">Query Type <span className="text-danger">*</span></label>
-                  <Form.Select
-                    id="issueType"
-                    name="issueType"
-                    className="py-2 px-3"
-                    value={formik.values.issueType}
-                    onChange={formik.handleChange}
-                    isInvalid={!!formik.errors.issueType}
-                    disabled={onLoad}
-                    style={{ borderRadius: '12px', backgroundColor: '#F8F9FA', border: '1px solid #dee2e6', padding: '12px 16px', fontSize: '0.95rem' }}
-                  >
-                    <option value="" disabled>
-                      Select
-                    </option>
-                    <option value="Improvement">Improvement</option>
-                    <option value="Application Issues">Application Query</option>
-                    <option value="General Inquiry">General Inquiry</option>
-                    <option value="ReferABusiness">Refer A Business</option>
-                  </Form.Select>
-                  {formik.errors.issueType && (
-                    <div className="text-danger small mt-1">{formik.errors.issueType}</div>
-                  )}
-                </div>
-
-                {/* Role */}
-                <div className="text-start mb-4">
-                  <label className="fw-bold mb-2 d-block">Role <span className="text-danger">*</span></label>
-                  <div className="d-flex flex-row align-items-center gap-4">
-                    <div className="d-flex align-items-center">
-                      <FormCheck
-                        type="radio"
-                        id="jobPoster"
-                        name="role"
-                        value="Job Poster"
-                        checked={formik.values.role === "Job Poster"}
+            <div className="col-12 col-md-10 col-lg-8 d-flex justify-content-center">
+              <div className={contactStyles.contactCard}>
+                <form onSubmit={formik.handleSubmit}>
+                  <div className="row">
+                    <div className="col-md-6 mb-4 text-start">
+                      <label htmlFor="name" className="fw-bold mb-2" style={{ color: '#333' }}>Name <span className="text-danger">*</span></label>
+                      <CInput
+                        id="name"
+                        name="name"
+                        value={formik.values.name}
                         onChange={formik.handleChange}
-                        className="m-0 custom-radio"
+                        key="name"
+                        hint="Enter"
+                        error={formik.errors.name}
+                        className="text-start"
+                        isEnabled={!onLoad}
+                        showTitle={false}
                       />
-                      <label htmlFor="jobPoster" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Job Poster</label>
                     </div>
-                    <div className="d-flex align-items-center">
-                      <FormCheck
-                        type="radio"
-                        id="jobSeeker"
-                        name="role"
-                        value="Job Seeker"
-                        checked={formik.values.role === "Job Seeker"}
+
+                    <div className="col-md-6 mb-4 text-start">
+                      <label htmlFor="email" className="fw-bold mb-2" style={{ color: '#333' }}>Email <span className="text-danger">*</span></label>
+                      <CInput
+                        id="email"
+                        name="email"
+                        value={formik.values.email}
                         onChange={formik.handleChange}
-                        className="m-0 custom-radio"
+                        key="email"
+                        hint="Enter"
+                        error={formik.errors.email}
+                        className="text-start"
+                        isEnabled={!onLoad}
+                        showTitle={false}
                       />
-                      <label htmlFor="jobSeeker" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Service Provider</label>
                     </div>
                   </div>
-                  {formik.errors.role && (
-                    <div className="text-danger small mt-1">{formik.errors.role}</div>
-                  )}
-                </div>
 
-                {/* Describe Your Query */}
-                <div className="text-start mb-4">
-                  <label htmlFor="issueDescription" className="fw-bold mb-2">Describe Your Query <span className="text-danger">*</span></label>
-                  <CInputArea
-                    id="issueDescription"
-                    name="issueDescription"
-                    value={formik.values.issueDescription}
-                    onChange={formik.handleChange}
-                    error={formik.errors.issueDescription}
-                    hint="Type your message..."
-                    readonly={onLoad}
-                    isMandatory={false}
-                    showTitle={false}
-                    wordLimit={250}
-                    style={{ backgroundColor: '#F8F9FA' }}
-                  />
-                </div>
+                  {/* Query Type */}
+                  <div className="text-start mb-4">
+                    <label htmlFor="issueType" className="fw-bold mb-2">Query Type <span className="text-danger">*</span></label>
+                    <Form.Select
+                      id="issueType"
+                      name="issueType"
+                      className="py-2 px-3"
+                      value={formik.values.issueType}
+                      onChange={formik.handleChange}
+                      isInvalid={!!formik.errors.issueType}
+                      disabled={onLoad}
+                      style={{ borderRadius: '12px', backgroundColor: '#F8F9FA', border: '1px solid #dee2e6', padding: '12px 16px', fontSize: '0.95rem' }}
+                    >
+                      <option value="" disabled>
+                        Select
+                      </option>
+                      <option value="Improvement">Improvement</option>
+                      <option value="Application Issues">Application Query</option>
+                      <option value="General Inquiry">General Inquiry</option>
+                      <option value="ReferABusiness">Refer A Business</option>
+                    </Form.Select>
+                    {formik.errors.issueType && (
+                      <div className="text-danger small mt-1">{formik.errors.issueType}</div>
+                    )}
+                  </div>
 
-                {/* reCAPTCHA */}
-                <div className="mb-4 d-flex justify-content-center justify-content-md-start" style={{ overflow: 'hidden' }}>
-                  <div style={{ transform: 'scale(1)', transformOrigin: 'left top' }}>
-                    <ReCAPTCHA
-                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
-                      onChange={onRecaptchaChange}
-                      theme="light"
+                  {/* Role */}
+                  <div className="text-start mb-4">
+                    <label className="fw-bold mb-2 d-block">Role <span className="text-danger">*</span></label>
+                    <div className="d-flex flex-row align-items-center gap-4">
+                      <div className="d-flex align-items-center">
+                        <FormCheck
+                          type="radio"
+                          id="jobPoster"
+                          name="role"
+                          value="Job Poster"
+                          checked={formik.values.role === "Job Poster"}
+                          onChange={formik.handleChange}
+                          className="m-0 custom-radio"
+                        />
+                        <label htmlFor="jobPoster" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Job Poster</label>
+                      </div>
+                      <div className="d-flex align-items-center">
+                        <FormCheck
+                          type="radio"
+                          id="jobSeeker"
+                          name="role"
+                          value="Job Seeker"
+                          checked={formik.values.role === "Job Seeker"}
+                          onChange={formik.handleChange}
+                          className="m-0 custom-radio"
+                        />
+                        <label htmlFor="jobSeeker" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Service Provider</label>
+                      </div>
+                    </div>
+                    {formik.errors.role && (
+                      <div className="text-danger small mt-1">{formik.errors.role}</div>
+                    )}
+                  </div>
+
+                  {/* Describe Your Query */}
+                  <div className="text-start mb-4">
+                    <label htmlFor="issueDescription" className="fw-bold mb-2">Describe Your Query <span className="text-danger">*</span></label>
+                    <CInputArea
+                      id="issueDescription"
+                      name="issueDescription"
+                      value={formik.values.issueDescription}
+                      onChange={formik.handleChange}
+                      error={formik.errors.issueDescription}
+                      hint="Type your message..."
+                      readonly={onLoad}
+                      isMandatory={false}
+                      showTitle={false}
+                      wordLimit={250}
+                      style={{ backgroundColor: '#F8F9FA' }}
                     />
                   </div>
-                </div>
 
-                {/* Submit Button */}
-                <div className="text-start">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    disabled={onLoad}
-                    style={{
-                      background: 'linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%)',
-                      border: 'none',
-                      padding: '14px 60px',
-                      borderRadius: '30px',
-                      fontWeight: 700,
-                      fontSize: '1.1rem',
-                      width: '200px',
-                      boxShadow: '0 4px 15px rgba(235, 95, 0, 0.3)',
-                      transition: 'all 0.3s'
-                    }}
-                  >
-                    Submit
-                  </Button>
-                </div>
-              </form>
+                  {/* reCAPTCHA */}
+                  <div className={`mb-4 d-flex justify-content-center justify-content-md-start ${contactStyles.recaptchaContainer}`}>
+                    <div>
+                      <ReCAPTCHA
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
+                        onChange={onRecaptchaChange}
+                        theme="light"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="text-start">
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      disabled={onLoad}
+                      className={contactStyles.submitBtn}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>

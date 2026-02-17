@@ -505,6 +505,7 @@
   min-height: calc(100vh - 74px);
   width: 100%;
   margin-top: 71px;
+
   /* Push content below fixed navbar */
   padding-top: 0;
   background-color: white;
@@ -690,10 +691,11 @@
 }
 
 .signupFormContainer {
+
   max-width: 450px;
-  margin: 0 auto;
+  margin-top: 40px;
   width: 100%;
-  padding-top: 0;
+
 }
 
 .signupTitle {
@@ -884,9 +886,10 @@
 @media (max-width: 1024px) {
   .signupContainer {
     flex-direction: column;
-    margin-top: 0;
+    margin-top: 40px;
     padding-top: 74px;
     /* Ensure padding is kept */
+
   }
 
   .signupLeftPanel,
@@ -1104,6 +1107,7 @@
 
   .navbarContainer {
     display: flex;
+    margin-bottom: 40px;
     justify-content: space-between;
     align-items: center;
   }
@@ -1559,7 +1563,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     max-width: 360px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 250px;
     position: relative;
   }
 
@@ -1669,15 +1673,20 @@
   }
 
   /* OTP Input Section */
+  .signupOtpInputs,
   .otpInputContainer {
-    gap: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
     margin-bottom: 16px;
   }
 
+  .signupOtpInput,
   .otpInput {
-    width: 40px;
-    height: 44px;
-    font-size: 1.1rem;
+    width: 36px;
+    height: 40px;
+    font-size: 1rem;
+    text-align: center;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
   }
@@ -1847,7 +1856,8 @@
 @media (max-width: 380px) {
   .signupFormContainer {
     padding: 20px 16px;
-    margin: 16px 8px;
+    margin: 80px 8px 16px 8px;
+
   }
 
   .signupTitle {

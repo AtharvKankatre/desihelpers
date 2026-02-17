@@ -825,50 +825,143 @@
 
 /* ========== Responsive ========== */
 @media (max-width: 768px) {
+
+    /* Hide and adjust desktop filter bar elements */
+    .filterTopRow {
+        display: none !important;
+    }
+
     .filterBar {
+        padding: 0;
+        background-color: #fff;
+        border-bottom: 1px solid #f0f0f0;
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
-        padding: 16px;
+        gap: 0;
     }
 
-    .locationInput,
-    .filterSelect {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .mapViewContainer {
-        height: calc(100vh - 200px);
-        /* Adjust for stacked filters on mobile */
-    }
-
-    .viewToggle {
-        margin-left: 0;
-        justify-content: center;
-        width: 100%;
-        background-color: #f1f4f9;
-        margin-top: 8px;
-    }
-
-    .viewToggleBtn {
-        flex: 1;
-        /* Distribute buttons evenly */
-    }
-
-    .listHeader {
+    /* Mobile Header Container */
+    .mobileFilterContainer {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        gap: 16px;
         padding: 16px;
+        width: 100%;
+        background-color: #fff;
     }
 
-    .searchInput {
+    .mobileSearchRow {
         width: 100%;
     }
 
+    .searchContainerMobile {
+        display: flex;
+        align-items: center;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 8px 12px;
+        width: 100%;
+        position: relative;
+    }
+
+    .searchContainerMobile .searchIcon {
+        position: static;
+        transform: none;
+        margin-right: 8px;
+        /* Ensure specific sizing/color overrides if needed */
+    }
+
+    .mobileTitleRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .listTitle {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .mobileActions {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .mobileActionBtn {
+        background: none;
+        border: none;
+        color: #999;
+        font-size: 18px;
+        padding: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s;
+    }
+
+    .activeMobileBtn {
+        color: #f07c00;
+    }
+
+    /* Map View Container Height */
+    .mapViewContainer {
+        height: calc(100vh - 180px);
+        /* Adjust for header */
+    }
+
+    /* Card Grid Mobile */
     .cardGrid,
     .seekerGrid {
         grid-template-columns: 1fr;
-        /* Single column on mobile */
+        gap: 16px;
+        padding: 16px;
+        margin-top: 0;
+    }
+
+    .jobCard {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .cardTopRow {
+        margin-bottom: 8px;
+    }
+
+    .cardPostedBy {
+        font-size: 11px;
+    }
+
+    .cardPrice {
+        font-size: 14px;
+    }
+
+    .cardTitleRow {
+        margin-bottom: 8px;
+    }
+
+    .cardJobTitle {
+        font-size: 16px;
+    }
+
+    .cardOnlineBadge {
+        font-size: 9px;
+        padding: 2px 8px;
+    }
+
+    .cardShareBtn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .cardDetailItem {
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    .cardFooter {
+        margin-top: 12px;
+        padding-top: 12px;
     }
 }

@@ -17,6 +17,7 @@ type Props = {
   maxLength?: number;
   showTitle?: boolean;
   wordLimit?: number; // New prop for word limit (optional)
+  style?: React.CSSProperties;
 };
 
 export const CInputArea: FunctionComponent<Props> = ({ wordLimit = 500, ...Props }) => {
@@ -54,6 +55,7 @@ export const CInputArea: FunctionComponent<Props> = ({ wordLimit = 500, ...Props
         onChange={handleChange}
         readOnly={Props.readonly}
         maxLength={Props.maxLength} // Max length removed, word count is enforced instead
+        style={Props.style}
       />
       <div className="text-end">
         <small className="text-muted">

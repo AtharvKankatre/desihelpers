@@ -11,6 +11,8 @@ import { IJobCategories, ISubCategory } from "@/models/JobCategories";
 import { userProfileStore } from "@/stores/UserProfileStore";
 import dynamic from "next/dynamic";
 import styles from "@/styles/ViewAllJobs.module.css";
+import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
+import { FaMapMarkedAlt, FaList, FaSlidersH, FaSortAmountDown } from "react-icons/fa";
 
 // Dynamically import map component for SSR compatibility
 const DisplayMap = dynamic(() => import("@/components/maps/DisplayMaps"), {
@@ -24,6 +26,7 @@ type SortKey = "jobType" | "workType" | "startDate" | "urgent" | "cityState" | "
 
 const ViewAllJobs = () => {
     const router = useRouter();
+    const { mobile } = useAppMediaQuery();
     const { jobCategories } = useAuth();
 
     // Requested static categories
@@ -417,31 +420,81 @@ const ViewAllJobs = () => {
                 </div>
 
                 {/* Row 2: Header + Search */}
+                {/* Row 2: Header + Search - Responsive Layout */}
                 {viewMode !== "map" && (
-                    <div className={styles.filterBottomRow}>
-                        <div className={styles.listHeader}>
-                            <h2 className={styles.listTitle}>
-                                {viewType === "jobs" ? "Job List" : "Service Provider List"}{" "}
-                                <span className={styles.jobCount}>
-                                    {displayJobs.length}
-                                </span>
-                            </h2>
-                        </div>
+                    mobile ? (
+                        <div className={styles.mobileFilterContainer}>
+                            {/* Mobile Row 1: Search */}
+                            <div className={styles.mobileSearchRow}>
+                                <div className={styles.searchContainerMobile}>
+                                    <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg>
+                                    <input
+                                        type="text"
+                                        className={styles.newSearchInput}
+                                        placeholder="Search by location"
+                                        value={locationSearch}
+                                        onChange={(e) => setLocationSearch(e.target.value)}
+                                    />
+                                </div>
+                            </div>
 
-                        <div className={styles.searchContainer}>
-                            <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="11" cy="11" r="8" />
-                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                            </svg>
-                            <input
-                                type="text"
-                                className={styles.newSearchInput}
-                                placeholder="Search by Name & Type of job"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                            {/* Mobile Row 2: Title + Icons */}
+                            <div className={styles.mobileTitleRow}>
+                                <h2 className={styles.listTitle}>
+                                    {viewType === "jobs" ? "Job List" : "Service Provider List"}{" "}
+                                    <span className={styles.jobCount}>
+                                        {displayJobs.length}
+                                    </span>
+                                </h2>
+                                <div className={styles.mobileActions}>
+                                    <button
+                                        className={`${styles.mobileActionBtn}`}
+                                        onClick={() => setViewMode("map")}
+                                    >
+                                        <FaMapMarkedAlt />
+                                    </button>
+                                    <button
+                                        className={`${styles.mobileActionBtn} ${viewMode === "card" ? styles.activeMobileBtn : ""}`}
+                                        onClick={() => setViewMode("card")}
+                                    >
+                                        <FaList />
+                                    </button>
+                                    {/* Placeholder for future filter implementation or Sort */}
+                                    <button className={styles.mobileActionBtn}>
+                                        <FaSlidersH />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className={styles.filterBottomRow}>
+                            <div className={styles.listHeader}>
+                                <h2 className={styles.listTitle}>
+                                    {viewType === "jobs" ? "Job List" : "Service Provider List"}{" "}
+                                    <span className={styles.jobCount}>
+                                        {displayJobs.length}
+                                    </span>
+                                </h2>
+                            </div>
+
+                            <div className={styles.searchContainer}>
+                                <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    className={styles.newSearchInput}
+                                    placeholder="Search by Name & Type of job"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )
                 )}
             </div>
 

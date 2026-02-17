@@ -1,5 +1,5 @@
 .offcanvasHeader {
-    background-color: #FFF5F0;
+    background-color: #ffffff;
     border-bottom: 1px solid #eee;
     padding: 1.5rem;
 }
@@ -10,13 +10,6 @@
     gap: 0.5rem;
 }
 
-.userName {
-    color: #f07c00;
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin: 0;
-}
-
 .locationInfo {
     display: flex;
     align-items: center;
@@ -24,6 +17,12 @@
     color: #1a5891;
     font-weight: 600;
     font-size: 0.9rem;
+}
+
+.closeIcon {
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
 }
 
 .lastLogin {
@@ -42,6 +41,8 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    flex: 1;
+    /* Push footer to bottom */
 }
 
 .menuItem {
@@ -51,7 +52,8 @@
     padding: 10px;
     cursor: pointer;
     border-radius: 8px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
+    /* Smooth transition */
     color: #333;
     text-decoration: none;
     font-weight: 600;
@@ -59,6 +61,8 @@
 
 .menuItem:hover {
     background-color: #f9f9f9;
+    transform: translateX(4px);
+    /* Slight movement for smooth feel */
 }
 
 .iconBox {
@@ -70,57 +74,6 @@
     align-items: center;
     justify-content: center;
     color: #f07c00;
-}
-
-.completionCard {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 1rem;
-    margin: 0.5rem 0;
-}
-
-.cardTitle {
-    font-weight: bold;
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.progressBar {
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-}
-
-.progressFill {
-    height: 100%;
-    background-color: #00bcd4;
-    /* Teal */
-    width: 65%;
-    /* Default fallback */
-}
-
-.cardDesc {
-    font-size: 0.8rem;
-    color: #666;
-    line-height: 1.4;
-}
-
-.dropdownSection {
-    margin-top: 0.5rem;
-}
-
-.profileDropdown {
-    width: 100%;
-    border: 1px solid #f07c00;
-    border-radius: 8px;
-    padding: 10px;
-    background-color: white;
-    color: #333;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(240, 124, 0, 0.1);
 }
 
 .separator {
@@ -136,4 +89,84 @@
 .logoutIconBox {
     background-color: #ffebee;
     color: #d32f2f;
+}
+
+/* Footer Section */
+.drawerFooter {
+    margin-top: auto;
+    padding: 1.5rem;
+    background-color: #001838;
+    /* Dark Blue */
+    color: #ffffff;
+}
+
+.footerBrand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.socialIconsRow {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.footerSocialIcon {
+    /* Since we use next/image, this might not be needed but good safety */
+    display: block;
+}
+
+.footerLinksGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 2 columns for better space usage */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.footerCol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footerColTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #f07c00;
+    /* Orange accent */
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.footerColList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.footerColList li a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    transition: color 0.2s;
+}
+
+.footerColList li a:hover {
+    color: #f07c00;
+}
+
+.drawerCopyright {
+    font-size: 0.7rem;
+    color: #888;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
 }

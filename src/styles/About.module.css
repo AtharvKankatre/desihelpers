@@ -422,31 +422,143 @@
 
 @media (max-width: 768px) {
     .aboutHero {
-        padding-top: 120px;
+        padding: 100px 20px 60px;
+        text-align: center;
     }
 
     .heroTitle {
         font-size: 28px;
+        margin-bottom: 16px;
     }
 
     .heroSubtitle {
-        font-size: 14px;
+        font-size: 15px;
+        padding: 0 10px;
+    }
+
+    /* Content Section - Problem Styling */
+    .contentSection {
+        padding: 40px 20px;
+    }
+
+    .contentWrapper {
+        flex-direction: column;
+        gap: 40px;
+        padding: 20px 0;
+    }
+
+    .textContent,
+    .imageWrapper {
+        width: 100%;
+        text-align: left;
+        /* Keep left alignment as per screenshot */
+    }
+
+    .imageWrapper {
+        order: 2;
+        /* Image below text on mobile if desired, or keep default */
+        margin-top: 20px;
     }
 
     .mainHeading {
-        font-size: 24px;
+        font-size: 26px;
     }
 
-    .ctaCard {
-        padding: 30px 20px;
+    .checklist {
+        gap: 12px;
     }
 
-    .readyTitle {
-        font-size: 28px;
+    .checkItem {
+        align-items: flex-start;
+    }
+
+    /* Mission Section */
+    .missionSection {
+        padding: 60px 20px;
+    }
+
+    .sectionTitle {
+        font-size: 26px;
+    }
+
+    .missionGrid {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .missionCard {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* Testimonials Section */
+    .testimonialsSection {
+        padding: 60px 20px;
+    }
+
+    .testimonialContainer {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .testimonialContent {
+        flex: auto;
+        width: 100%;
+        position: static;
+        text-align: center;
+        /* Center align header for mobile */
+        margin-bottom: 20px;
+    }
+
+    .testimonialHeading {
+        font-size: 30px;
+        /* Smaller heading */
+    }
+
+    .testimonialGrid {
+        height: auto;
+        mask-image: none;
+        -webkit-mask-image: none;
+        overflow: visible;
+        flex-direction: column;
+        /* Stack columns */
+    }
+
+    .testimonialCol {
+        gap: 20px;
+        transform: none !important;
+        margin-top: 0 !important;
     }
 
     .staggeredCol {
         margin-top: 0;
-        /* Stack normally on mobile to save space */
+    }
+
+    .reviewCard {
+        width: 100%;
+        /* Full width cards */
+        min-height: auto;
+        padding: 24px;
+    }
+
+    /* CTA Section */
+    .readySection {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .readyContent {
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+    }
+
+    .readyTextGroup {
+        text-align: center;
+    }
+
+    .readyTitle {
+        font-size: 32px;
     }
 }
