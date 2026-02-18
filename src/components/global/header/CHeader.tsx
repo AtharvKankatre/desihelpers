@@ -1,4 +1,5 @@
 import DesiHelpersIcon from "@/components/static/DesiHelpersIcon";
+import { FaBell } from "react-icons/fa";
 import { CUserAvatar } from "./header_components/CUserAvatar";
 import { Routes } from "@/services/routes/Routes";
 import Link from "next/link";
@@ -170,12 +171,7 @@ export const CHeader = () => {
                 onClick={() => setNotificationOpen(!notificationOpen)}
                 style={{ position: 'relative' }}
               >
-                <Image
-                  src="/newassets/notification.png"
-                  alt="Notification"
-                  width={24}
-                  height={24}
-                />
+                <FaBell style={{ color: "white", fontSize: "24px" }} />
                 <span style={{
                   position: 'absolute',
                   top: '2px',

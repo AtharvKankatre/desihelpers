@@ -12,7 +12,7 @@ import { userProfileStore } from "@/stores/UserProfileStore";
 import dynamic from "next/dynamic";
 import styles from "@/styles/ViewAllJobs.module.css";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
-import { FaMapMarkedAlt, FaList, FaSlidersH, FaSortAmountDown } from "react-icons/fa";
+import { FaMapMarkedAlt, FaList, FaSlidersH, FaSortAmountDown, FaBell, FaArrowLeft } from "react-icons/fa";
 
 // Dynamically import map component for SSR compatibility
 const DisplayMap = dynamic(() => import("@/components/maps/DisplayMaps"), {
@@ -78,6 +78,7 @@ const ViewAllJobs = () => {
     const [subCategoryFilter, setSubCategoryFilter] = useState("");
     const [radiusFilter, setRadiusFilter] = useState(50);
     const [searchQuery, setSearchQuery] = useState("");
+    const [filterModalOpen, setFilterModalOpen] = useState(false);
 
     // Sort state
     const [sortKey, setSortKey] = useState<SortKey | null>(null);
@@ -421,13 +422,23 @@ const ViewAllJobs = () => {
 
                 {/* Row 2: Header + Search */}
                 {/* Row 2: Header + Search - Responsive Layout */}
-                {viewMode !== "map" && (
-                    mobile ? (
+                {/* Row 2: Header + Search - Responsive Layout */}
+                {mobile ? (
+                    viewMode === "map" ? (
+                        <div className={styles.mobileMapHeader}>
+                            <button
+                                className={styles.mobileBackBtn}
+                                onClick={() => setViewMode("card")}
+                            >
+                                <FaArrowLeft /> Back to List
+                            </button>
+                        </div>
+                    ) : (
                         <div className={styles.mobileFilterContainer}>
-                            {/* Mobile Row 1: Search */}
+                            {/* Mobile Row 1: Search + Filter Button */}
                             <div className={styles.mobileSearchRow}>
                                 <div className={styles.searchContainerMobile}>
-                                    <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <circle cx="11" cy="11" r="8" />
                                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                                     </svg>
@@ -439,6 +450,13 @@ const ViewAllJobs = () => {
                                         onChange={(e) => setLocationSearch(e.target.value)}
                                     />
                                 </div>
+                                <button
+                                    className={styles.mobileFilterBtn}
+                                    onClick={() => setFilterModalOpen(true)}
+                                >
+                                    <FaSlidersH style={{ fontSize: 12 }} />
+                                    Filter
+                                </button>
                             </div>
 
                             {/* Mobile Row 2: Title + Icons */}
@@ -462,14 +480,18 @@ const ViewAllJobs = () => {
                                     >
                                         <FaList />
                                     </button>
-                                    {/* Placeholder for future filter implementation or Sort */}
-                                    <button className={styles.mobileActionBtn}>
+                                    <button
+                                        className={`${styles.mobileActionBtn} ${viewMode === "table" ? styles.activeMobileBtn : ""}`}
+                                        onClick={() => setViewMode("table")}
+                                    >
                                         <FaSlidersH />
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    ) : (
+                    )
+                ) : (
+                    viewMode !== "map" && (
                         <div className={styles.filterBottomRow}>
                             <div className={styles.listHeader}>
                                 <h2 className={styles.listTitle}>
@@ -628,13 +650,7 @@ const ViewAllJobs = () => {
                                                 <td className={styles.centeredTd}>
                                                     {job.urgent ? (
                                                         <span className={styles.urgentIcon}>
-                                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M12 2V4M19.07 4.93L17.66 6.34M4.93 4.93L6.34 6.34" stroke="#FF0000" strokeWidth="2" strokeLinecap="round" />
-                                                                <path d="M7 11C7 8.23858 9.23858 6 12 6C14.7614 6 17 8.23858 17 11V16H7V11Z" fill="#EE0000" />
-                                                                <path d="M12 9C11.4477 9 11 9.44772 11 10V12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12V10C13 9.44772 12.5523 9 12 9Z" fill="white" fillOpacity="0.5" />
-                                                                <path d="M5 16C5 15.4477 5.44772 15 6 15H18C18.5523 15 19 15.4477 19 16V17C19 17.5523 18.5523 18 18 18H6C5.44772 18 5 17.5523 5 17V16Z" fill="#EE0000" />
-                                                                <path d="M10 18C10 19.1046 10.8954 20 12 20C13.1046 20 14 19.1046 14 18H10Z" fill="#EE0000" />
-                                                            </svg>
+                                                            <FaBell style={{ color: "red", fontSize: "24px" }} />
                                                         </span>
                                                     ) : <span className={styles.notUrgent}>—</span>}
                                                 </td>
@@ -662,11 +678,7 @@ const ViewAllJobs = () => {
                                                 {job.jobType?.name ?? "Nanny"}
                                                 {job.urgent && (
                                                     <span className={styles.cardUrgentStar}>
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M12 2V4M19.07 4.93L17.66 6.34M4.93 4.93L6.34 6.34" stroke="#FF0000" strokeWidth="2" strokeLinecap="round" />
-                                                            <path d="M7 11C7 8.23858 9.23858 6 12 6C14.7614 6 17 8.23858 17 11V16H7V11Z" fill="#EE0000" />
-                                                            <path d="M5 16C5 15.4477 5.44772 15 6 15H18C18.5523 15 19 15.4477 19 16V17C19 17.5523 18.5523 18 18 18H6C5.44772 18 5 17.5523 5 17V16Z" fill="#EE0000" />
-                                                        </svg>
+                                                        <FaBell style={{ color: "red", fontSize: "20px" }} />
                                                     </span>
                                                 )}
                                             </h3>
@@ -723,6 +735,84 @@ const ViewAllJobs = () => {
                     </>
                 )}
             </div>
+
+            {/* Mobile Filter Modal */}
+            {filterModalOpen && (
+                <div className={styles.filterModalOverlay}>
+                    <div className={styles.filterModal}>
+                        {/* Header */}
+                        <div className={styles.filterModalHeader}>
+                            <span className={styles.filterModalTitle}>Filter</span>
+                            <button
+                                className={styles.filterModalClose}
+                                onClick={() => setFilterModalOpen(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* Filter Options */}
+                        <div className={styles.filterModalBody}>
+                            <select
+                                className={styles.filterModalSelect}
+                                value={viewType === "jobs" ? "viewJobs" : "viewSeekers"}
+                                onChange={(e) => setViewType(e.target.value === "viewSeekers" ? "seekers" : "jobs")}
+                            >
+                                <option value="viewJobs">View Jobs</option>
+                                <option value="viewSeekers">View Service Provider</option>
+                            </select>
+                            <select
+                                className={styles.filterModalSelect}
+                                value={workTypeFilter}
+                                onChange={(e) => setWorkTypeFilter(e.target.value)}
+                            >
+                                <option value="Part Time">Part/Full Time</option>
+                                <option value="Part Time">Part Time</option>
+                                <option value="Full Time">Full Time</option>
+                            </select>
+                            <select
+                                className={styles.filterModalSelect}
+                                value={categoryFilter}
+                                onChange={(e) => { setCategoryFilter(e.target.value); setSubCategoryFilter(""); }}
+                            >
+                                <option value="">All Category</option>
+                                {displayCategories.map((cat: IJobCategories) => (
+                                    <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
+                                ))}
+                            </select>
+                            <select
+                                className={styles.filterModalSelect}
+                                value={subCategoryFilter}
+                                onChange={(e) => setSubCategoryFilter(e.target.value)}
+                            >
+                                <option value="">All Sub Category</option>
+                                {subCategories.map((sub: ISubCategory) => (
+                                    <option key={sub.name} value={sub.name}>{sub.name}</option>
+                                ))}
+                            </select>
+                            <select
+                                className={styles.filterModalSelect}
+                                value={radiusFilter}
+                                onChange={(e) => setRadiusFilter(parseInt(e.target.value))}
+                            >
+                                {Object.entries(MapRadius).map(([label, value]) => (
+                                    <option key={value} value={value}>{label}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Footer Button */}
+                        <div className={styles.filterModalFooter}>
+                            <button
+                                className={styles.filterModalApply}
+                                onClick={() => setFilterModalOpen(false)}
+                            >
+                                Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

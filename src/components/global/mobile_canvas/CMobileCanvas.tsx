@@ -92,7 +92,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
     return (
         <>
             <button
-                onClick={handleShow}
+                onClick={show ? handleClose : handleShow}
                 style={{
                     background: "transparent",
                     border: "none",

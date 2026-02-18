@@ -143,7 +143,10 @@
     align-items: center;
     width: 100%;
     margin-top: 12px;
-    /* Increased space between rows */
+    flex-wrap: wrap;
+    /* Allow wrapping */
+    gap: 40px;
+    /* Add gap for when items wrap */
 }
 
 .locationInput::placeholder,
@@ -275,7 +278,8 @@
 .searchContainer {
     position: relative;
     width: 320px;
-    /* Fixed width for search bar */
+    max-width: 100%;
+    /* Ensure it doesn't overflow container */
 }
 
 .searchIcon {
@@ -365,6 +369,7 @@
     width: 100%;
     border-collapse: collapse;
     min-width: 800px;
+    margin-top: 20px;
     /* Force scroll on small screens */
 }
 
@@ -376,7 +381,9 @@
     font-weight: 700;
     font-size: 14px;
     text-align: left;
+    /* Fixed invalid 'start-left' */
     padding: 16px;
+    /* Matched with td padding for alignment */
     border-bottom: 2px solid #edf2f7;
     cursor: pointer;
     user-select: none;
@@ -446,6 +453,7 @@
 /* ========== Card View (Grid) ========== */
 .cardGrid {
     display: grid;
+    padding-top: 50px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     padding-bottom: 32px;
@@ -457,6 +465,7 @@
 
 .seekerGrid {
     display: grid;
+    padding-top: 35px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
     padding-bottom: 32px;
@@ -465,6 +474,7 @@
 }
 
 .jobCard {
+    margin-top: 20px;
     background-color: #fff;
     border: 1px solid #e2e8f0;
     /* Slightly darker border for white background */
@@ -762,6 +772,7 @@
 }
 
 .seekerServices {
+
     margin-top: 4px;
 }
 
@@ -774,12 +785,14 @@
 }
 
 .seekerServiceTags {
+
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
 .seekerServiceTag {
+
     background-color: #fff3e0;
     color: #e65100;
     font-size: 11px;
@@ -838,19 +851,25 @@
         flex-direction: column;
         align-items: stretch;
         gap: 0;
+        position: relative;
+        top: auto;
+        box-shadow: none;
     }
 
     /* Mobile Header Container */
     .mobileFilterContainer {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        padding: 16px;
+        gap: 12px;
+        padding: 70px 16px 8px 16px;
         width: 100%;
         background-color: #fff;
     }
 
     .mobileSearchRow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         width: 100%;
     }
 
@@ -859,9 +878,41 @@
         align-items: center;
         background-color: #f5f5f5;
         border-radius: 8px;
-        padding: 8px 12px;
-        width: 100%;
+        padding: 6px 10px;
+        flex: 1;
+        min-width: 0;
         position: relative;
+    }
+
+    .searchContainerMobile .newSearchInput {
+        font-size: 12px;
+    }
+
+    .searchContainerMobile .newSearchInput::placeholder {
+        font-size: 12px;
+        color: #aaa;
+        text-align: center;
+    }
+
+    .mobileFilterBtn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background-color: #001838;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background-color 0.2s;
+    }
+
+    .mobileFilterBtn:active {
+        background-color: #001028;
     }
 
     .searchContainerMobile .searchIcon {
@@ -907,8 +958,21 @@
 
     /* Map View Container Height */
     .mapViewContainer {
-        height: calc(100vh - 180px);
-        /* Adjust for header */
+        height: calc(100vh - 120px);
+        /* Fill space tightly between back-button header and footer */
+        margin-bottom: 0;
+        flex: none;
+    }
+
+    .contentAreaFull {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Content Area Mobile */
+    .contentArea {
+        padding: 8px 8px 0 8px;
+        margin-top: 0;
     }
 
     /* Card Grid Mobile */
@@ -916,8 +980,8 @@
     .seekerGrid {
         grid-template-columns: 1fr;
         gap: 16px;
-        padding: 16px;
-        margin-top: 0;
+        padding: 8px 4px 16px 4px;
+        margin-top: 4px;
     }
 
     .jobCard {
@@ -963,5 +1027,175 @@
     .cardFooter {
         margin-top: 12px;
         padding-top: 12px;
+    }
+
+    /* Mobile Map Header */
+    .mobileMapHeader {
+        display: flex;
+        align-items: center;
+        padding: 70px 16px 12px 16px;
+        background-color: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        width: 100%;
+    }
+
+    .mobileBackBtn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a5891;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    /* Mobile Filter Panel */
+    .mobileFilterPanel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px 16px 16px;
+        background-color: #fff;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .mobileFilterSelect {
+        width: 100%;
+        padding: 10px 32px 10px 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #333;
+        background-color: #fff;
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .mobileFilterSelect:focus {
+        border-color: #f07c00;
+        box-shadow: 0 0 0 3px rgba(240, 124, 0, 0.1);
+    }
+
+    /* ========== Filter Modal ========== */
+    .filterModalOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 99999;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .filterModal {
+        background-color: #fff;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    .filterModalHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #001838;
+        padding: 16px 20px;
+        flex-shrink: 0;
+    }
+
+    .filterModalTitle {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .filterModalClose {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 4px;
+        line-height: 1;
+    }
+
+    .filterModalBody {
+        flex: 1;
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        overflow-y: auto;
+    }
+
+    .filterModalSelect {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        font-size: 14px;
+        color: #333;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .filterModalSelect:focus {
+        border-color: #001838;
+    }
+
+    .filterModalFooter {
+        padding: 16px 20px 24px;
+        flex-shrink: 0;
+    }
+
+    .filterModalApply {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #f07c00, #ff9a2e);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        transition: opacity 0.2s;
+    }
+
+    .filterModalApply:active {
+        opacity: 0.85;
     }
 }

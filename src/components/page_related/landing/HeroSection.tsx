@@ -216,7 +216,7 @@ export const HeroSection: React.FC = () => {
         <div className={styles.toggleContainer}>
           <button
             className={`${styles.toggleButton} ${activeTab === "findJob" ? styles.findJobActive : ""}`}
-            onClick={() => setActiveTab("findJob")}
+            onClick={() => router.push(Routes.viewAllJobs)}
           >
             Find Job
           </button>
