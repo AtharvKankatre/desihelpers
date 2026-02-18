@@ -1,0 +1,22 @@
+{
+  "welcome_banner": "Welcome to DesiHelpers.com",
+  "post_jobs": "Post jobs",
+  "available_job_seekers": "Available Job Seekers",
+  "trending_jobs": "Trending Jobs in (local area)",
+  "job_titles": {
+    "nanny": "Home/Baby Care",
+    "caterer": "Caterer",
+    "house_help": "Event Help",
+    "event": "Tutoring"
+  },
+  "English": "English",
+  "Hindi": "Hindi",
+  "mission_title": "Our Mission",
+  "mission_body": "Our mission is simple - to create value by assisting you in finding high quality leads for your household needs saving your time and frustration from other platforms and connections.",
+  "connect_title": "Connect",
+  "connect_body": "Connect and engage with potential social contacts on our platform",
+  "care_title": "Care",
+  "care_body": "Find the nanny or household Care and support your need to elevate your lifestyle",
+  "excel_title": "Excel",
+  "excel_body": "Foster the community culture and Excel together"
+}

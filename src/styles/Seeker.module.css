@@ -1,0 +1,51 @@
+.seekerCardDetails {
+    border: 1px solid #00a2b3;
+    /* border-radius: 4px; */
+    border-width: 1.5px;
+    border-style: solid;
+    position: relative;
+    background-color: white;
+    width: auto;
+    color:#1f4e79;
+  }
+
+  .iconBorder{
+  border-top: 1px dashed #1a5891;
+  background-color: #e5fcff;
+  margin-top: 10px;
+  }
+
+  .imageDiv{
+    margin-bottom: 5px;
+  }
+  .cardTop{
+    border-radius: 8px 8px 0 0 ;
+    color: white;
+    background-color: #073157;
+  }
+  .seekerPhoto{
+    width: 110px;
+    height: 110px; /* Set your desired height */
+    object-fit: cover; /* Adjust the image to cover the container */
+  }
+  .cardBorder{
+    border: 1px solid #073157;
+    border-radius: 8px;
+  }
+  .iconSize{
+    width: 30px;
+    margin-right: 5px;
+    margin-top: 10px;
+  }
+
+  .jobDescriptionCard {
+    max-height: 200px; /* Set the maximum height for the card */
+    overflow-y: auto;  /* Enable vertical scrolling */
+  }
+  
+  .cardBody {
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    padding: 15px; /* Adjust padding as needed */
+  }
+
+ 
