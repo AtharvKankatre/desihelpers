@@ -9,10 +9,17 @@ import Head from 'next/head';
 import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { HelmetProvider } from "react-helmet-async";
+import { OutstandingLoader } from "@/components/static/OutstandingLoader";
+import { useLoaderStore } from "@/stores/LoaderStore";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GOOGLEANALYTICS_TRACKINGID;
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const { showLoader, hideLoader } = useLoaderStore();
+  const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
@@ -22,10 +29,20 @@ export default function App({ Component, pageProps }: AppProps) {
     };
     router.events.on('routeChangeComplete', handleRouteChange);
 
+    const handleStart = () => showLoader();
+    const handleComplete = () => hideLoader();
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
     };
-  }, [router.events]);
+  }, [router.events, showLoader, hideLoader]);
 
 
   useEffect(() => {
@@ -55,11 +72,14 @@ export default function App({ Component, pageProps }: AppProps) {
         `,
         }}
       />
-      <AuthProvider>
-        <CGlobalLayout>
-          <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
-        </CGlobalLayout>{" "}
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <OutstandingLoader />
+          <CGlobalLayout>
+            <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
+          </CGlobalLayout>{" "}
+        </AuthProvider>
+      </QueryClientProvider>
     </>
   );
 }

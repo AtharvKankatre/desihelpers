@@ -9,6 +9,8 @@
     padding: 80px 20px;
     font-family: 'Roboto', sans-serif;
     overflow: hidden;
+    position: relative;
+    /* Ensure quote positions relative to section */
 }
 
 .container {
@@ -19,6 +21,29 @@
 .header {
     text-align: center;
     margin-bottom: 60px;
+    position: relative;
+}
+
+.quoteIcon {
+    position: absolute;
+    top: -50px;
+    /* Adjust to move it partially off-screen or top */
+    right: 0;
+    /* Align to right edge */
+    z-index: 0;
+    opacity: 0.3;
+    /* Subtle transparency */
+    pointer-events: none;
+    /* click-through */
+    transform: rotate(0deg);
+    /* SVG has rotation */
+}
+
+/* Adjust title to be above the quote */
+.title,
+.subtitle {
+    position: relative;
+    z-index: 1;
 }
 
 .title {

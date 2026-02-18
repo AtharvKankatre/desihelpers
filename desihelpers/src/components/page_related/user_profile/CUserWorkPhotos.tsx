@@ -19,13 +19,13 @@ export const CUserWorkPhotos: FunctionComponent<Props> = ({ workPhotos }) => {
       if (!bucketName) {
         return;
       }
-      const urls = getWorkPhotoUrls(bucketName, workPhotos);
+      const urls = await getWorkPhotoUrls(bucketName, workPhotos);
       setWorkPhotoUrls(urls);
     };
-  
+
     fetchPhotoUrls();
   }, [workPhotos]);
-  
+
 
   const handleOpen = (image: string) => {
     setSelectedImage(image);
@@ -42,24 +42,25 @@ export const CUserWorkPhotos: FunctionComponent<Props> = ({ workPhotos }) => {
       <CExpandablePanel title="My Work" id="workPhotos" isExpanded="show">
         {workPhotoUrls.length === 0 ? (
           <p className="text-secondary">No images to preview</p>
-        ) : (  <Row className="g-2">
-            {workPhotoUrls.map((image: string, index: number) => (
-              <Col xs={12} sm={3} key={index} className="mt-2 me-4">
-                <Card>
-                  <img
-                    src={image}
-                    alt={`Work photo ${index + 1}`}
-                    className="card-img-top seekerPhoto"
-                  />
-                  <Card.Footer>
-                    <Button variant="light" onClick={() => handleOpen(image)}>
-                      <SlSizeFullscreen size={20} className="textPrimary " />
-                    </Button>
-                  </Card.Footer>
-                </Card>
-              </Col>
-            ))}
-          </Row>)}
+        ) : (<Row className="g-2">
+          {workPhotoUrls.map((image: string, index: number) => (
+            <Col xs={12} sm={3} key={index} className="mt-2 me-4">
+              <Card>
+                <img
+                  src={image}
+                  alt={`Work photo ${index + 1}`}
+                  className="card-img-top seekerPhoto"
+                  loading="lazy"
+                />
+                <Card.Footer>
+                  <Button variant="light" onClick={() => handleOpen(image)}>
+                    <SlSizeFullscreen size={20} className="textPrimary " />
+                  </Button>
+                </Card.Footer>
+              </Card>
+            </Col>
+          ))}
+        </Row>)}
       </CExpandablePanel>
 
       <Modal show={open} onHide={handleClose} size="lg">
@@ -72,6 +73,7 @@ export const CUserWorkPhotos: FunctionComponent<Props> = ({ workPhotos }) => {
               src={selectedImage}
               alt="Selected Work Photo"
               style={{ width: "100%", height: "auto", objectFit: "contain" }}
+              loading="lazy"
             />
           )}
         </Modal.Body>

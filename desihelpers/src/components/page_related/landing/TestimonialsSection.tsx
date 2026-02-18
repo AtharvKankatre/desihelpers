@@ -46,6 +46,14 @@ export const TestimonialsSection: React.FC = () => {
 
     return (
         <section className={styles.testimonialsSection}>
+            {/* Background Quote Icon - Positioned absolute in the section */}
+            <div className={styles.quoteIcon}>
+                <svg width="320" height="300" viewBox="0 0 120 100" fill="none" style={{ transform: "rotate(180deg)" }}>
+                    <path d="M0 60C0 48 2 37.3333 6 28C10.6667 18.6667 16.6667 11 24 5C32 -1 40.6667 -3.66667 50 -4V8C42 9.33333 35.3333 12.6667 30 18C24.6667 23.3333 21.6667 30 21 38H50V100H0V60Z" fill="#E2E8F0" />
+                    <path d="M70 60C70 48 72 37.3333 76 28C80.6667 18.6667 86.6667 11 94 5C102 -1 110.667 -3.66667 120 -4V8C112 9.33333 105.333 12.6667 100 18C94.6667 23.3333 91.6667 30 91 38H120V100H70V60Z" fill="#E2E8F0" />
+                </svg>
+            </div>
+
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h2 className={styles.title}>What Our Members Have To Say</h2>
@@ -61,6 +69,7 @@ export const TestimonialsSection: React.FC = () => {
                                 src={activeTestimonial.userImage}
                                 alt={activeTestimonial.name}
                                 className={styles.mainImage}
+                                loading="lazy"
                                 onError={(e) => {
                                     e.currentTarget.src = "https://via.placeholder.com/400x500";
                                 }}

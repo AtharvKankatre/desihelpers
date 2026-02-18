@@ -199,7 +199,7 @@ export const PopularServicesSection: React.FC = () => {
                                     <>
                                         {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
                                         <div className={styles.jobImageContainer}>
-                                            <img src={item.image} alt={item.title} className={styles.jobImage} />
+                                            <img src={item.image} alt={item.title} className={styles.jobImage} loading="lazy" />
                                         </div>
                                         <h3 className={styles.cardTitle}>{item.title}</h3>
                                         <p className={styles.cardDescription}>{item.description}</p>
@@ -225,7 +225,7 @@ export const PopularServicesSection: React.FC = () => {
                                 {item.type === "helper" && (
                                     <>
                                         <div className={styles.helperImageContainer}>
-                                            <img src={item.image} alt={item.name} className={styles.helperImage} />
+                                            <img src={item.image} alt={item.name} className={styles.helperImage} loading="lazy" />
                                         </div>
                                         <h3 className={styles.cardTitle}>{item.name}</h3>
                                         <div className={styles.cardLocation}>

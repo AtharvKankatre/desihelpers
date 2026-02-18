@@ -15,8 +15,8 @@ interface AuthContextType {
   jobCategories: IJobCategories[];
   isProfileBuild: boolean;
   setIsProfileBuild: (status: boolean) => void;
-  email:string;
-  role:string;
+  email: string;
+  role: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -80,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const fetchJobTypesFn = async () => {
-    var result = await ApiService.crud(APIDetails.fetchJobTypes);
+    var result = await ApiService.crud(APIDetails.fetchJobTypes, null, null, { skipLoader: true });
     if (result[0]) {
       setJobCategories(result[1]);
     }

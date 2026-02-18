@@ -2,8 +2,7 @@
 
 
 import styles from "@/styles/Common.module.css";
-import Ctestimonials from "@/components/page_related/landing/Testimonials";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import router from "next/router";
 import base64url from "base64url";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
@@ -32,6 +31,18 @@ import { BlogSection } from "@/components/page_related/landing/BlogSection";
 import { AdPlaceholders } from "@/components/page_related/landing/AdPlaceholders";
 import { FAQSection } from "@/components/page_related/landing/FAQSection";
 import { CTASection } from "@/components/page_related/landing/CTASection";
+
+// Memoize static sections to prevent re-renders when Landing state changes
+const MemoizedHeroSection = memo(HeroSection);
+const MemoizedWhyUsSection = memo(WhyUsSection);
+const MemoizedPopularServicesSection = memo(PopularServicesSection);
+const MemoizedTestimonialsGrid = memo(TestimonialsGrid);
+const MemoizedTestimonialsSection = memo(TestimonialsSection);
+const MemoizedJoinMissionSection = memo(JoinMissionSection);
+const MemoizedBlogSection = memo(BlogSection);
+const MemoizedAdPlaceholders = memo(AdPlaceholders);
+const MemoizedFAQSection = memo(FAQSection);
+const MemoizedCTASection = memo(CTASection);
 
 const Landing: React.FC = () => {
   const userStore = userProfileStore();
@@ -132,34 +143,34 @@ const Landing: React.FC = () => {
   return (
     <div className={styles.displayDetailsWrapper} style={{ paddingTop: 0 }}>
       {/* New Hero Section */}
-      <HeroSection />
+      <MemoizedHeroSection />
 
       {/* Why Us Section */}
-      <WhyUsSection />
+      <MemoizedWhyUsSection />
 
       {/* Popular Services Section */}
-      <PopularServicesSection />
+      <MemoizedPopularServicesSection />
 
       {/* Testimonials Grid Section - Figma Design */}
-      <TestimonialsGrid />
+      <MemoizedTestimonialsGrid />
 
       {/* Testimonials Section - What Our Members Have To Say */}
-      <TestimonialsSection />
+      <MemoizedTestimonialsSection />
 
       {/* Join Mission Section */}
-      <JoinMissionSection />
+      <MemoizedJoinMissionSection />
 
       {/* Blog Section */}
-      <BlogSection />
+      <MemoizedBlogSection />
 
       {/* Ad Placeholders */}
-      <AdPlaceholders />
+      <MemoizedAdPlaceholders />
 
       {/* FAQ Section */}
-      <FAQSection />
+      <MemoizedFAQSection />
 
       {/* CTA Section */}
-      <CTASection />
+      <MemoizedCTASection />
 
 
 

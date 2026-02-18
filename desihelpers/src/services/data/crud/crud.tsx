@@ -11,6 +11,7 @@ import { IToken } from "@/models/TokenModel";
 import { Routes } from "@/services/routes/Routes";
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import Cookies from "js-cookie";
+import { useLoaderStore } from "@/stores/LoaderStore";
 
 // Define the base URL for your API
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -43,19 +44,39 @@ class ApiService {
 
     // Setup the interceptor for axios
     this.axiosInstance.interceptors.request.use(async (config) => {
+      // Show loader on request start if not skipped
+      if (config.headers["skipLoader"] !== "true") {
+        useLoaderStore.getState().showLoader();
+      }
 
       if (config.headers["needsBearer"]) {
         let accessToken: string = CookieService.accessToken() ?? "";
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
 
+      // Remove custom header before sending request (optional, but cleaner)
+      // delete config.headers["skipLoader"]; 
+
       return config;
     });
 
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Hide loader on successful response if it was shown
+        // Note: We can't easily know if it was shown here without checking config again.
+        // But hideLoader is idempotent (decrements count), so we need to match showLoader calls.
+        if (response.config.headers["skipLoader"] !== "true") {
+          useLoaderStore.getState().hideLoader();
+        }
+        return response;
+      },
       async (error: AxiosError) => {
         const originalRequest = error.config as CustomAxiosRequestConfig;
+
+        // Hide loader if it was shown
+        if (originalRequest && originalRequest.headers && originalRequest.headers["skipLoader"] !== "true") {
+          useLoaderStore.getState().hideLoader();
+        }
 
         // Check if the error is 401 i.e. unauthorized
         if (error.response?.status == 401 && !originalRequest._retry) {
@@ -85,13 +106,14 @@ class ApiService {
   }
 
   // This is the main function that is called outside the class
-  public async crud(api: any[], data?: any, putData?: any): Promise<any> {
+  public async crud(api: any[], data?: any, putData?: any, options?: { skipLoader?: boolean }): Promise<any> {
     let url: string = this.shouldDataBeAdded(api, data);
     let type: ApiType = api[1];
     let needsBearer: boolean = api[2];
     let config: object = {
       headers: {
         needsBearer: needsBearer,
+        skipLoader: options?.skipLoader ? "true" : "false",
       },
     };
     var res;

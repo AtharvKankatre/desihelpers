@@ -8,6 +8,7 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import Swal from "sweetalert2";
 import CookieService from "@/services/authorization/CookieService";
+import SignupLeftPanel from "@/components/auth/SignupLeftPanel";
 
 // Define the form data interface for all steps
 interface SignupFormData {
@@ -428,64 +429,7 @@ const Login = () => {
     }
   };
 
-  // Render left panel (shared between signup and login)
-  const renderLeftPanel = () => (
-    <div className={style.signupLeftPanel}>
-      {/* Hero Section with Images */}
-      <div className={style.signupHeroSection}>
-        {/* Background Arrow - increased size */}
-        <Image
-          src="/newassets/arrow.png"
-          alt=""
-          width={700}
-          height={950}
-          className={style.signupBackgroundArrow}
-        />
 
-        {/* Small green decorative arrow top left */}
-        <span className={style.signupDecorGreen}>✦</span>
-
-        {/* Small red X decoration */}
-        <span className={style.signupDecorX}>✕</span>
-
-        {/* Center design - combined handshake, dollar, arrows */}
-        <Image
-          src="/newassets/centerdesign.png"
-          alt="Handshake"
-          width={320}
-          height={320}
-          className={style.signupCenterDesign}
-        />
-      </div>
-
-      {/* Tagline */}
-      <h2 className={style.signupTagline}>
-        Connecting <span className={style.signupHighlightOrange}>Seekers</span> And{" "}
-        <span className={style.signupHighlightOrange}>Providers</span> In ONE Trusted DESI
-        Community Platform.
-      </h2>
-
-      {/* Description */}
-      <p className={style.signupDescription}>
-        A trusted space where families and friends can easily find help, share
-        services, and support each other—just like asking a neighbors back home,
-        but online this time.
-      </p>
-
-      {/* Stats */}
-      <div className={style.signupStats}>
-        <div className={style.signupStatItem}>
-          <span className={style.signupStatNumber}>200+</span>
-          <span className={style.signupStatLabel}>Daily Visitors</span>
-        </div>
-        <div className={style.signupStatDivider}></div>
-        <div className={style.signupStatItem}>
-          <span className={style.signupStatNumber}>1200+</span>
-          <span className={style.signupStatLabel}>Number of members</span>
-        </div>
-      </div>
-    </div>
-  );
 
   // Render progress bar
   const renderProgressBar = () => (
@@ -947,7 +891,7 @@ const Login = () => {
   // Render Login View
   const renderLoginView = () => (
     <div className={style.signupContainer}>
-      {renderLeftPanel()}
+      <SignupLeftPanel />
       <div className={style.signupRightPanel}>
         <div className={style.signupFormContainer}>
           <button className={style.closeButton} onClick={() => router.push("/Landing")}>
@@ -1047,7 +991,7 @@ const Login = () => {
   // Render Signup View with Steps
   const renderSignupView = () => (
     <div className={style.signupContainer}>
-      {renderLeftPanel()}
+      <SignupLeftPanel />
       <div className={style.signupRightPanel}>
         <div className={style.signupFormContainer}>
           <button className={style.closeButton} onClick={() => router.push("/Landing")}>

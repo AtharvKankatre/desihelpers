@@ -136,6 +136,7 @@ const UserProfile: FunctionComponent = () => {
                             src="/assets/icons/icon_login 1.svg"
                             alt="login Icon"
                             className={styles.infoIcons}
+                            loading="lazy"
                           />
                         </OverlayTrigger>
                         <CH6Label label={"Login"} />
@@ -145,6 +146,7 @@ const UserProfile: FunctionComponent = () => {
                         src="/assets/icons/icon_arrowhead_right.svg"
                         alt=""
                         className={styles.infoIconsArrow}
+                        loading="lazy"
                       />
 
                       <div className={styles.step}>
@@ -160,6 +162,7 @@ const UserProfile: FunctionComponent = () => {
                             src="/assets/icons/icon_user.svg"
                             alt="Build Profile Icon"
                             className={styles.infoIcons}
+                            loading="lazy"
                           />
                         </OverlayTrigger>
                         <CH6Label label={"Build Profile"} />
@@ -183,6 +186,7 @@ const UserProfile: FunctionComponent = () => {
                             src="/assets/icons/icon_thumb.svg"
                             alt="Save Icon"
                             className={styles.infoIcons}
+                            loading="lazy"
                           />
                         </OverlayTrigger>
                         <CH6Label label={"Save"} />
@@ -208,6 +212,7 @@ const UserProfile: FunctionComponent = () => {
                             src="/assets/icons/icon_skillset.svg"
                             alt="Add Skills Icon"
                             className={styles.infoIcons}
+                            loading="lazy"
                           />
                         </OverlayTrigger>
                         <CH6Label label={"Add your Skills"} />
@@ -430,77 +435,75 @@ const UserProfile: FunctionComponent = () => {
         <div className="col-md-12">
           <div className={`container p-4 mb-4  ${styles.viewProfileMain}`}>
             <div className="row">
-            <div className="col-md-4 d-flex ">
-  <CH2Label label="My Profile" />
-  {isSeeker === true && (
-    <div className="ms-2">
-      <CCopyLinkButton id={profile?._id || ""} />
-    </div>
-  )}
-</div>
-
-                <div className="col-md-8 col-sm-12 align-content-center text-end">
-
-                  <div className="w-auto mb-2 float-end">
-                    <CButton
-                      buttonClassName="btn bgSecondary btn-sm text-light"
-                      label="Change Password"
-                      onClick={handleChangePasswordModal}
-                    />
+              <div className="col-md-4 d-flex ">
+                <CH2Label label="My Profile" />
+                {isSeeker === true && (
+                  <div className="ms-2">
+                    <CCopyLinkButton id={profile?._id || ""} />
                   </div>
+                )}
+              </div>
 
-                  <div
-                    className={`${
-                      isProfileBuild ? "w-auto float-end" : "d-none"
-                      }`}
-                  > 
-                    {isSeeker == true && profile?.jobDetails?.length == 0 ? (
-                      <CButton
-                        buttonClassName="btn btn-warning btn-sm"
-                        label="Add Your Skills"
-                        onClick={goToSeekerProfile}
-                      />
-                    ) : null}
-                  </div>
+              <div className="col-md-8 col-sm-12 align-content-center text-end">
 
-                  <div
-                    className={`${
-                      isProfileBuild ? "w-auto float-end mb-2" : "d-none"
-                      }`}
-                  >
-                    {isSeeker == true && profile?.jobDetails?.length != 0 ? (
-                      <>
-                        <CButton
-                          buttonClassName="btn btn-warning btn-sm"
-                          label="Edit Your Skills"
-                          onClick={goToSeekerProfile}
-                        />
+                <div className="w-auto mb-2 float-end">
+                  <CButton
+                    buttonClassName="btn bgSecondary btn-sm text-light"
+                    label="Change Password"
+                    onClick={handleChangePasswordModal}
+                  />
+                </div>
 
-                      </>
-                    ) : null}
-                  </div>
-                 
-                  <div
-                    className={`${isProfileBuild ? "w-auto float-end" : "d-none"
-                      }`}
-                  >
+                <div
+                  className={`${isProfileBuild ? "w-auto float-end" : "d-none"
+                    }`}
+                >
+                  {isSeeker == true && profile?.jobDetails?.length == 0 ? (
                     <CButton
                       buttonClassName="btn btn-warning btn-sm"
-                      label="Edit Profile"
-                      onClick={goToEditProfile}
-                    />         
-                  </div>
-
-                  <div className="w-auto float-end">
-                    {isSeeker == false ? (
-                      <CBecomeServiceProvider
-                        showModal={showSeekerModal}
-                        setShowModal={setShowSeekerModal}
-                      />
-                    ) : null}
-                  </div>
+                      label="Add Your Skills"
+                      onClick={goToSeekerProfile}
+                    />
+                  ) : null}
                 </div>
-                <ToastContainer />
+
+                <div
+                  className={`${isProfileBuild ? "w-auto float-end mb-2" : "d-none"
+                    }`}
+                >
+                  {isSeeker == true && profile?.jobDetails?.length != 0 ? (
+                    <>
+                      <CButton
+                        buttonClassName="btn btn-warning btn-sm"
+                        label="Edit Your Skills"
+                        onClick={goToSeekerProfile}
+                      />
+
+                    </>
+                  ) : null}
+                </div>
+
+                <div
+                  className={`${isProfileBuild ? "w-auto float-end" : "d-none"
+                    }`}
+                >
+                  <CButton
+                    buttonClassName="btn btn-warning btn-sm"
+                    label="Edit Profile"
+                    onClick={goToEditProfile}
+                  />
+                </div>
+
+                <div className="w-auto float-end">
+                  {isSeeker == false ? (
+                    <CBecomeServiceProvider
+                      showModal={showSeekerModal}
+                      setShowModal={setShowSeekerModal}
+                    />
+                  ) : null}
+                </div>
+              </div>
+              <ToastContainer />
             </div>
 
             <Row className="mt-2 mb-4 modalImportantInfo pt-4">
@@ -597,8 +600,7 @@ const UserProfile: FunctionComponent = () => {
                       <CDisplay
                         heading="OK With Pets"
                         icon="/assets/icons/form_icons/icon_pets.svg"
-                        label={`${
-                          profile?.okWithPets == true
+                        label={`${profile?.okWithPets == true
                             ? "Yes"
                             : profile?.okWithPets == false
                               ? "No"
@@ -627,7 +629,7 @@ const UserProfile: FunctionComponent = () => {
                         rel="noopener noreferrer"
                         style={{ cursor: "pointer" }}
                       >
-                       Click to open link
+                        Click to open link
                       </Link>
                     )
                   }
@@ -648,7 +650,7 @@ const UserProfile: FunctionComponent = () => {
                         rel="noopener noreferrer"
                         style={{ cursor: "pointer" }}
                       >
-                       Click to open link
+                        Click to open link
                       </Link>
                     )
                   }
@@ -664,14 +666,14 @@ const UserProfile: FunctionComponent = () => {
                       "Not provided"
                     ) : (
                       <Link
-                      href={`${profile?.websiteLink!}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ cursor: "pointer" }}
-                    >
-                      Click to open link
-                    </Link>
-                    
+                        href={`${profile?.websiteLink!}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ cursor: "pointer" }}
+                      >
+                        Click to open link
+                      </Link>
+
                     )
                   }
                 />
@@ -724,8 +726,7 @@ const UserProfile: FunctionComponent = () => {
                 </div>
 
                 <div
-                  className={`${
-                    isProfileBuild ? "w-auto float-end" : "d-none"
+                  className={`${isProfileBuild ? "w-auto float-end" : "d-none"
                     }`}
                 >
                   {isSeeker == true && profile?.jobDetails?.length == 0 ? (
@@ -738,8 +739,7 @@ const UserProfile: FunctionComponent = () => {
                 </div>
 
                 <div
-                  className={`${
-                    isProfileBuild ? "w-auto float-end" : "d-none"
+                  className={`${isProfileBuild ? "w-auto float-end" : "d-none"
                     }`}
                 >
                   {isSeeker == true && profile?.jobDetails?.length != 0 ? (
@@ -752,8 +752,7 @@ const UserProfile: FunctionComponent = () => {
                 </div>
 
                 <div
-                  className={`${
-                    isProfileBuild ? "w-auto float-end" : "d-none"
+                  className={`${isProfileBuild ? "w-auto float-end" : "d-none"
                     }`}
                 >
                   <CButton
@@ -869,8 +868,7 @@ const UserProfile: FunctionComponent = () => {
                       <CDisplay
                         heading="OK With Pets"
                         icon="/assets/icons/form_icons/icon_pets.svg"
-                        label={`${
-                          profile?.okWithPets == true
+                        label={`${profile?.okWithPets == true
                             ? "Yes"
                             : profile?.okWithPets == false
                               ? "No"
@@ -920,7 +918,7 @@ const UserProfile: FunctionComponent = () => {
                         rel="noopener noreferrer"
                         style={{ cursor: "pointer" }}
                       >
-                         Click to open link
+                        Click to open link
                       </Link>
                     )
                   }
@@ -941,7 +939,7 @@ const UserProfile: FunctionComponent = () => {
                         rel="noopener noreferrer"
                         style={{ cursor: "pointer" }}
                       >
-                         Click to open link
+                        Click to open link
                       </Link>
                     )
                   }
