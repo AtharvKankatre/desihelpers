@@ -1,0 +1,14 @@
+{
+  "welcome_banner": "DesiHelpers.com में आपका स्वागत है",
+  "post_jobs": "नौकरियां पोस्ट करें",
+  "available_job_seekers": "उपलब्ध नौकरी खोजने वाले",
+  "trending_jobs": "(स्थानीय क्षेत्र) में ट्रेंडिंग नौकरियां",
+  "job_titles": {
+    "nanny": "दाई",
+    "caterer": "कैटरर",
+    "house_help": "गृह सहायक",
+    "event": "इवेंट"
+  },
+  "English": "अंग्रेज़ी",
+  "Hindi": "हिन्दी"
+}
