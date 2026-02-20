@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import type { AppProps } from "next/app";
 import { CGlobalLayout } from "@/components/global/header/CGlobalLayout";
+import { PageLoader } from "@/components/global/loader/PageLoader";
 import { useEffect } from "react";
 import { AuthProvider } from "@/services/authorization/AuthContext";
 import Head from 'next/head';
@@ -55,6 +56,7 @@ export default function App({ Component, pageProps }: AppProps) {
         }}
       />
       <AuthProvider>
+        <PageLoader />
         <CGlobalLayout>
           <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
         </CGlobalLayout>{" "}

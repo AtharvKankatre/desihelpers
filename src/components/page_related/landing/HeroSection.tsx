@@ -17,7 +17,7 @@ const fallbackJobCards = [
     location: "Bothell, Washington",
     date: "Mon 25, 2025",
     rate: "$25-$35 / hr",
-    image: "/assets/illustrations/nanny.png",
+    image: "/assets/daycare-center.png",
     urgent: true,
   },
   {
@@ -27,7 +27,7 @@ const fallbackJobCards = [
     location: "Bothell, Washington",
     date: "Mon 25, 2025",
     rate: "-",
-    image: "/assets/illustrations/movers.png",
+    image: "/assets/mover-packer.png",
     urgent: true,
   },
   {
@@ -37,7 +37,7 @@ const fallbackJobCards = [
     location: "Oakland, California",
     date: "Sep 12, 2025",
     rate: "-",
-    image: "/assets/illustrations/mothers_helper.png",
+    image: "/assets/mothers_helper.png",
     urgent: true,
   },
   {
@@ -47,7 +47,7 @@ const fallbackJobCards = [
     location: "Oakland, California",
     date: "Oct 1, 2025",
     rate: "-",
-    image: "https://cdn-icons-png.flaticon.com/512/3014/3014520.png",
+    image: "/assets/tiffin-services.png",
     urgent: true,
   },
   {
@@ -57,7 +57,7 @@ const fallbackJobCards = [
     location: "Issaquah, Washington",
     date: "Sep 12, 2025",
     rate: "$15-$25 / hr",
-    image: "/assets/illustrations/house_cleaners.png",
+    image: "/assets/house_cleaner.png",
     urgent: true,
   },
   {
@@ -67,7 +67,7 @@ const fallbackJobCards = [
     location: "Adair County, Kentucky",
     date: "Sep 19, 2025",
     rate: "$25-$35 / hr",
-    image: "/assets/illustrations/cake_bakers.png",
+    image: "/assets/cake-baker.png",
     urgent: true,
   },
   {
@@ -77,7 +77,7 @@ const fallbackJobCards = [
     location: "Morrisville, Pennsylvania",
     date: "Jul 1, 2025",
     rate: "$15-$25 / hr",
-    image: "/assets/illustrations/servers.png",
+    image: "/assets/server.png",
     urgent: true,
   },
 ];
@@ -143,7 +143,7 @@ const _HeroSection: React.FC = () => {
             location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location not specified",
             date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
             rate: job.payRange || "-",
-            image: job.jobType?.image || "/assets/illustrations/nanny.png", // Use job type image or default
+            image: job.jobType?.image || "/assets/daycare-center.png", // Use job type image or default
             urgent: job.urgent || false,
           }));
           setJobs(apiJobs);

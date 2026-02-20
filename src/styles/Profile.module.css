@@ -49,7 +49,7 @@
 .navLink {
     color: white;
     text-decoration: none;
-    font-size: 14px;
+    font-size: var(--body-small-size);
     font-weight: 500;
     transition: color 0.2s ease;
 }
@@ -79,7 +79,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     font-weight: 500;
 }
 
@@ -217,7 +217,7 @@
 
 .profileName {
     color: white;
-    font-size: 24px;
+    font-size: var(--h3-size);
     font-weight: 600;
     margin: 0 0 6px 0;
 }
@@ -250,7 +250,7 @@
 .profileLocation {
     color: #111827;
     /* Black color as requested */
-    font-size: 13px;
+    font-size: var(--body-small-size);
     display: flex;
     align-items: center;
     gap: 4px;
@@ -275,7 +275,7 @@
 .actionBtn {
     padding: 8px 16px;
     border-radius: 25px;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -363,7 +363,7 @@
     align-items: center;
     gap: 10px;
     color: #001838;
-    font-size: 14px;
+    font-size: var(--body-small-size);
 }
 
 .contactIconWrapper {
@@ -483,7 +483,7 @@
 
 .cardTitle {
     color: #ff6b35;
-    font-size: 15px;
+    font-size: var(--body-medium-size);
     font-weight: 600;
     margin: 0;
 }
@@ -500,7 +500,7 @@
 
 .cardContent {
     color: #333;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     line-height: 1.6;
 }
 
@@ -528,7 +528,7 @@
 
 .infoValue {
     color: #000;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     font-weight: 600;
 }
 
@@ -556,7 +556,7 @@
 
 .tab {
     padding: 16px 20px;
-    font-size: 14px;
+    font-size: var(--body-small-size);
     color: #666;
     cursor: pointer;
     border-bottom: 3px solid transparent;
@@ -581,7 +581,7 @@
     align-items: center;
     gap: 8px;
     color: #f07c00;
-    font-size: 14px;
+    font-size: var(--body-small-size);
     cursor: pointer;
     padding: 16px 0;
     font-weight: 600;
@@ -683,7 +683,7 @@
 
 .serviceTitle {
     color: #001738;
-    font-size: 16px;
+    font-size: var(--body-medium-size);
     font-weight: 600;
     margin: 0;
 }
@@ -708,13 +708,13 @@
 
 .detailValue {
     color: #000;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     font-weight: 600;
 }
 
 .serviceDescription {
     color: #555;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     line-height: 1.6;
     margin-bottom: 8px;
 }
@@ -723,7 +723,7 @@
     color: #ff6b35;
     background: none;
     border: none;
-    font-size: 13px;
+    font-size: var(--body-small-size);
     cursor: pointer;
     padding: 0;
     font-weight: 500;
@@ -779,7 +779,7 @@
 
 .jobTitle {
     color: #003385;
-    font-size: 16px;
+    font-size: var(--body-medium-size);
     font-weight: 600;
     margin: 0;
 }

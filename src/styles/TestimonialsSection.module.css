@@ -1,13 +1,6 @@
-/* ======================== */
-/* TESTIMONIALS CAROUSEL    */
-/* ======================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
 .testimonialsSection {
     background: #f8fafc;
     padding: 80px 20px;
-    font-family: 'Roboto', sans-serif;
     overflow: hidden;
 }
 
@@ -22,16 +15,18 @@
 }
 
 .title {
-    font-size: 36px;
-    font-weight: 700;
+    font-size: var(--h2-size);
+    font-weight: var(--h2-weight);
     color: #1e3a8a;
     /* Deep blue title */
     margin-bottom: 8px;
+    line-height: var(--h2-line-height);
 }
 
 .subtitle {
-    font-size: 16px;
+    font-size: var(--body-medium-size);
     color: #64748b;
+    line-height: var(--body-medium-line-height);
 }
 
 .contentWrapper {
@@ -188,8 +183,8 @@
 }
 
 .quoteText {
-    font-size: 16px;
-    line-height: 1.8;
+    font-size: var(--body-medium-size);
+    line-height: var(--body-medium-line-height);
     color: #334155;
     margin-bottom: 32px;
     font-weight: 400;
@@ -200,14 +195,15 @@
 }
 
 .authorName {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: var(--body-large-size);
+    font-weight: var(--body-large-weight-semibold);
     color: #1e3a8a;
     margin-bottom: 4px;
+    line-height: var(--body-large-line-height);
 }
 
 .location {
-    font-size: 13px;
+    font-size: var(--body-small-size);
     color: #64748b;
     display: flex;
     align-items: center;

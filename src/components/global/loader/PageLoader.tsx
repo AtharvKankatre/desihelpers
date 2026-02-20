@@ -1,0 +1,76 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import styles from "@/styles/PageLoader.module.css";
+import Image from "next/image";
+
+export const PageLoader: React.FC = () => {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+
+        // Determine loading state changes via Router events
+        const handleStart = (url: string) => {
+            // Only show loader for /jobs routes
+            if (url !== router.asPath && url.startsWith('/jobs')) {
+                // Wait 150ms before showing loader to avoid flash on instant loads
+                timeoutId = setTimeout(() => {
+                    setLoading(true);
+
+                    // FORCE HIDE after 2.5 seconds no matter what,
+                    // so the user isn't stuck waiting forever visually.
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 2500);
+
+                }, 150);
+            }
+        };
+
+        const handleComplete = () => {
+            clearTimeout(timeoutId);
+            setLoading(false);
+        };
+
+        router.events.on("routeChangeStart", handleStart);
+        router.events.on("routeChangeComplete", handleComplete);
+        router.events.on("routeChangeError", handleComplete);
+
+        return () => {
+            router.events.off("routeChangeStart", handleStart);
+            router.events.off("routeChangeComplete", handleComplete);
+            router.events.off("routeChangeError", handleComplete);
+        };
+    }, [router]);
+
+    return (
+        <div className={`${styles.loaderOverlay} ${loading ? styles.loaderOverlayActive : ""}`}>
+            <div className={styles.loaderContent}>
+                <div className={styles.spinnerRing}>
+                    {/* Central Logo */}
+                    <div style={{ position: 'relative', width: '50px', height: '50px' }}>
+                        <Image
+                            src="/DesiHelpers_colored.svg"
+                            alt="DesiHelpers Loading"
+                            fill
+                            style={{ objectFit: 'contain' }}
+                            className={styles.logoImage}
+                            priority
+                        />
+                    </div>
+                </div>
+
+                {/* Loading text with animated dots */}
+                <div className={styles.loaderText}>
+                    Loading
+                    <div className={styles.dots} style={{ display: 'inline-flex', gap: '2px' }}>
+                        <span>.</span>
+                        <span>.</span>
+                        <span>.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};

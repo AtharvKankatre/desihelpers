@@ -100,15 +100,21 @@ const About: React.FC = () => {
 
               <div className={styles.checklist}>
                 <div className={styles.checkItem}>
-                  <FaCheckCircle className={styles.checkIcon} size={20} style={{ color: '#f07c00' }} />
+                  <svg className={styles.checkIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f07c00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
                   <p className={styles.checkText}>
-                    <strong>Posters</strong> can view active profiles nearby and connect instantly—no posting or reposting required.
+                    <strong>Posters can view active profiles nearby and connect instantly—no posting or reposting required.</strong>
                   </p>
                 </div>
                 <div className={styles.checkItem}>
-                  <FaCheckCircle className={styles.checkIcon} size={20} style={{ color: '#f07c00' }} />
+                  <svg className={styles.checkIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f07c00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
                   <p className={styles.checkText}>
-                    <strong>Seekers</strong> can see verified opportunities in their area—without endless group hopping.
+                    <strong>Seekers can see verified opportunities in their area—without endless group hopping.</strong>
                   </p>
                 </div>
               </div>
@@ -125,7 +131,15 @@ const About: React.FC = () => {
             </div>
 
             <div className={styles.imageWrapper}>
-              <img src="/assets/why-us-image-final.png" alt="Desi Helpers - Solving Problems" />
+              <div style={{ position: 'relative', width: '100%', height: '500px' }}>
+                <Image
+                  src="/assets/why-us-image-final.png"
+                  alt="Desi Helpers - Solving Problems"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -143,15 +157,36 @@ const About: React.FC = () => {
 
           <div className={styles.missionGrid}>
             <div className={styles.missionCard}>
-              <img src="/assets/mission-connect-hq.png" alt="Connect" style={{ width: '150px', height: '150px', objectFit: 'contain' }} />
+              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto mb-3' }}>
+                <Image
+                  src="/assets/mission-connect-hq.png"
+                  alt="Connect"
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
               <p>Connect and engage with potential social contacts on our platform</p>
             </div>
             <div className={styles.missionCard}>
-              <img src="/assets/mission-care-hq.png" alt="Care" style={{ width: '150px', height: '150px', objectFit: 'contain' }} />
+              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto mb-3' }}>
+                <Image
+                  src="/assets/mission-care-hq.png"
+                  alt="Care"
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
               <p>Find the nanny or household Care and support your need to elevate your lifestyle</p>
             </div>
             <div className={styles.missionCard}>
-              <img src="/assets/mission-excel-hq.png" alt="Excel" style={{ width: '150px', height: '150px', objectFit: 'contain' }} />
+              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto mb-3' }}>
+                <Image
+                  src="/assets/mission-excel-hq.png"
+                  alt="Excel"
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
               <p>Foster the community culture and Excel together</p>
             </div>
           </div>

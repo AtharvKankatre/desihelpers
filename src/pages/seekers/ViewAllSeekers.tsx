@@ -13,6 +13,8 @@ import { CH3Label } from "@/components/reusable/labels/CH3Label";
 import CCopyLinkButton from "@/components/reusable/CShareLink";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getOptimizedIcon } from "@/utils/iconMapping";
+import Image from "next/image";
 
 const ViewAllSeekers: FunctionComponent = () => {
   const router = useRouter();
@@ -185,25 +187,17 @@ const ViewAllSeekers: FunctionComponent = () => {
       cell: (row: IUserProfileModel) => (
         <div>
           {(row.jobDetails ?? [])
-            .flatMap((detail) =>
-              detail.icons
-                ? [
-                  {
-                    src: detail.icons,
-                    alt: `icon-${detail.jobTypeId}`,
-                    subCategory: detail.subCategory,
-                  },
-                ]
-                : []
-            )
-            .map((icon, i) => (
+            .map((detail, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
-                <img
-                  src={icon.src}
-                  alt={icon.alt}
-                  style={{ width: "24px", height: "24px", marginRight: "10px" }}
-                />
-                <span>{icon.subCategory}</span>
+                <div style={{ position: 'relative', width: '24px', height: '24px', marginRight: '10px' }}>
+                  <Image
+                    src={getOptimizedIcon(detail.subCategory || detail.jobType || "")}
+                    alt={detail.subCategory || "icon"}
+                    fill
+                    style={{ objectFit: 'contain' }}
+                  />
+                </div>
+                <span>{detail.subCategory}</span>
               </div>
             ))}
         </div>

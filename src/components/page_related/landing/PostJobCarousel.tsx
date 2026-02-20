@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { CH2Label } from "@/components/reusable/labels/CH2Label";
 import styles from "@/styles/Common.module.css";
 import { useAuth } from "@/services/authorization/AuthContext";
+import { getOptimizedIcon } from "@/utils/iconMapping";
+import Image from "next/image";
 
 const images = [
   {
@@ -81,7 +83,7 @@ export const PostJobCarousel: React.FC = () => {
   const router = useRouter();
   const { isActive, isProfileBuild } = useAuth();
   const handleImageClick = (path: string, label: string) => {
-   
+
     // const isProfileBuild = sessionStorage.getItem("isProfileBuild") === "true";
     // const isActive = sessionStorage.getItem("isActive") === "true";
 
@@ -171,10 +173,18 @@ export const PostJobCarousel: React.FC = () => {
               style={{ height: "200px", objectFit: "cover" }}
             />
             <div
-              className="position-absolute w-100 text-center text-white bg-dark bg-opacity-50 py-2 rounded-bottom"
+              className="position-absolute w-100 text-center text-white bg-dark bg-opacity-50 py-2 rounded-bottom d-flex align-items-center justify-content-center gap-2"
               style={{ bottom: 0 }}
             >
-              {image.label}
+              <div style={{ position: 'relative', width: '20px', height: '20px' }}>
+                <Image
+                  src={getOptimizedIcon(image.label)}
+                  alt={image.label}
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
+              <span>{image.label}</span>
             </div>
           </div>
         ))}

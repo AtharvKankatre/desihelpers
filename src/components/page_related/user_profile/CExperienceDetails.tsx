@@ -4,6 +4,8 @@ import { CH5Label } from "@/components/reusable/labels/CH5Label";
 import { IUserProfileModel } from "@/models/UserProfileModel";
 import { FunctionComponent } from "react";
 import styles from "@/styles/UserProfiles.module.css"
+import { getOptimizedIcon } from "@/utils/iconMapping";
+import Image from "next/image";
 type Props = {
   profile: IUserProfileModel | null;
 };
@@ -35,7 +37,17 @@ export const CExperienceDetails: FunctionComponent<Props> = ({ profile }) => {
                 {profile?.jobDetails?.map((e) => (
                   <tr key={e.id ?? "-"}>
                     <td className="col-md-2 text-center" scope="row">
-                      {e.jobType ?? "-"}
+                      <div className="d-flex align-items-center justify-content-center gap-2">
+                        <div style={{ position: 'relative', width: '20px', height: '20px' }}>
+                          <Image
+                            src={getOptimizedIcon(e.subCategory || e.jobType || "")}
+                            alt={e.jobType || "icon"}
+                            fill
+                            style={{ objectFit: 'contain' }}
+                          />
+                        </div>
+                        <span>{e.jobType ?? "-"}</span>
+                      </div>
                     </td>
                     <th className="col-md-2 text-center">
                       {e.subCategory ?? "-"}

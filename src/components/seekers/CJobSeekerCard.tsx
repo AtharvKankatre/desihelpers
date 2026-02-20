@@ -12,6 +12,8 @@ import { getWorkPhotoUrls } from "@/utils/s3Helper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CCopyLinkButton from "../reusable/CShareLink";
+import { getOptimizedIcon } from "@/utils/iconMapping";
+import Image from "next/image";
 
 type Props = {
   jobs: IUserProfileModel;
@@ -106,21 +108,17 @@ export const CJobSeekerJob: FunctionComponent<Props> = ({
                   </div>
                 </div>
                 <div className="mb-3 pb-2">
-                  <div>
-                    <div>
-                      {/* Render icons here */}
-                      {icons &&
-                        icons
-                          .split(",")
-                          .map((icon, index) => (
-                            <img
-                              key={index}
-                              src={icon}
-                              alt={`Icon ${index}`}
-                              className={styles.iconSize}
-                            />
-                          ))}
-                    </div>
+                  <div className="d-flex justify-content-center gap-2">
+                    {jobs.jobDetails?.map((detail, index) => (
+                      <div key={index} style={{ position: 'relative', width: '24px', height: '24px' }} title={detail.subCategory}>
+                        <Image
+                          src={getOptimizedIcon(detail.subCategory || detail.jobType || "")}
+                          alt={detail.subCategory || "icon"}
+                          fill
+                          style={{ objectFit: 'contain' }}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="d-flex flex-row w-100 justify-content-between mt-2">

@@ -1,13 +1,6 @@
-/* ======================== */
-/* JOIN MISSION SECTION     */
-/* ======================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
 .section {
     background: #ffffff;
     padding: 80px 20px;
-    font-family: 'Roboto', sans-serif;
 }
 
 .container {
@@ -27,7 +20,7 @@
 }
 
 .subHeader {
-    font-size: 14px;
+    font-size: var(--body-small-size);
     font-weight: 700;
     color: #4b5563;
     text-transform: uppercase;
@@ -36,18 +29,18 @@
 }
 
 .mainHeader {
-    font-size: 42px;
-    font-weight: 700;
+    font-size: var(--h2-size);
+    font-weight: var(--h2-weight);
     color: #003399;
     /* Deep Blue matching image */
     margin-bottom: 24px;
-    line-height: 1.2;
+    line-height: var(--h2-line-height);
 }
 
 .description {
-    font-size: 16px;
+    font-size: var(--body-medium-size);
     color: #6b7280;
-    line-height: 1.6;
+    line-height: var(--body-medium-line-height);
     margin-bottom: 32px;
     max-width: 500px;
 }
@@ -63,8 +56,8 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: var(--body-medium-size);
+    font-weight: var(--body-medium-weight-semibold);
     color: #374151;
 }
 
@@ -94,8 +87,8 @@
 }
 
 .cardTitle {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: var(--h3-size);
+    font-weight: var(--h3-weight);
     color: #1f2937;
     margin-bottom: 24px;
 }
@@ -107,7 +100,7 @@
 .progressLabels {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: var(--caption-size);
     color: #6b7280;
     margin-bottom: 8px;
 }
@@ -144,7 +137,7 @@
     padding: 14px 20px;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: var(--body-small-size);
     outline: none;
     transition: border-color 0.2s;
     color: #374151;
@@ -165,8 +158,8 @@
     background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
     box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
     color: white;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: var(--body-medium-size);
+    font-weight: var(--body-medium-weight-semibold);
     border: none;
     border-radius: 50px;
     cursor: pointer;

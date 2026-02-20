@@ -17,7 +17,7 @@ const fallbackServices = [
         location: "Bothell, Washington",
         date: "Mon 25, 2025",
         rate: "$25-$35 / hr",
-        image: "/assets/illustrations/nanny.png",
+        image: "/assets/daycare-center.png",
         urgent: true,
     },
     {
@@ -36,7 +36,7 @@ const fallbackServices = [
         location: "Oakland, California",
         date: "Oct 1, 2025",
         rate: "$15-$20 / meal",
-        image: "https://cdn-icons-png.flaticon.com/512/3014/3014520.png",
+        image: "/assets/tiffin-services.png",
         urgent: true,
     },
     {
@@ -47,7 +47,7 @@ const fallbackServices = [
         location: "Adair County, Kentucky",
         date: "Sep 19, 2025",
         rate: "$25-$35 / hr",
-        image: "/assets/illustrations/cake_bakers.png",
+        image: "/assets/cake-baker.png",
         urgent: true,
     },
     {
@@ -66,7 +66,7 @@ const fallbackServices = [
         location: "Morrisville, Pennsylvania",
         date: "Jul 1, 2025",
         rate: "$15-$25 / hr",
-        image: "/assets/illustrations/servers.png",
+        image: "/assets/server.png",
         urgent: true,
     },
     {
@@ -79,13 +79,7 @@ const fallbackServices = [
     },
 ];
 
-// Skill icon mapping
-const skillIcons: { [key: string]: string } = {
-    babysitting: "👶",
-    cooking: "🍳",
-    cleaning: "🧹",
-    tutoring: "📚",
-};
+import { getOptimizedIcon } from "@/utils/iconMapping";
 
 import { Routes } from "@/services/routes/Routes";
 import { useAuth } from "@/services/authorization/AuthContext";
@@ -137,7 +131,7 @@ export const PopularServicesSection: React.FC = () => {
                         location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location specified",
                         date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
                         rate: job.payRange || "-",
-                        image: job.jobType?.image || "/assets/illustrations/nanny.png",
+                        image: job.jobType?.image || "/assets/daycare-center.png",
                         urgent: job.urgent || false,
                     }));
                     combinedRes = [...combinedRes, ...apiJobs];
@@ -149,7 +143,7 @@ export const PopularServicesSection: React.FC = () => {
                         type: "helper",
                         name: seeker.displayName || `${seeker.firstName || ""} ${seeker.lastName || ""}`.trim() || "Helper",
                         location: `${seeker.city || ""}, ${seeker.state || ""}`.trim() || "Location specified",
-                        image: seeker.profilePhoto || "/assets/helpers/sukhreet-kaur-1.png",
+                        image: seeker.profilePhoto || "/assets/daycare-center.png",
                         skills: seeker.jobDetails?.map((jd: any) => jd.jobType).filter(Boolean).slice(0, 4) || ["babysitting", "cooking"]
                     }));
                     combinedRes = [...combinedRes, ...apiSeekers];
@@ -202,8 +196,16 @@ export const PopularServicesSection: React.FC = () => {
                         <span className={styles.cardRate}>{item.rate}</span>
                     </div>
                     <div className={styles.skillIcons}>
-                        {Object.values(skillIcons).map((icon, idx) => (
-                            <span key={idx} className={styles.skillIcon}>{icon}</span>
+                        {["babysitting", "cooking", "cleaning", "tutoring"].map((searchKey, idx) => (
+                            <span key={idx} className={styles.skillIcon} title={searchKey}>
+                                <Image
+                                    src={getOptimizedIcon(searchKey)}
+                                    alt={searchKey}
+                                    width={24}
+                                    height={24}
+                                    style={{ objectFit: 'contain' }}
+                                />
+                            </span>
                         ))}
                     </div>
                 </>
@@ -231,8 +233,14 @@ export const PopularServicesSection: React.FC = () => {
                     </div>
                     <div className={styles.skillIcons}>
                         {item.skills?.map((skill: string, idx: number) => (
-                            <span key={idx} className={styles.skillIcon}>
-                                {skillIcons[skill.toLowerCase()] || "✨"}
+                            <span key={idx} className={styles.skillIcon} title={skill}>
+                                <Image
+                                    src={getOptimizedIcon(skill)}
+                                    alt={skill}
+                                    width={24}
+                                    height={24}
+                                    style={{ objectFit: 'contain' }}
+                                />
                             </span>
                         ))}
                     </div>
