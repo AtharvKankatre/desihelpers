@@ -4,11 +4,15 @@ import { CUserAvatar } from "./header_components/CUserAvatar";
 import { Routes } from "@/services/routes/Routes";
 import Link from "next/link";
 import { useAuth } from "@/services/authorization/AuthContext";
-import React, { FunctionComponent, useState, useEffect } from "react";
-import { Fade, Zoom } from "@mui/material";
+import React, { FunctionComponent, useState, useEffect, memo } from "react";
+import dynamic from "next/dynamic";
+import { Zoom } from "@mui/material";
 import { useRouter } from "next/router";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
-import { CMobileCanvas } from "@/components/global/mobile_canvas/CMobileCanvas";
+
+const CMobileCanvas = dynamic(() => import("@/components/global/mobile_canvas/CMobileCanvas").then(mod => mod.CMobileCanvas));
+const CNotificationPopup = dynamic(() => import("./header_components/CNotificationPopup").then(mod => mod.CNotificationPopup));
+const CFeedbackModal = dynamic(() => import("./header_components/CFeedbackModal").then(mod => mod.CFeedbackModal));
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import Roles from "@/constants/ERoles";
@@ -16,11 +20,10 @@ import styles from "@/styles/Common.module.css";
 import Image from "next/image";
 
 
-import { CNotificationPopup } from "./header_components/CNotificationPopup";
-import { CFeedbackModal } from "./header_components/CFeedbackModal";
+// ... imports
 // ... imports
 
-export const CHeader = () => {
+const _CHeader = () => {
   const { mobile, tablet } = useAppMediaQuery();
   const router = useRouter();
   const isHidden = router.pathname === Routes.mapSearch;
@@ -200,4 +203,5 @@ export const CHeader = () => {
       <CFeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </nav>
   );
-};
+}; export const CHeader = memo(_CHeader);
+export default CHeader;

@@ -1,7 +1,6 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/globals.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import type { AppProps } from "next/app";
-import "bootstrap/dist/css/bootstrap.css";
 import { CGlobalLayout } from "@/components/global/header/CGlobalLayout";
 import { useEffect } from "react";
 import { AuthProvider } from "@/services/authorization/AuthContext";

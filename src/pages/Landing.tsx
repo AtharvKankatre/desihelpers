@@ -12,7 +12,6 @@ import ApiService from "@/services/data/crud/crud";
 import { userProfileStore } from "@/stores/UserProfileStore";
 import { IUserProfileModel } from "@/models/UserProfileModel";
 import { useAuth } from "@/services/authorization/AuthContext";
-import JobSeekerModal from "@/components/page_related/landing/PromptModalForSeeker";
 import { jobStore } from "@/stores/JobStore";
 import { seekerStore } from "@/stores/SeekerStore";
 import { CCommonLoader } from "@/components/static/CommonLoader";
@@ -25,13 +24,15 @@ import { useRef } from "react";
 import { HeroSection } from "@/components/page_related/landing/HeroSection";
 import { WhyUsSection } from "@/components/page_related/landing/WhyUsSection";
 import { PopularServicesSection } from "@/components/page_related/landing/PopularServicesSection";
-import { TestimonialsSection } from "@/components/page_related/landing/TestimonialsSection";
-import { TestimonialsGrid } from "@/components/page_related/landing/TestimonialsGrid";
-import { JoinMissionSection } from "@/components/page_related/landing/JoinMissionSection";
-import { BlogSection } from "@/components/page_related/landing/BlogSection";
-import { AdPlaceholders } from "@/components/page_related/landing/AdPlaceholders";
-import { FAQSection } from "@/components/page_related/landing/FAQSection";
-import { CTASection } from "@/components/page_related/landing/CTASection";
+import dynamic from "next/dynamic";
+
+const TestimonialsGrid = dynamic(() => import("@/components/page_related/landing/TestimonialsGrid").then(mod => mod.TestimonialsGrid));
+const JoinMissionSection = dynamic(() => import("@/components/page_related/landing/JoinMissionSection").then(mod => mod.JoinMissionSection));
+const BlogSection = dynamic(() => import("@/components/page_related/landing/BlogSection").then(mod => mod.BlogSection));
+const AdPlaceholders = dynamic(() => import("@/components/page_related/landing/AdPlaceholders").then(mod => mod.AdPlaceholders));
+const FAQSection = dynamic(() => import("@/components/page_related/landing/FAQSection").then(mod => mod.FAQSection));
+const CTASection = dynamic(() => import("@/components/page_related/landing/CTASection").then(mod => mod.CTASection));
+const JobSeekerModal = dynamic(() => import("@/components/page_related/landing/PromptModalForSeeker"));
 
 const Landing: React.FC = () => {
   const userStore = userProfileStore();

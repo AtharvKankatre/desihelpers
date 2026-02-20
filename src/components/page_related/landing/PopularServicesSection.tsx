@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, memo } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import styles from "@/styles/PopularServices.module.css";
 import ApiService from "@/services/data/crud/crud";
@@ -179,7 +180,14 @@ export const PopularServicesSection: React.FC = () => {
                 <>
                     {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
                     <div className={styles.jobImageContainer}>
-                        <img src={item.image} alt={item.title} className={styles.jobImage} />
+                        <Image
+                            src={item.image}
+                            alt={item.title}
+                            className={styles.jobImage}
+                            width={280}
+                            height={180}
+                            style={{ objectFit: 'cover' }}
+                        />
                     </div>
                     <h3 className={styles.cardTitle}>{item.title}</h3>
                     <p className={styles.cardDescription}>{item.description}</p>
@@ -205,7 +213,14 @@ export const PopularServicesSection: React.FC = () => {
             {item.type === "helper" && (
                 <>
                     <div className={styles.helperImageContainer}>
-                        <img src={item.image} alt={item.name} className={styles.helperImage} />
+                        <Image
+                            src={item.image}
+                            alt={item.name}
+                            className={styles.helperImage}
+                            width={280}
+                            height={280}
+                            style={{ objectFit: 'cover' }}
+                        />
                     </div>
                     <h3 className={styles.cardTitle}>{item.name}</h3>
                     <div className={styles.cardLocation}>
@@ -285,5 +300,5 @@ export const PopularServicesSection: React.FC = () => {
     );
 };
 
-export default PopularServicesSection;
+export default memo(PopularServicesSection);
 

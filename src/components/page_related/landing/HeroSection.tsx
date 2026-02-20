@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/HeroSection.module.css";
 import { Routes } from "@/services/routes/Routes";
@@ -119,7 +119,10 @@ const wordCloudItems = [
   { text: "Packer", top: "82%", left: "88%", size: "16px" },
 ];
 
-export const HeroSection: React.FC = () => {
+
+import Image from "next/image";
+
+const _HeroSection: React.FC = () => {
   const router = useRouter();
   const { isActive, isProfileBuild } = useAuth();
   const [activeTab, setActiveTab] = useState<"findJob" | "hireSomeone">("findJob");
@@ -196,18 +199,28 @@ export const HeroSection: React.FC = () => {
     <div className={styles.heroContainer}>
       {/* Background Text Images - Left and Right */}
       <div className={styles.backgroundTextImages}>
-        <img
-          src="/newassets/LeftText.png"
-          alt=""
-          className={styles.leftTextImage}
-          aria-hidden="true"
-        />
-        <img
-          src="/newassets/RightText.png"
-          alt=""
-          className={styles.rightTextImage}
-          aria-hidden="true"
-        />
+        <div className={styles.leftTextImage}>
+          <Image
+            src="/newassets/LeftText.png"
+            alt=""
+            width={400}
+            height={600}
+            priority
+            aria-hidden="true"
+            style={{ objectFit: 'contain' }}
+          />
+        </div>
+        <div className={styles.rightTextImage}>
+          <Image
+            src="/newassets/RightText.png"
+            alt=""
+            width={400}
+            height={600}
+            priority
+            aria-hidden="true"
+            style={{ objectFit: 'contain' }}
+          />
+        </div>
       </div>
 
       {/* Toggle Buttons with Horizontal Lines (Moved Above Headline) */}
@@ -270,7 +283,13 @@ export const HeroSection: React.FC = () => {
               {job.urgent && <span className={styles.urgentBadge}>URGENT</span>}
 
               <div className={styles.cardImage}>
-                <img src={job.image} alt={job.title} />
+                <Image
+                  src={job.image}
+                  alt={job.title}
+                  width={200}
+                  height={150}
+                  style={{ objectFit: 'cover' }}
+                />
               </div>
 
               <h3 className={styles.cardTitle}>{job.title}</h3>
@@ -308,5 +327,6 @@ export const HeroSection: React.FC = () => {
   );
 };
 
+export const HeroSection = memo(_HeroSection);
 export default HeroSection;
 

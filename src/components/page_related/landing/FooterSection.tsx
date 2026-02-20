@@ -1,16 +1,23 @@
-import React from "react";
+import React, { memo } from "react";
+import Image from "next/image";
 import styles from "@/styles/FooterSection.module.css";
 // Using react-icons since @fortawesome/free-brands-svg-icons is not installed
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube, FaTwitter } from "react-icons/fa";
 import Link from "next/link";
 
-export const FooterSection: React.FC = () => {
+const _FooterSection: React.FC = () => {
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
                 {/* Brand Column */}
                 <div className={styles.brandColumn}>
-                    <img src="/DesiHelpers_without-tag-line.svg" alt="DesiHelpers" className={styles.logoImage} style={{ maxHeight: "40px", width: "auto" }} />
+                    <Image
+                        src="/DesiHelpers_without-tag-line.svg"
+                        alt="DesiHelpers"
+                        width={150}
+                        height={40}
+                        style={{ height: "40px", width: "auto" }}
+                    />
                     <div className={styles.socialIcons}>
                         <a href="#" className={styles.iconLink}><FaFacebookF /></a>
                         <a href="#" className={styles.iconLink}><FaInstagram /></a>
@@ -61,3 +68,4 @@ export const FooterSection: React.FC = () => {
         </footer>
     );
 };
+export const FooterSection = memo(_FooterSection);
