@@ -48,23 +48,31 @@
     margin: 0 auto;
 }
 
-/* Cards Grid - 24px gap */
-.cardsGrid {
-    display: flex;
-    gap: 24px;
-    overflow-x: auto;
-    padding: 10px 5px;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    padding-bottom: 20px;
-    justify-content: center;
-    /* Center cards if they don't fill width */
-    /* Add space for shadow and hover lift */
-    perspective: 1000px;
+/* Marquee Wrapper - clips overflow and adds fade edges */
+.marqueeWrapper {
+    overflow: hidden;
+    position: relative;
+    padding: 10px 0 20px;
+    mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
 }
 
-.cardsGrid::-webkit-scrollbar {
-    display: none;
+/* Marquee Track - holds duplicated cards and animates */
+.marqueeTrack {
+    display: flex;
+    gap: 24px;
+    width: max-content;
+    animation: marqueeScroll 35s linear infinite;
+}
+
+@keyframes marqueeScroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /* Card - 200px width, 8px radius */
@@ -258,14 +266,16 @@
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     font-weight: 500;
-    color: #1e40af; /* Matches card title blue */
+    color: #1e40af;
+    /* Matches card title blue */
     text-decoration: underline;
     cursor: pointer;
     transition: color 0.2s ease;
 }
 
 .exploreLink:hover {
-    color: #f97316; /* Orange hover */
+    color: #f97316;
+    /* Orange hover */
 }
 
 /* Register Button - Orange gradient, pill shape */
@@ -308,12 +318,9 @@
         font-size: 14px;
     }
 
-    .cardsGrid {
-        gap: 12px;
-        justify-content: flex-start;
-        padding-left: 15px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .marqueeTrack {
+        gap: 16px;
+        animation-duration: 25s;
     }
 
     .card {

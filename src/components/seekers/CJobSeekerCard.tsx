@@ -9,7 +9,7 @@ import { useAuth } from "@/services/authorization/AuthContext";
 import { CDisplaySeekerDetailsModal } from "./CDisplaySeekerDetailsModal";
 import CButton from "../reusable/CButton";
 import { getWorkPhotoUrls } from "@/utils/s3Helper";
-import { ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CCopyLinkButton from "../reusable/CShareLink";
 
@@ -31,7 +31,7 @@ export const CJobSeekerJob: FunctionComponent<Props> = ({
   const dummyImage = "/assets/icons/form_icons/icon_dummy_user.svg"; // Replace with your dummy image path
   const [selectedSeeker, setSelectedSeeker] =
     useState<IUserProfileModel | null>(null);
-    
+
   const settings = {
     dots: true,
     infinite: true,
@@ -76,7 +76,7 @@ export const CJobSeekerJob: FunctionComponent<Props> = ({
       }
       const photo = jobs.profilePhoto;
       const photosArray = photo ? [photo] : [];
-      const urls = getWorkPhotoUrls(bucketName, photosArray);
+      const urls = await getWorkPhotoUrls(bucketName, photosArray);
       setPhotoUrls(urls.length > 0 ? urls[0] : undefined); // Expecting only one URL
     };
 
@@ -124,7 +124,7 @@ export const CJobSeekerJob: FunctionComponent<Props> = ({
                   </div>
                 </div>
                 <div className="d-flex flex-row w-100 justify-content-between mt-2">
-                   <CCopyLinkButton id={jobs._id || ""} /> 
+                  <CCopyLinkButton id={jobs._id || ""} />
                   {!isProfileBuild || !isActive ? (
                     <CButton
                       label="View Details"
@@ -138,8 +138,8 @@ export const CJobSeekerJob: FunctionComponent<Props> = ({
                       source="landing"
                     />
                   )}
-                 
-                <ToastContainer />
+
+                  <ToastContainer />
                 </div>
               </div>
             </div>

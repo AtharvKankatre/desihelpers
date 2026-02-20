@@ -22,6 +22,15 @@ interface CJobsOfferingModalProps {
     initialJobs: JobData[];
 }
 
+const CalendarIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+);
+
 const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
     open,
     onClose,
@@ -44,12 +53,12 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
     const handleAddJob = () => {
         const newJob: JobData = {
             id: Date.now().toString(),
-            title: "New Job",
+            title: "Looking for Nanny Services",
             jobRequirements: "",
-            location: "",
-            startDate: "",
+            location: "Bayonne, New Jersey",
+            startDate: "2025-02-24T18:30",
             workType: "Part Time",
-            reqExperience: "",
+            reqExperience: "5",
             payRange: "$15-$25",
             dietaryPreference: "Veg",
             daysPerWeek: "5",
@@ -88,11 +97,11 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
 
                 {/* Subtitle row: description + Add Jobs link */}
                 <div className={styles.servicesModalActions}>
-                    <p className={styles.modalSubtitle}>
+                    <p className={styles.modalSubtitle} style={{ margin: 0 }}>
                         Add/Delete Job Opportunities to get listed on deshihelper
                     </p>
                     <div className={styles.addServicesLink} onClick={handleAddJob}>
-                        <span>+</span> Add Jobs
+                        <span style={{ fontSize: '18px', fontWeight: '400' }}>+</span> Add Jobs
                     </div>
                 </div>
 
@@ -110,13 +119,15 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                             >
                                 <span className={styles.accordionTitle}>{job.title}</span>
                                 <div className={styles.accordionHeaderActions}>
-                                    <button
-                                        className={styles.removeServiceBtn}
-                                        onClick={(e) => handleRemoveJob(job.id, e)}
-                                        title="Remove Job"
-                                    >
-                                        ×
-                                    </button>
+                                    {jobs.length > 1 && (
+                                        <button
+                                            className={styles.removeServiceBtn}
+                                            onClick={(e) => handleRemoveJob(job.id, e)}
+                                            title="Remove Job"
+                                        >
+                                            ×
+                                        </button>
+                                    )}
                                     <div className={`${styles.accordionChevron} ${job.isExpanded ? styles.rotate180 : ""}`}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                             <path d="M6 9l6 6 6-6" />
@@ -129,21 +140,25 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                             {job.isExpanded && (
                                 <div className={styles.accordionContent}>
                                     {/* Job Requirements */}
-                                    <div className={styles.formSection}>
+                                    <div className={styles.formSection} style={{ padding: 0 }}>
                                         <label className={styles.fieldLabel}>Job Requirements</label>
-                                        <textarea
-                                            className={styles.textarea}
-                                            value={job.jobRequirements}
-                                            onChange={(e) => updateJobField(job.id, 'jobRequirements', e.target.value)}
-                                            placeholder="Need nanny for a 6 month old baby"
-                                        />
-                                        <span className={styles.wordCount}>
-                                            {job.jobRequirements.split(/\s+/).filter(Boolean).length}/250 words
-                                        </span>
+                                        <div className={styles.textareaContainer}>
+                                            <textarea
+                                                className={styles.textarea}
+                                                value={job.jobRequirements}
+                                                onChange={(e) => updateJobField(job.id, 'jobRequirements', e.target.value)}
+                                                placeholder="Need nanny for a 6 month old baby"
+                                                maxLength={1250}
+                                                style={{ minHeight: '100px', padding: '15px' }}
+                                            />
+                                            <span className={styles.wordCount}>
+                                                {job.jobRequirements.length}/250 words
+                                            </span>
+                                        </div>
                                     </div>
 
                                     {/* Location */}
-                                    <div className={styles.formSection}>
+                                    <div className={styles.formSection} style={{ padding: 0, marginTop: '15px' }}>
                                         <label className={styles.fieldLabel}>Location</label>
                                         <select
                                             className={styles.formSelect}
@@ -159,18 +174,21 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                         </select>
                                     </div>
 
-                                    {/* Start Date | Work Type | Req Exp */}
-                                    <div className={styles.formRow} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                                        <div className={styles.formSection}>
+                                    {/* Triple column rows */}
+                                    <div className={styles.formRow3} style={{ marginTop: '15px' }}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Start Date</label>
-                                            <input
-                                                type="datetime-local"
-                                                className={styles.formInput}
-                                                value={job.startDate}
-                                                onChange={(e) => updateJobField(job.id, 'startDate', e.target.value)}
-                                            />
+                                            <div className={styles.inputWithIcon}>
+                                                <input
+                                                    type="datetime-local"
+                                                    className={styles.formInput}
+                                                    value={job.startDate}
+                                                    onChange={(e) => updateJobField(job.id, 'startDate', e.target.value)}
+                                                />
+                                                <div className={styles.fieldIcon}><CalendarIcon /></div>
+                                            </div>
                                         </div>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Work Type</label>
                                             <select
                                                 className={styles.formSelect}
@@ -182,7 +200,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 <option value="Contract">Contract</option>
                                             </select>
                                         </div>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>
                                                 Req Exp <span className={styles.labelHint}>(in yrs)</span>
                                             </label>
@@ -196,9 +214,8 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                         </div>
                                     </div>
 
-                                    {/* Pay Range | Dietary Preference | Days per week */}
-                                    <div className={styles.formRow} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                                        <div className={styles.formSection}>
+                                    <div className={styles.formRow3}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Pay Range</label>
                                             <select
                                                 className={styles.formSelect}
@@ -211,7 +228,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 <option value="$60+">$60+</option>
                                             </select>
                                         </div>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Dietary Preference</label>
                                             <select
                                                 className={styles.formSelect}
@@ -223,7 +240,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 <option value="Veg/Non-Veg">Veg/Non-Veg</option>
                                             </select>
                                         </div>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Days per week</label>
                                             <select
                                                 className={styles.formSelect}
@@ -257,3 +274,4 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
 };
 
 export default CJobsOfferingModal;
+

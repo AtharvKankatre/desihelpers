@@ -839,7 +839,7 @@
 /* ========== Responsive ========== */
 @media (max-width: 768px) {
 
-    /* Hide and adjust desktop filter bar elements */
+    /* Hide desktop filter bar */
     .filterTopRow {
         display: none !important;
     }
@@ -847,119 +847,167 @@
     .filterBar {
         padding: 0;
         background-color: #fff;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: none;
         flex-direction: column;
         align-items: stretch;
         gap: 0;
         position: relative;
         top: auto;
         box-shadow: none;
+        border-radius: 0;
     }
 
     /* Mobile Header Container */
     .mobileFilterContainer {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding: 70px 16px 8px 16px;
+        gap: 16px;
+        padding: 85px 20px 20px 20px;
         width: 100%;
         background-color: #fff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        z-index: 10;
+        border-bottom: 1px solid #f0f0f0;
     }
 
+    /* Search Row */
     .mobileSearchRow {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         width: 100%;
     }
 
     .searchContainerMobile {
         display: flex;
         align-items: center;
-        background-color: #f5f5f5;
-        border-radius: 8px;
-        padding: 6px 10px;
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 50px;
+        padding: 8px 16px;
         flex: 1;
         min-width: 0;
         position: relative;
+        height: 48px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
     }
 
     .searchContainerMobile .newSearchInput {
-        font-size: 12px;
+        font-size: 14px;
+        border: none;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        background: transparent;
+        color: #1e293b;
+    }
+
+    .searchContainerMobile .newSearchInput:focus {
+        box-shadow: none;
+        border: none;
+        outline: none;
     }
 
     .searchContainerMobile .newSearchInput::placeholder {
-        font-size: 12px;
-        color: #aaa;
-        text-align: center;
-    }
-
-    .mobileFilterBtn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background-color: #001838;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 8px 14px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-        flex-shrink: 0;
-        transition: background-color 0.2s;
-    }
-
-    .mobileFilterBtn:active {
-        background-color: #001028;
+        font-size: 14px;
+        color: #94a3b8;
+        text-align: left;
     }
 
     .searchContainerMobile .searchIcon {
+        min-width: 18px;
+        color: #64748b;
+        margin-right: 10px;
         position: static;
         transform: none;
-        margin-right: 8px;
-        /* Ensure specific sizing/color overrides if needed */
     }
 
+    /* Filter Button */
+    .mobileFilterBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: #001838;
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 0 20px;
+        height: 48px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 24, 56, 0.2);
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+    }
+
+    .mobileFilterBtn:active {
+        transform: scale(0.96);
+        background-color: #001028;
+    }
+
+    /* Mobile Title Row */
     .mobileTitleRow {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-top: 4px;
     }
 
     .listTitle {
-        font-size: 18px;
+        font-size: 20px;
+        color: #001838;
+        font-weight: 700;
+        letter-spacing: -0.5px;
         margin: 0;
+    }
+
+    .jobCount {
+        background-color: #00c2a8;
+        font-size: 11px;
+        height: 20px;
+        padding: 0 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        color: #fff;
+        margin-left: 8px;
     }
 
     .mobileActions {
         display: flex;
-        gap: 20px;
+        gap: 12px;
         align-items: center;
     }
 
     .mobileActionBtn {
-        background: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #f8fafc;
         border: none;
-        color: #999;
-        font-size: 18px;
-        padding: 4px;
+        color: #64748b;
+        font-size: 16px;
+        padding: 0;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: color 0.2s;
+        transition: all 0.2s;
     }
 
     .activeMobileBtn {
-        color: #f07c00;
+        background-color: #f07c00;
+        color: white;
+        box-shadow: 0 4px 10px rgba(240, 124, 0, 0.3);
     }
 
-    /* Map View Container Height */
+    /* Map View Container */
     .mapViewContainer {
         height: calc(100vh - 120px);
-        /* Fill space tightly between back-button header and footer */
         margin-bottom: 0;
         flex: none;
     }
@@ -969,24 +1017,29 @@
         margin: 0 !important;
     }
 
-    /* Content Area Mobile */
+    /* Content Area */
     .contentArea {
-        padding: 8px 8px 0 8px;
+        padding: 0 16px 20px 16px;
         margin-top: 0;
     }
 
-    /* Card Grid Mobile */
+    /* Card Grid */
     .cardGrid,
     .seekerGrid {
         grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 8px 4px 16px 4px;
-        margin-top: 4px;
+        gap: 20px;
+        padding: 10px 0 30px 0;
+        margin-top: 0;
     }
 
+    /* Job Card Refinements */
     .jobCard {
-        padding: 16px;
-        gap: 12px;
+        padding: 20px;
+        gap: 16px;
+        border-radius: 16px;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        margin-top: 0;
     }
 
     .cardTopRow {
@@ -994,11 +1047,13 @@
     }
 
     .cardPostedBy {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .cardPrice {
-        font-size: 14px;
+        font-size: 15px;
+        color: #001838;
+        font-weight: 700;
     }
 
     .cardTitleRow {
@@ -1006,34 +1061,47 @@
     }
 
     .cardJobTitle {
-        font-size: 16px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #001838;
     }
 
     .cardOnlineBadge {
-        font-size: 9px;
+        font-size: 10px;
         padding: 2px 8px;
     }
 
     .cardShareBtn {
-        width: 30px;
-        height: 30px;
+        width: 34px;
+        height: 34px;
     }
 
     .cardDetailItem {
-        font-size: 13px;
-        gap: 8px;
+        font-size: 14px;
+        gap: 10px;
+    }
+
+    .cardTags {
+        gap: 6px;
+    }
+
+    .cardTag {
+        padding: 6px 12px;
+        font-size: 12px;
+        border-radius: 50px;
     }
 
     .cardFooter {
-        margin-top: 12px;
-        padding-top: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
     }
 
     /* Mobile Map Header */
     .mobileMapHeader {
         display: flex;
         align-items: center;
-        padding: 70px 16px 12px 16px;
+        padding: 85px 20px 12px 20px;
         background-color: #fff;
         border-bottom: 1px solid #f0f0f0;
         width: 100%;
@@ -1064,7 +1132,7 @@
 
     .mobileFilterSelect {
         width: 100%;
-        padding: 10px 32px 10px 14px;
+        padding: 12px 16px;
         border: 1px solid #e0e0e0;
         border-radius: 8px;
         font-size: 14px;
@@ -1075,7 +1143,7 @@
         -webkit-appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 12px center;
+        background-position: right 14px center;
         background-size: 14px;
         transition: border-color 0.2s;
     }
@@ -1085,7 +1153,7 @@
         box-shadow: 0 0 0 3px rgba(240, 124, 0, 0.1);
     }
 
-    /* ========== Filter Modal ========== */
+    /* Filter Modal */
     .filterModalOverlay {
         position: fixed;
         top: 0;
@@ -1102,10 +1170,12 @@
     .filterModal {
         background-color: #fff;
         width: 100%;
-        height: 100%;
+        height: 90%;
         display: flex;
         flex-direction: column;
         animation: slideUp 0.3s ease-out;
+        border-radius: 16px 16px 0 0;
+        overflow: hidden;
     }
 
     @keyframes slideUp {
@@ -1131,7 +1201,6 @@
         color: #fff;
         font-size: 16px;
         font-weight: 600;
-        letter-spacing: 0.3px;
     }
 
     .filterModalClose {
@@ -1141,7 +1210,6 @@
         font-size: 20px;
         cursor: pointer;
         padding: 4px;
-        line-height: 1;
     }
 
     .filterModalBody {
@@ -1163,13 +1231,11 @@
         color: #333;
         appearance: none;
         -webkit-appearance: none;
-        -moz-appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 14px center;
         background-size: 14px;
         outline: none;
-        transition: border-color 0.2s;
     }
 
     .filterModalSelect:focus {
@@ -1179,6 +1245,7 @@
     .filterModalFooter {
         padding: 16px 20px 24px;
         flex-shrink: 0;
+        border-top: 1px solid #f0f0f0;
     }
 
     .filterModalApply {
@@ -1191,11 +1258,362 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        letter-spacing: 0.5px;
-        transition: opacity 0.2s;
+    }
+}
+
+
+
+.filterBar {
+    padding: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+    top: auto;
+    box-shadow: none;
+}
+
+/* Mobile Header Container */
+.mobileFilterContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 70px 16px 8px 16px;
+    width: 100%;
+    background-color: #fff;
+}
+
+.mobileSearchRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.searchContainerMobile {
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 6px 10px;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+.searchContainerMobile .newSearchInput {
+    font-size: 12px;
+}
+
+.searchContainerMobile .newSearchInput::placeholder {
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+}
+
+.mobileFilterBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #001838;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+}
+
+.mobileFilterBtn:active {
+    background-color: #001028;
+}
+
+.searchContainerMobile .searchIcon {
+    position: static;
+    transform: none;
+    margin-right: 8px;
+    /* Ensure specific sizing/color overrides if needed */
+}
+
+.mobileTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.listTitle {
+    font-size: 18px;
+    margin: 0;
+}
+
+.mobileActions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.mobileActionBtn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.activeMobileBtn {
+    color: #f07c00;
+}
+
+/* Map View Container Height */
+.mapViewContainer {
+    height: calc(100vh - 120px);
+    /* Fill space tightly between back-button header and footer */
+    margin-bottom: 0;
+    flex: none;
+}
+
+.contentAreaFull {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Content Area Mobile */
+.contentArea {
+    padding: 8px 8px 0 8px;
+    margin-top: 0;
+}
+
+/* Card Grid Mobile */
+.cardGrid,
+.seekerGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 8px 4px 16px 4px;
+    margin-top: 4px;
+}
+
+.jobCard {
+    padding: 16px;
+    gap: 12px;
+}
+
+.cardTopRow {
+    margin-bottom: 8px;
+}
+
+.cardPostedBy {
+    font-size: 11px;
+}
+
+.cardPrice {
+    font-size: 14px;
+}
+
+.cardTitleRow {
+    margin-bottom: 8px;
+}
+
+.cardJobTitle {
+    font-size: 16px;
+}
+
+.cardOnlineBadge {
+    font-size: 9px;
+    padding: 2px 8px;
+}
+
+.cardShareBtn {
+    width: 30px;
+    height: 30px;
+}
+
+.cardDetailItem {
+    font-size: 13px;
+    gap: 8px;
+}
+
+.cardFooter {
+    margin-top: 12px;
+    padding-top: 12px;
+}
+
+/* Mobile Map Header */
+.mobileMapHeader {
+    display: flex;
+    align-items: center;
+    padding: 70px 16px 12px 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    width: 100%;
+}
+
+.mobileBackBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a5891;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* Mobile Filter Panel */
+.mobileFilterPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px 16px 16px;
+    background-color: #fff;
+    border-top: 1px solid #f0f0f0;
+}
+
+.mobileFilterSelect {
+    width: 100%;
+    padding: 10px 32px 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.mobileFilterSelect:focus {
+    border-color: #f07c00;
+    box-shadow: 0 0 0 3px rgba(240, 124, 0, 0.1);
+}
+
+/* ========== Filter Modal ========== */
+.filterModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 99999;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.filterModal {
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
     }
 
-    .filterModalApply:active {
-        opacity: 0.85;
+    to {
+        transform: translateY(0);
     }
+}
+
+.filterModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #001838;
+    padding: 16px 20px;
+    flex-shrink: 0;
+}
+
+.filterModalTitle {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.filterModalClose {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+}
+
+.filterModalBody {
+    flex: 1;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.filterModalSelect {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #333;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filterModalSelect:focus {
+    border-color: #001838;
+}
+
+.filterModalFooter {
+    padding: 16px 20px 24px;
+    flex-shrink: 0;
+}
+
+.filterModalApply {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #f07c00, #ff9a2e);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+}
+
+.filterModalApply:active {
+    opacity: 0.85;
 }

@@ -12,8 +12,7 @@ type Props = {
 export const CGlobalLayout: FunctionComponent<Props> = ({ children }) => {
   const router = useRouter();
 
-  // Hide global header on profile page (it has its own integrated header)
-  const hideGlobalHeader = router.pathname === "/profile";
+  const hideGlobalHeader = router.pathname.startsWith("/profile");
 
   return (
     <>

@@ -4,12 +4,20 @@
 .profilePage {
     min-height: 100vh;
     background: #f4f7fb;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 /* Profile header - very dark navy for premium feel */
 .profileHeader {
     background: #001838;
-    padding: 0;
+    padding: 0 !important;
+    margin-top: 0 !important;
     position: relative;
     min-height: 220px;
     margin-bottom: 85px;
@@ -214,6 +222,17 @@
     margin: 0 0 6px 0;
 }
 
+.ratingLocationWrapper {
+    display: flex;
+    flex-direction: column;
+    /* Default stacked */
+}
+
+.locationDivider {
+    display: none;
+    /* Hidden on desktop */
+}
+
 /* Star rating */
 .starRating {
     display: flex;
@@ -254,22 +273,21 @@
 }
 
 .actionBtn {
-    padding: 8px 20px;
+    padding: 8px 16px;
     border-radius: 25px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     transition: all 0.2s ease;
     background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .callBtn {
-    color: #001838;
-    border: 1px solid #001838;
+    color: #003385;
+    border: 1px solid #c0ccda;
 }
 
 .callBtn:hover {
@@ -278,19 +296,25 @@
 }
 
 .callBtn svg {
-    color: #001838;
+    color: #003385;
     width: 14px;
     height: 14px;
 }
 
 .emailBtn {
-    color: #001838;
-    border: 1px solid #001838;
+    color: #003385;
+    border: 1px solid #c0ccda;
 }
 
 .emailBtn:hover {
     background: #f8fafc;
     transform: translateY(-1px);
+}
+
+.emailBtn svg {
+    color: #003385;
+    width: 14px;
+    height: 14px;
 }
 
 .emailIconWrapper {
@@ -311,8 +335,8 @@
 }
 
 .whatsappBtn {
-    color: #22c55e;
-    border: 1px solid #22c55e;
+    color: #10b981;
+    border: 1px solid #a7f3d0;
 }
 
 .whatsappBtn:hover {
@@ -321,7 +345,7 @@
 }
 
 .whatsappBtn svg {
-    color: #22c55e;
+    color: #10b981;
     width: 16px;
     height: 16px;
 }
@@ -387,22 +411,21 @@
     transform: scale(1.05);
 }
 
-/* Social media icons row - lower down with more gap from top actions */
 .socialIconsRow {
     position: absolute;
     top: 72%;
     right: 50px;
     display: flex;
-    gap: 10px;
+    gap: 8px;
     z-index: 30;
 }
 
 .socialIcon {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -438,10 +461,17 @@
 /* Sidebar cards (About Me, Address) */
 .sidebarCard {
     background: white;
-    border-radius: 8px;
-    padding: 18px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e0e6ed;
     position: relative;
+}
+
+.tabSection {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
 .cardHeader {
@@ -489,17 +519,17 @@
 }
 
 .infoLabel {
-    color: #888;
+    color: #666;
     font-size: 11px;
     margin-bottom: 2px;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
 }
 
 .infoValue {
-    color: #333;
+    color: #000;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .infoGrid {
@@ -525,8 +555,8 @@
 }
 
 .tab {
-    padding: 16px 18px;
-    font-size: 13px;
+    padding: 16px 20px;
+    font-size: 14px;
     color: #666;
     cursor: pointer;
     border-bottom: 3px solid transparent;
@@ -536,12 +566,12 @@
 }
 
 .tab:hover {
-    color: #ff6b35;
+    color: #f07c00;
 }
 
 .tabActive {
-    color: #ff6b35;
-    border-bottom-color: #ff6b35;
+    color: #f07c00;
+    border-bottom-color: #f07c00;
     font-weight: 600;
 }
 
@@ -549,16 +579,59 @@
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 5px;
-    color: #ff6b35;
-    font-size: 13px;
+    gap: 8px;
+    color: #f07c00;
+    font-size: 14px;
     cursor: pointer;
     padding: 16px 0;
-    font-weight: 500;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.addServicesBtn span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .addServicesBtn:hover {
-    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.desktopOnly {
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .desktopOnly {
+        display: none !important;
+    }
+}
+
+.mobileOnly {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .mobileOnly {
+        display: flex !important;
+    }
+}
+
+.tabsContainer {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.activeTabContent {
+    display: block;
+}
+
+.hiddenTabContent {
+    display: none;
 }
 
 /* Tab content */
@@ -631,13 +704,12 @@
     color: #888;
     font-size: 11px;
     margin-bottom: 2px;
-    text-transform: uppercase;
 }
 
 .detailValue {
-    color: #333;
+    color: #000;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .serviceDescription {
@@ -671,9 +743,10 @@
 }
 
 .testimonialCard {
-    padding: 20px 25px;
-    border-bottom: 1px solid #f0f0f0;
-    margin: 0;
+    padding: 15px 20px;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    margin-bottom: 15px;
     background: white;
 }
 
@@ -691,8 +764,6 @@
 .jobIcon {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background: #f0f4f8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -707,7 +778,7 @@
 }
 
 .jobTitle {
-    color: #1e40af;
+    color: #003385;
     font-size: 16px;
     font-weight: 600;
     margin: 0;
@@ -727,13 +798,13 @@
 }
 
 .jobDetailLabel {
-    color: #888;
+    color: #666;
     font-size: 11px;
-    text-transform: capitalize;
+    text-transform: none;
 }
 
 .jobDetailValue {
-    color: #333;
+    color: #000;
     font-size: 13px;
     font-weight: 600;
 }
@@ -767,38 +838,34 @@
 /* Testimonials Styles */
 .testimonialToggle {
     display: flex;
-    gap: 8px;
-    padding: 15px 20px;
-    border-bottom: 1px solid #f0f0f0;
+    gap: 10px;
+    padding: 12px 15px 5px 15px;
+    border-bottom: none;
 }
 
 .toggleBtn {
-    padding: 8px 20px;
-    border-radius: 20px;
+    padding: 6px 18px;
+    border-radius: 30px;
     border: none;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #f0f0f0;
+    background: transparent;
     color: #666;
 }
 
 .toggleBtn:hover {
-    background: #e5e5e5;
+    background: #f0f4f8;
 }
 
 .toggleBtnActive {
-    background: #ff6b35;
-    color: white;
-}
-
-.toggleBtnActive:hover {
-    background: #e85a2a;
+    background: #00bfa5 !important;
+    color: white !important;
 }
 
 .testimonialsList {
-    padding: 0;
+    padding: 5px 15px 15px 15px;
 }
 
 
@@ -809,12 +876,12 @@
 
 .testimonialStars {
     display: flex;
-    gap: 3px;
-    margin-bottom: 12px;
+    gap: 4px;
+    margin-bottom: 15px;
 }
 
 .testimonialStar {
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .starFilled {
@@ -826,9 +893,9 @@
 }
 
 .testimonialText {
-    color: #444;
-    font-size: 14px;
-    line-height: 1.7;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.5;
     margin: 0 0 15px 0;
 }
 
@@ -844,8 +911,8 @@
 }
 
 .reviewerPhoto {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     object-fit: cover;
     background: #f0f0f0;
@@ -858,21 +925,21 @@
 }
 
 .reviewerName {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
 }
 
 .reviewerLocation {
-    font-size: 12px;
-    color: #ff6b35;
+    font-size: 11px;
+    color: #666;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .reviewerLocation svg {
-    color: #ff6b35;
+    color: #333;
 }
 
 /* Photo Gallery Styles */
@@ -1413,8 +1480,8 @@
 }
 
 .accordionActive {
-    border-right: 4px solid #003385;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #003385;
+    box-shadow: 0 4px 12px rgba(0, 51, 133, 0.1);
 }
 
 .accordionHeader {
@@ -1423,8 +1490,7 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    background: white;
-    /* "make it white only" */
+    background: #f8fbff;
 }
 
 .accordionTitle {
@@ -1501,6 +1567,26 @@
     margin-bottom: 20px;
 }
 
+.formRow3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.inputWithIcon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.fieldIcon {
+    position: absolute;
+    right: 15px;
+    color: #666;
+    pointer-events: none;
+}
+
 @media (max-width: 600px) {
     .formRow {
         grid-template-columns: 1fr;
@@ -1552,51 +1638,60 @@
 .modalContainer {
     background-color: #fff;
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     position: relative;
     padding: 0;
     z-index: 10556;
-    border: 1px solid #f0f0f0;
-    overflow: hidden;
-    max-height: 90vh;
+    border: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 95vh;
     display: flex;
     flex-direction: column;
-    width: 800px;
+    width: 650px;
     max-width: 95%;
 }
 
+.modalContainerWithBorder {
+    border-right: 5px solid #003385 !important;
+}
+
+.modalBody {
+    padding: 0 25px 25px;
+    flex: 1;
+}
+
 .modalHeader {
-    background-color: #001838;
-    /* Navy blue header */
-    padding: 20px 25px;
+    background-color: white;
+    padding: 20px 25px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .modalTitle {
-    color: white;
-    font-size: 20px;
-    font-weight: 600;
+    color: #003385;
+    font-size: 26px;
+    font-weight: 700;
     margin: 0;
 }
 
 .closeBtn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 28px;
-    line-height: 20px;
+    color: #4b5563;
+    font-size: 20px;
     cursor: pointer;
     transition: color 0.2s;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: -10px;
 }
 
 .closeBtn:hover {
-    color: white;
+    color: #111827;
 }
 
 .servicesModalActions {
@@ -1608,10 +1703,11 @@
 }
 
 .modalSubtitle {
-    color: #666;
-    font-size: 13px;
-    margin: 0 25px 20px;
-    line-height: 1.5;
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 400;
 }
 
 .addServicesLink {
@@ -1639,177 +1735,42 @@
 }
 
 .cancelBtn {
-    background: transparent;
-    border: 1px solid #001838;
-    color: #001838;
-    padding: 8px 24px;
+    background: white;
+    border: 1.5px solid #003385;
+    color: #003385;
+    padding: 10px 24px;
     border-radius: 25px;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s;
+    outline: none;
 }
 
 .cancelBtn:hover {
-    background: #f8fafc;
+    background: #f0f4f8;
 }
 
 .updateBtn {
-    background: #ff6b35;
-    /* Orange primary button */
+    background: #ff7c1d;
     border: none;
     color: white;
-    padding: 8px 30px;
+    padding: 10px 30px;
     border-radius: 25px;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
     transition: all 0.2s;
+    outline: none;
 }
 
 .updateBtn:hover {
-    background: #e85a2a;
+    background: #e66a1a;
     transform: translateY(-1px);
 }
 
-/* Modal Styles - Shared by Services Popup and Feedback Modal */
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Backdrop */
-    z-index: 10555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modalContainer {
-    background-color: #fff;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    position: relative;
-    padding: 0;
-    z-index: 10556;
-    border: 1px solid #f0f0f0;
-    overflow: hidden;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    width: 800px;
-    max-width: 95%;
-}
-
-.modalHeader {
-    background-color: #001838;
-    /* Navy blue header */
-    padding: 20px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modalTitle {
-    color: white;
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-}
-
-.closeBtn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 28px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: color 0.2s;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.closeBtn:hover {
-    color: white;
-}
-
-.servicesModalActions {
-    padding: 15px 25px 0;
-    background: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modalSubtitle {
-    color: #666;
-    font-size: 13px;
-    margin: 0;
-}
-
-.addServicesLink {
-    color: #ff6b35;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.addServicesLink span {
-    font-size: 18px;
-    font-weight: 300;
-}
-
-.modalActions {
-    padding: 20px 25px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    background: white;
-    border-top: 1px solid #f0f0f0;
-}
-
-.cancelBtn {
-    background: transparent;
-    border: 1px solid #001838;
-    color: #001838;
-    padding: 8px 24px;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.cancelBtn:hover {
-    background: #f8fafc;
-}
-
-.updateBtn {
-    background: #ff6b35;
-    /* Orange primary button */
-    border: none;
-    color: white;
-    padding: 8px 30px;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
-    transition: all 0.2s;
-}
-
-.updateBtn:hover {
-    background: #e85a2a;
-    transform: translateY(-1px);
-}
+/* End of Modal Styles */
 
 .formThreeCol {
     display: grid;
@@ -1826,9 +1787,9 @@
 
 .sectionHeading {
     color: #003385;
-    font-size: 16px;
-    font-weight: 600;
-    margin: 25px 0 15px 0;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 20px 0 15px 0;
 }
 
 .socialFieldLabel {
@@ -1858,7 +1819,7 @@
 }
 
 .checkboxWrapper {
-    margin: 15px 0;
+    margin: 10px 0 20px 0;
 }
 
 .checkboxLabel {
@@ -2018,6 +1979,11 @@
     transition: all 0.2s ease;
 }
 
+.formInput::placeholder {
+    color: #9ca3af;
+    opacity: 0.6;
+}
+
 .formInput:focus {
     border-color: #ff6b35;
 }
@@ -2034,6 +2000,24 @@
     opacity: 1;
 }
 
+.formSection {
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.fieldLabel {
+    display: block;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.textareaContainer {
+    position: relative;
+    width: 100%;
+}
+
 .textarea {
     width: 100%;
     min-height: 120px;
@@ -2042,12 +2026,11 @@
     border-radius: 12px;
     font-size: 14px;
     background-color: white;
-    resize: vertical;
+    resize: none;
     outline: none;
     transition: all 0.2s ease;
     color: #333;
-    line-height: 1.6;
-    font-family: inherit;
+    line-height: 1.5;
 }
 
 .textarea:focus {
@@ -2057,9 +2040,113 @@
 .wordCount {
     display: block;
     text-align: right;
-    font-size: 11px;
-    color: #999;
-    margin-top: 4px;
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+}
+
+.multiSelect {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    min-height: 48px;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.langTag {
+    background: #ffede6;
+    color: #ff6b35;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.removeTag {
+    color: #ff6b35;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.chevronIcon {
+    margin-left: auto;
+    color: #333;
+    display: flex;
+}
+
+.radioGroupsRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 0;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #444;
+    font-weight: 500;
+    position: relative;
+    padding-left: 28px;
+}
+
+.radioLabel input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.radioCircle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 20px;
+    width: 20px;
+    background-color: white;
+    border: 2px solid #e0e6ed;
+    border-radius: 50%;
+}
+
+.radioLabel:hover input~.radioCircle {
+    border-color: #ff6b35;
+}
+
+.radioLabel input:checked~.radioCircle {
+    border-color: #ff6b35;
+}
+
+.radioLabel input:checked~.radioCircle:after {
+    content: "";
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff6b35;
 }
 
 .formRow {
@@ -2084,8 +2171,17 @@
 }
 
 .accordionActive {
+    border: 1px solid #e0e6ed;
     border-right: 4px solid #003385;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.accordionActive .accordionHeader {
+    background: #f0f7ff;
+}
+
+.accordionActive .accordionTitle {
+    color: #003385;
 }
 
 .accordionHeader {
@@ -2145,4 +2241,295 @@
 .removeServiceBtn:hover {
     background: #ff6b35;
     color: white;
+}
+
+/* Mobile Menu Button - Default Hidden */
+.mobileMenuBtn {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+
+    /* Navbar */
+    .profileNavbar {
+        padding: 12px 16px;
+    }
+
+    .mobileMenuBtn {
+        display: flex;
+    }
+
+    .navbarLinks {
+        display: none;
+    }
+
+    .navIconButton:last-child {
+        display: none;
+        /* Hide profile icon on mobile */
+    }
+
+    /* Header & Profile Photo */
+    .profileHeader {
+        min-height: 130px;
+        height: 130px;
+        margin-bottom: 190px;
+        /* Provides space for the absolute profileInfoSection */
+        padding-bottom: 0;
+        position: relative;
+    }
+
+    /* Move Header Actions (Edit/Share) */
+    .headerActions {
+        top: auto;
+        bottom: 12px;
+        right: 16px;
+        gap: 8px;
+    }
+
+    .headerActionBtn {
+        width: 32px;
+        height: 32px;
+        background: white;
+        /* Matches mockup solid white buttons */
+        border: none;
+        border-radius: 50%;
+        color: #001838;
+    }
+
+    .headerActionBtn svg {
+        width: 14px;
+        height: 14px;
+        stroke: #001838;
+    }
+
+    /* Social Icons - RIGHT ALIGNED Below Blue Header */
+    .socialIconsRow {
+        position: absolute;
+        top: 140px;
+        right: 16px;
+        display: flex;
+        gap: 8px;
+        z-index: 30;
+        /* Keep above the white card */
+    }
+
+    .socialIcon {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #003385;
+        color: #003385;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .socialIcon svg {
+        fill: #003385;
+    }
+
+    .socialIcon:hover {
+        background: rgba(0, 51, 133, 0.05);
+        border-color: #003385;
+    }
+
+    /* Profile Info Container - Directly on page background */
+    .profileInfoSection {
+        position: absolute;
+        top: 130px;
+        /* Start exactly below the blue background */
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 16px 16px 16px;
+        background: transparent;
+        /* No white background card! */
+        box-shadow: none;
+        /* No card drop shadow */
+        border-radius: 0;
+        z-index: 20;
+    }
+
+    .profilePhotoContainer {
+        margin-right: 0;
+        margin-bottom: 8px;
+        align-self: flex-start;
+        position: relative;
+        margin-top: -45px;
+        /* Pull up to overlap the blue header perfectly */
+        z-index: 30;
+    }
+
+    .profilePhoto {
+        width: 90px;
+        height: 90px;
+        border: 4px solid white;
+        margin-top: 0;
+        border-radius: 50%;
+        object-fit: cover;
+        background: white;
+        box-shadow: none !important;
+        /* Forces the huge white shadow glow to disappear! */
+    }
+
+    .cameraIcon {
+        width: 28px;
+        height: 28px;
+        bottom: 0;
+        right: 0;
+    }
+
+    .profileDetails {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        text-align: left;
+        padding-top: 0;
+    }
+
+    .profileName {
+        font-size: 22px;
+        margin-bottom: 6px;
+        color: #001838;
+        text-align: left;
+    }
+
+    /* Rating & Location */
+    .ratingLocationWrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .starRating {
+        margin-bottom: 0;
+    }
+
+    .locationDivider {
+        display: block;
+        width: 1px;
+        height: 12px;
+        background-color: #888;
+        margin: 0 4px;
+    }
+
+    .profileLocation {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 13px;
+    }
+
+    /* Action Buttons */
+    .actionButtons {
+        display: flex;
+        justify-content: space-between;
+        gap: 4px;
+        width: 100%;
+        padding: 0 0 8px 0;
+        overflow-x: hidden;
+        /* Prevent scrolling if they fit */
+        flex-wrap: nowrap;
+    }
+
+    .actionButtons::-webkit-scrollbar {
+        display: none;
+    }
+
+    .actionBtn {
+        flex: 1 1 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 0;
+        padding: 5px 8px;
+        font-size: 11px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    /* Content Layout */
+    .profileContent {
+        display: flex;
+        flex-direction: column;
+        padding: 0 16px 16px 16px;
+        gap: 20px;
+    }
+
+    .sidebar {
+        order: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .mainContent {
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .tabsHeader {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding: 0 16px;
+        scrollbar-width: none;
+    }
+
+    .tabsHeader::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        padding: 12px 14px;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    /* Modals & Bottom Sheets */
+    .modalContainer {
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 0;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        transform: none;
+        max-width: 100%;
+        margin: auto 0 0 0;
+    }
+
+    .overlay {
+        align-items: flex-end;
+    }
+
+    /* General Mobile Adjustments */
+    .cardTitle {
+        color: #ff6b35;
+    }
+
+    .sidebarCard {
+        padding: 16px;
+    }
+
+    .serviceCard {
+        padding: 16px;
+    }
 }

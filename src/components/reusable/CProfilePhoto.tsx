@@ -23,7 +23,7 @@ const ProfilePhotoComponent = ({ profilePhoto, onPhotoUrlReady }: ProfilePhotoCo
       }
 
       try {
-        const urls = getWorkPhotoUrls(bucketName, [profilePhoto]); // Assuming getWorkPhotoUrls takes an array
+        const urls = await getWorkPhotoUrls(bucketName, [profilePhoto]); // Assuming getWorkPhotoUrls takes an array
         const url = urls.length > 0 ? urls[0] : undefined;
         setPhotoUrl(url);
         onPhotoUrlReady?.(url); // Notify parent of the resolved URL

@@ -21,7 +21,7 @@ export const CJobSeekerMapCard: FunctionComponent<Props> = ({
   setModal,
 }) => {
   const { mobile } = useAppMediaQuery();
-  const dummyImage = "/assets/icons/form_icons/icon_dummy_user.svg"; 
+  const dummyImage = "/assets/icons/form_icons/icon_dummy_user.svg";
   const [PhotoUrls, setPhotoUrls] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -32,19 +32,18 @@ export const CJobSeekerMapCard: FunctionComponent<Props> = ({
       }
       const photo = seeker.profilePhoto;
       const photosArray = photo ? [photo] : [];
-      const urls = getWorkPhotoUrls(bucketName, photosArray);
+      const urls = await getWorkPhotoUrls(bucketName, photosArray);
       setPhotoUrls(urls.length > 0 ? urls[0] : undefined);  // Expecting only one URL
     };
-  
+
     fetchPhotoUrls();
   }, [seeker.profilePhoto]);
   return (
     <Card
-      className={`bgPrimary ${
-        mobile
-          ? jobStyles.jobSeekerCardForMapMobile
-          : jobStyles.jobSeekerCardForMap
-      }`}
+      className={`bgPrimary ${mobile
+        ? jobStyles.jobSeekerCardForMapMobile
+        : jobStyles.jobSeekerCardForMap
+        }`}
     >
       <div className={jobStyles.jobSeekerPhotoAndDisplayName}>
         <Image src={PhotoUrls || dummyImage} height={68} width={68} roundedCircle />

@@ -43,10 +43,10 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
       }
       const photo = job.userProfile?.profilePhoto;
       const photosArray = photo ? [photo] : [];
-      const urls = getWorkPhotoUrls(bucketName, photosArray);
+      const urls = await getWorkPhotoUrls(bucketName, photosArray);
       setPhotoUrls(urls.length > 0 ? urls[0] : undefined);  // Expecting only one URL
     };
-  
+
     fetchPhotoUrls();
   }, [job.userProfile?.profilePhoto]);
 
@@ -58,7 +58,7 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
       size="xl"
       aria-labelledby="example-modal-sizes-title-xl"
       centered
-      backdrop="static" 
+      backdrop="static"
     >
       <Modal.Header closeButton>
         <Modal.Title className="d-flex flex-row w-100 justify-content-between align-items-center">
@@ -165,7 +165,7 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
               />
             </Col>
             <Col md={tablet ? 12 : 4}>
-            <CDisplay
+              <CDisplay
                 heading="Email"
                 icon="/assets/icons/form_icons/icon_email.svg"
                 label={

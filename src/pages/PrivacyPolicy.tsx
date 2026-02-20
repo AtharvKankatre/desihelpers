@@ -149,15 +149,14 @@ const PrivacyPolicy = () => {
 
       {/* Ready to Get Started Section */}
       <section className={styles.readySection}>
-        <div className={styles.ctaBackground}></div>
-        <div className={styles.container}>
-          <div className={styles.readyContent}>
+        <div className={styles.readyContent}>
+          <div className={styles.readyTextGroup}>
             <h2 className={styles.readyTitle}>Ready to Get Started?</h2>
             <p className={styles.readySubtitle}>
               Join our community today and experience the difference of working with verified, trusted professionals.
             </p>
-            <Link href="/auth/signup" className={styles.readyButton}>Join the community</Link>
           </div>
+          <Link href="/auth/signup" className={styles.readyButton}>Join the community</Link>
         </div>
       </section>
     </>

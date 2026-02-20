@@ -39,12 +39,19 @@ const CEditProfileModal: React.FC<CEditProfileModalProps> = ({
         onClose();
     };
 
+    const wordCount = aboutMe.trim() === "" ? 0 : aboutMe.trim().split(/\s+/).length;
+
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContainer}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>Edit Profile</h2>
-                    <button className={styles.closeBtn} onClick={onClose}>×</button>
+                    <button className={styles.closeBtn} onClick={onClose}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
                 <p className={styles.modalSubtitle}>
                     Providing detailed information about yourself will increase chances of getting connected with more people in the community
@@ -59,11 +66,11 @@ const CEditProfileModal: React.FC<CEditProfileModalProps> = ({
                             onChange={(e) => setAboutMe(e.target.value)}
                             placeholder="Tell us about yourself..."
                         />
-                        <span className={styles.wordCount}>0/250 words</span>
+                        <span className={styles.wordCount}>{wordCount}/250 words</span>
                     </div>
                 </div>
 
-                <div className={styles.formSection}>
+                <div className={styles.formSection} style={{ marginTop: '10px' }}>
                     <label className={styles.fieldLabel}>Spoken Languages</label>
                     <div className={styles.multiSelect}>
                         {languages.map((lang, index) => (
@@ -72,79 +79,81 @@ const CEditProfileModal: React.FC<CEditProfileModalProps> = ({
                             </span>
                         ))}
                         <div className={styles.chevronIcon}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M6 9l6 6 6-6" />
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div className={styles.radioGroupsRow}>
-                    <div className={styles.formSection}>
-                        <label className={styles.fieldLabel}>Commute Preference</label>
-                        <div className={styles.radioGroup}>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="commute"
-                                    value="Have a Ride"
-                                    checked={commute === "Have a Ride"}
-                                    onChange={(e) => setCommute(e.target.value)}
-                                />
-                                <span className={styles.radioCircle}></span>
-                                Have a Ride
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="commute"
-                                    value="Require a Ride"
-                                    checked={commute === "Require a Ride"}
-                                    onChange={(e) => setCommute(e.target.value)}
-                                />
-                                <span className={styles.radioCircle}></span>
-                                Require a Ride
-                            </label>
+                <div className={styles.formSection}>
+                    <div className={styles.radioGroupsRow}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <label className={styles.fieldLabel}>Commute Preference</label>
+                            <div className={styles.radioGroup}>
+                                <label className={styles.radioLabel}>
+                                    <input
+                                        type="radio"
+                                        name="commute"
+                                        value="Have a Ride"
+                                        checked={commute === "Have a Ride"}
+                                        onChange={(e) => setCommute(e.target.value)}
+                                    />
+                                    <span className={styles.radioCircle}></span>
+                                    Have a Ride
+                                </label>
+                                <label className={styles.radioLabel}>
+                                    <input
+                                        type="radio"
+                                        name="commute"
+                                        value="Require a Ride"
+                                        checked={commute === "Require a Ride"}
+                                        onChange={(e) => setCommute(e.target.value)}
+                                    />
+                                    <span className={styles.radioCircle}></span>
+                                    Require a Ride
+                                </label>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className={styles.formSection}>
-                        <label className={styles.fieldLabel}>Dietary Preference</label>
-                        <div className={styles.radioGroup}>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="dietary"
-                                    value="Veg"
-                                    checked={dietary === "Veg"}
-                                    onChange={(e) => setDietary(e.target.value)}
-                                />
-                                <span className={styles.radioCircle}></span>
-                                Veg
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="dietary"
-                                    value="Non-Veg"
-                                    checked={dietary === "Non-Veg"}
-                                    onChange={(e) => setDietary(e.target.value)}
-                                />
-                                <span className={styles.radioCircle}></span>
-                                Non-Veg
-                            </label>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="dietary"
-                                    value="Veg/Non-Veg"
-                                    checked={dietary === "Veg/Non-Veg"}
-                                    onChange={(e) => setDietary(e.target.value)}
-                                />
-                                <span className={styles.radioCircle}></span>
-                                Veg/Non-Veg
-                            </label>
-                        </div>
+                <div className={styles.formSection}>
+                    <label className={styles.fieldLabel}>Dietary Preference</label>
+                    <div className={styles.radioGroup}>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="dietary"
+                                value="Veg"
+                                checked={dietary === "Veg"}
+                                onChange={(e) => setDietary(e.target.value)}
+                            />
+                            <span className={styles.radioCircle}></span>
+                            Veg
+                        </label>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="dietary"
+                                value="Non-Veg"
+                                checked={dietary === "Non-Veg"}
+                                onChange={(e) => setDietary(e.target.value)}
+                            />
+                            <span className={styles.radioCircle}></span>
+                            Non-Veg
+                        </label>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="dietary"
+                                value="Veg/Non-Veg"
+                                checked={dietary === "Veg/Non-Veg"}
+                                onChange={(e) => setDietary(e.target.value)}
+                            />
+                            <span className={styles.radioCircle}></span>
+                            Veg/Non-Veg
+                        </label>
                     </div>
                 </div>
 
@@ -176,9 +185,9 @@ const CEditProfileModal: React.FC<CEditProfileModalProps> = ({
                     </div>
                 </div>
 
-                <div className={styles.modalActions}>
-                    <button className={styles.cancelBtn} onClick={onClose}>Cancel</button>
-                    <button className={styles.updateBtn} onClick={handleUpdate}>Update</button>
+                <div className={styles.modalActions} style={{ borderTop: 'none', paddingBottom: '30px', justifyContent: 'center', gap: '20px' }}>
+                    <button className={styles.cancelBtn} style={{ width: '180px' }} onClick={onClose}>Cancel</button>
+                    <button className={styles.updateBtn} style={{ width: '180px' }} onClick={handleUpdate}>Update</button>
                 </div>
             </div>
         </div>

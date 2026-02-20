@@ -1,5 +1,5 @@
 import withAuth from "@/services/authorization/ProfileService";
-import { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import SeekerServices from "@/services/seekers/SeekerService";
 import styles from "@/styles/Common.module.css";
 import DataTable from "react-data-table-component";
@@ -28,7 +28,7 @@ const ViewAllSeekers: FunctionComponent = () => {
   const [selectedFilters, setSelectedFilters] = useState<any>({
     serviceType: "",
     city: "",
-    state:"",
+    state: "",
   });
 
   const fetchAllJobs = async () => {
@@ -58,7 +58,7 @@ const ViewAllSeekers: FunctionComponent = () => {
   };
 
   const getUniqueStates = () => {
-    const states = new Set (filteredJobs.map((job) => job.state).filter((state) => state));
+    const states = new Set(filteredJobs.map((job) => job.state).filter((state) => state));
     return Array.from(states).sort();
   };
 
@@ -129,6 +129,28 @@ const ViewAllSeekers: FunctionComponent = () => {
 
   if (isLoading) return <CCommonLoader />;
 
+  const RowProfilePhoto = ({ profilePhoto, dummyImage }: { profilePhoto?: string, dummyImage: string }) => {
+    const [photoUrl, setPhotoUrl] = useState<string>(dummyImage);
+
+    useEffect(() => {
+      if (profilePhoto) {
+        const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "";
+        getWorkPhotoUrls(bucketName, [profilePhoto]).then(urls => {
+          if (urls.length > 0) setPhotoUrl(urls[0]);
+        }).catch(err => console.error(err));
+      }
+    }, [profilePhoto, dummyImage]);
+
+    return (
+      <img
+        src={photoUrl}
+        alt="Profile Photo"
+        className="rounded-circle"
+        style={{ width: "30px", height: "30px", objectFit: "cover" }}
+      />
+    );
+  };
+
   // DataTable columns definition
   const columns = [
     {
@@ -143,27 +165,18 @@ const ViewAllSeekers: FunctionComponent = () => {
       name: "Provider",
       cell: (row: IUserProfileModel) => (
         <div
-        style={{
-          display: "flex", // Use flexbox layout
-          alignItems: "center", // Align items vertically
-          gap: "5px", // Add spacing between elements
-          marginTop: "5px"
-        }}
-      >
-        <img
-          src={
-            row.profilePhoto
-              ? getWorkPhotoUrls(process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "", [row.profilePhoto])[0]
-              : dummyImage
-          }
-          alt="Profile Photo"
-          className="rounded-circle"
-          style={{ width: "30px", height: "30px" }}
-        />
-        <span>{row.displayName ?? "-"}</span>
-        <CCopyLinkButton id={row._id || ""} />
-        <ToastContainer />
-      </div>
+          style={{
+            display: "flex", // Use flexbox layout
+            alignItems: "center", // Align items vertically
+            gap: "5px", // Add spacing between elements
+            marginTop: "5px"
+          }}
+        >
+          <RowProfilePhoto profilePhoto={row.profilePhoto} dummyImage={dummyImage} />
+          <span>{row.displayName ?? "-"}</span>
+          <CCopyLinkButton id={row._id || ""} />
+          <ToastContainer />
+        </div>
       ),
       sortable: true,
     },
@@ -175,12 +188,12 @@ const ViewAllSeekers: FunctionComponent = () => {
             .flatMap((detail) =>
               detail.icons
                 ? [
-                    {
-                      src: detail.icons,
-                      alt: `icon-${detail.jobTypeId}`,
-                      subCategory: detail.subCategory,
-                    },
-                  ]
+                  {
+                    src: detail.icons,
+                    alt: `icon-${detail.jobTypeId}`,
+                    subCategory: detail.subCategory,
+                  },
+                ]
                 : []
             )
             .map((icon, i) => (
@@ -200,7 +213,7 @@ const ViewAllSeekers: FunctionComponent = () => {
 
     {
       name: "Commute Preference",
-      selector: (row: IUserProfileModel) => (row.commutePreference && row.commutePreference !== "")? row.commutePreference : "-",
+      selector: (row: IUserProfileModel) => (row.commutePreference && row.commutePreference !== "") ? row.commutePreference : "-",
       center: true,
       sortable: true,
     },
@@ -218,89 +231,89 @@ const ViewAllSeekers: FunctionComponent = () => {
           <div className={`container p-4 mb-2 ${styles.viewProfileMain}`}>
             <div className="row align-items-center mb-2">
               <div className="col-md-3 text-start">
-                <img src="/assets/icons/icon_back_arrow.svg" alt="Back" onClick={router.back} className={`${styles.backArrow}`} />  
+                <img src="/assets/icons/icon_back_arrow.svg" alt="Back" onClick={router.back} className={`${styles.backArrow}`} />
                 <CH3Label label="Service Providers" />
               </div>
 
               {/* Search input */}
               <div className="col-md-2 mb-1 ms-1 col-sm-12">
-               <div className="mb-3">
-                    <label className={`${styles.listFilters}`}>
-                      <strong>Search</strong>
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${styles.filterDiv}`}
-                      placeholder="Search By Name"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)} // Update search query                  
-                    />
-                </div> 
+                <div className="mb-3">
+                  <label className={`${styles.listFilters}`}>
+                    <strong>Search</strong>
+                  </label>
+                  <input
+                    type="text"
+                    className={`form-control ${styles.filterDiv}`}
+                    placeholder="Search By Name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)} // Update search query                  
+                  />
+                </div>
               </div>
 
-              <div className={`col-md-6 ms-1 mb-1 col-sm-12 ${styles.listFilters}`}>            
-                  {/* Service Type Filter */}
-                  <div className="mb-3">
-                    <label>
-                      <strong>Service Type</strong>
-                    </label>
-                    <select
-                      className={`form-control ${styles.filterDiv}`}
-                      value={selectedFilters.serviceType}
-                      onChange={(e) =>
-                        handleFilterChange("serviceType", e.target.value)
-                      }
-                    >
-                      <option value="">Select Service Type</option>
-                      {getUniqueServiceTypes().map((serviceType, index) => (
-                        <option key={index} value={serviceType}>
-                          {serviceType}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              <div className={`col-md-6 ms-1 mb-1 col-sm-12 ${styles.listFilters}`}>
+                {/* Service Type Filter */}
+                <div className="mb-3">
+                  <label>
+                    <strong>Service Type</strong>
+                  </label>
+                  <select
+                    className={`form-control ${styles.filterDiv}`}
+                    value={selectedFilters.serviceType}
+                    onChange={(e) =>
+                      handleFilterChange("serviceType", e.target.value)
+                    }
+                  >
+                    <option value="">Select Service Type</option>
+                    {getUniqueServiceTypes().map((serviceType, index) => (
+                      <option key={index} value={serviceType}>
+                        {serviceType}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  {/* State Filter */}
-                  <div className="mb-3">
-                    <label>
-                      <strong>State</strong>
-                    </label>
-                    <select
-                      className={`form-control ${styles.filterDiv}`}
-                      value={selectedFilters.state}
-                      onChange={(e) =>
-                        handleFilterChange("state", e.target.value)
-                      }
-                    >
-                      <option value="">Select State</option>
-                      {getUniqueStates().map((state, index) => (
-                        <option key={index} value={state}>
-                          {state}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                {/* State Filter */}
+                <div className="mb-3">
+                  <label>
+                    <strong>State</strong>
+                  </label>
+                  <select
+                    className={`form-control ${styles.filterDiv}`}
+                    value={selectedFilters.state}
+                    onChange={(e) =>
+                      handleFilterChange("state", e.target.value)
+                    }
+                  >
+                    <option value="">Select State</option>
+                    {getUniqueStates().map((state, index) => (
+                      <option key={index} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  {/* City Filter */}
-                  <div className="mb-3">
-                    <label>
-                      <strong>City</strong>
-                    </label>
-                    <select
-                      className={`form-control ${styles.filterDiv}`}
-                      value={selectedFilters.city}
-                      onChange={(e) =>
-                        handleFilterChange("city", e.target.value)
-                      }
-                    >
-                      <option value="">Select City</option>
-                      {getUniqueCities().map((city, index) => (
-                        <option key={index} value={city}>
-                          {city}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                {/* City Filter */}
+                <div className="mb-3">
+                  <label>
+                    <strong>City</strong>
+                  </label>
+                  <select
+                    className={`form-control ${styles.filterDiv}`}
+                    value={selectedFilters.city}
+                    onChange={(e) =>
+                      handleFilterChange("city", e.target.value)
+                    }
+                  >
+                    <option value="">Select City</option>
+                    {getUniqueCities().map((city, index) => (
+                      <option key={index} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
 
@@ -308,46 +321,46 @@ const ViewAllSeekers: FunctionComponent = () => {
               {/* Applied Filters */}
               {(Object.values(selectedFilters).some((filter) => filter) ||
                 searchQuery) && (
-                <div className={`mt-2 mb-2 ${styles.appliedFiltersDisplay}`}>
-                  <div className={`mt-1 ms-1`}><strong>Applied Filters: </strong> </div>
-                  <div className={`${styles.appliedFilters}`}>
-                    {selectedFilters.serviceType && (
-                      <span className={`badge bg-secondary ${styles.filterBadge}`}>
-                        Service Type: {selectedFilters.serviceType}
-                      </span>
-                    )}
-                    {selectedFilters.city && (
-                      <span className={`badge bg-secondary ${styles.filterBadge}`}>
-                        City: {selectedFilters.city}
-                      </span>
-                    )}
-                    {selectedFilters.state && (
-                      <span className={`badge bg-secondary ${styles.filterBadge}`}>
-                      State: {selectedFilters.state}
-                    </span>
-                    )}
-                    {searchQuery && (
-                      <span className={`badge bg-secondary ${styles.filterBadge}`}>
-                      Search By Name: {searchQuery}
-                    </span>
-                    )}
+                  <div className={`mt-2 mb-2 ${styles.appliedFiltersDisplay}`}>
+                    <div className={`mt-1 ms-1`}><strong>Applied Filters: </strong> </div>
+                    <div className={`${styles.appliedFilters}`}>
+                      {selectedFilters.serviceType && (
+                        <span className={`badge bg-secondary ${styles.filterBadge}`}>
+                          Service Type: {selectedFilters.serviceType}
+                        </span>
+                      )}
+                      {selectedFilters.city && (
+                        <span className={`badge bg-secondary ${styles.filterBadge}`}>
+                          City: {selectedFilters.city}
+                        </span>
+                      )}
+                      {selectedFilters.state && (
+                        <span className={`badge bg-secondary ${styles.filterBadge}`}>
+                          State: {selectedFilters.state}
+                        </span>
+                      )}
+                      {searchQuery && (
+                        <span className={`badge bg-secondary ${styles.filterBadge}`}>
+                          Search By Name: {searchQuery}
+                        </span>
+                      )}
 
-                    {/* Reset Filters Button */}
-                    {(Object.values(selectedFilters).some((filter) => filter) ||
-                      searchQuery) && (
-                      <button
-                        className="btn btn-sm btn-outline-danger ms-1"
-                        style={{ width: "fit-content", height:'33px', marginTop: "3px" }}
-                        onClick={resetFilters}
-                      >
-                        Clear Filters
-                      </button>
-                    )}
+                      {/* Reset Filters Button */}
+                      {(Object.values(selectedFilters).some((filter) => filter) ||
+                        searchQuery) && (
+                          <button
+                            className="btn btn-sm btn-outline-danger ms-1"
+                            style={{ width: "fit-content", height: '33px', marginTop: "3px" }}
+                            onClick={resetFilters}
+                          >
+                            Clear Filters
+                          </button>
+                        )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
-          
+
 
 
             <DataTable
@@ -376,11 +389,11 @@ const ViewAllSeekers: FunctionComponent = () => {
                   },
                 },
               }}
-              // paginationPerPage={50} // Set default rows per page
-              // paginationComponentOptions={{
-              //   rowsPerPageText: 'Rows per page:',
-              // }}
-              // paginationRowsPerPageOptions={[5, 10, 20,30]} // Options for rows per page
+            // paginationPerPage={50} // Set default rows per page
+            // paginationComponentOptions={{
+            //   rowsPerPageText: 'Rows per page:',
+            // }}
+            // paginationRowsPerPageOptions={[5, 10, 20,30]} // Options for rows per page
             />
 
             <hr />
@@ -401,4 +414,7 @@ const ViewAllSeekers: FunctionComponent = () => {
   );
 };
 
-export default withAuth(ViewAllSeekers);
+export default ViewAllSeekers;
+
+
+

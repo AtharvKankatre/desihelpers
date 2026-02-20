@@ -40,10 +40,9 @@ const WhatsAppIcon = () => (
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.888 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .018 5.394 0 12.03c0 2.12.553 4.189 1.603 5.923L0 24l6.126-1.608a11.846 11.846 0 005.918 1.586h.005c6.632 0 12.028-5.396 12.032-12.033a11.833 11.833 0 00-3.535-8.503" /></svg>
 );
 
-const EditIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+const EditIcon = ({ color = "currentColor" }: { color?: string }) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
     </svg>
 );
 
@@ -68,6 +67,12 @@ const PlusIcon = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <line x1="12" y1="5" x2="12" y2="19" />
         <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+);
+
+const ChevronUpIcon = ({ style }: { style?: React.CSSProperties }) => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
+        <polyline points="18 15 12 9 6 15"></polyline>
     </svg>
 );
 
@@ -227,7 +232,18 @@ interface PersonalSocialUpdateData {
 
 
 const Profile: React.FC = () => {
-    const [activeTab, setActiveTab] = useState("services");
+    const [activeTab, setActiveTab] = useState("services"); // Keeping for possible desktop fallback not requested
+    const [expandedSections, setExpandedSections] = useState({
+        services: true,
+        jobs: true,
+        testimonials: true,
+        gallery: true,
+    });
+
+    const toggleSection = (section: keyof typeof expandedSections) => {
+        setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+    };
+
     const [profile, setProfile] = useState(sampleProfile);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [servicesModalOpen, setServicesModalOpen] = useState(false);
@@ -401,6 +417,13 @@ const Profile: React.FC = () => {
 
                 {/* Navbar row */}
                 <div className={styles.profileNavbar}>
+                    <button className={styles.mobileMenuBtn}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
                     <Link href="/Landing" className={styles.navbarBrand}>
                         <DesiHelpersIcon />
                     </Link>
@@ -498,13 +521,10 @@ const Profile: React.FC = () => {
 
                         <div className={styles.actionButtons}>
                             <button className={`${styles.actionBtn} ${styles.callBtn}`}>
-                                <PhoneIcon /> Call Me
+                                <PhoneIcon /> Call ME
                             </button>
                             <button className={`${styles.actionBtn} ${styles.emailBtn}`}>
-                                <span className={styles.emailIconWrapper}>
-                                    <EmailIcon />
-                                </span>
-                                Email Me
+                                <EmailIcon /> Email Me
                             </button>
                             <button className={`${styles.actionBtn} ${styles.whatsappBtn}`}>
                                 <WhatsAppIcon /> Whatsapp Me
@@ -524,20 +544,24 @@ const Profile: React.FC = () => {
                     {/* About Me Card */}
                     <div className={styles.sidebarCard}>
                         <div className={styles.cardHeader}>
-                            <h3 className={styles.cardTitle}>About Me</h3>
+                            <h3 className={styles.cardTitle} style={{ color: '#003385' }}>About Me</h3>
                             <span className={styles.editIcon} onClick={() => setEditModalOpen(true)}>
-                                <EditIcon />
-                            </span>
+                                <EditIcon /></span>
                         </div>
                         <div className={styles.cardContent}>
-                            <p>
-                                {profile.aboutMe} <span className={styles.readMore}>Read more...</span>
+                            <p style={{ margin: 0, color: '#444', fontSize: '14px', lineHeight: '1.5' }}>
+                                {profile.aboutMe} <span className={styles.readMore} style={{ fontWeight: 500 }}>Read more...</span>
                             </p>
 
-                            <div className={styles.infoGrid} style={{ marginTop: "15px" }}>
+                            <div className={styles.infoRow} style={{ marginTop: "20px" }}>
+                                <div className={styles.infoLabel}>Languages Spoken</div>
+                                <div className={styles.infoValue}>{profile.languages}</div>
+                            </div>
+
+                            <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
-                                    <div className={styles.infoLabel}>Languages Spoken</div>
-                                    <div className={styles.infoValue}>{profile.languages}</div>
+                                    <div className={styles.infoLabel}>Commute Preference</div>
+                                    <div className={styles.infoValue}>{profile.commutePreference}</div>
                                 </div>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>Dietary Preference</div>
@@ -545,14 +569,7 @@ const Profile: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className={styles.infoGrid}>
-                                <div className={styles.infoRow}>
-                                    <div className={styles.infoLabel}>Commute Preference</div>
-                                    <div className={styles.infoValue}>{profile.commutePreference}</div>
-                                </div>
-                            </div>
-
-                            <div className={styles.infoRow}>
+                            <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>OK With Pets</div>
                                 <div className={styles.infoValue}>{profile.okWithPets}</div>
                             </div>
@@ -562,25 +579,24 @@ const Profile: React.FC = () => {
                     {/* Address Details Card */}
                     <div className={styles.sidebarCard}>
                         <div className={styles.cardHeader}>
-                            <h3 className={styles.cardTitle}>Address Details</h3>
+                            <h3 className={styles.cardTitle} style={{ color: '#003385' }}>Address Details</h3>
                             <span
                                 className={styles.editIcon}
                                 onClick={() => setAddressModalOpen(true)}
                                 style={{ cursor: "pointer" }}
                             >
-                                <EditIcon />
-                            </span>
+                                <EditIcon /></span>
                         </div>
                         <div className={styles.cardContent}>
                             <div className={styles.infoRow}>
                                 <div className={styles.infoLabel}>Address Line 1</div>
                                 <div className={styles.infoValue}>{profile.address.line1}</div>
                             </div>
-                            <div className={styles.infoRow}>
+                            <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>Address Line 2</div>
                                 <div className={styles.infoValue}>{profile.address.line2}</div>
                             </div>
-                            <div className={styles.infoGrid}>
+                            <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>City</div>
                                     <div className={styles.infoValue}>{profile.address.city}</div>
@@ -590,7 +606,7 @@ const Profile: React.FC = () => {
                                     <div className={styles.infoValue}>{profile.address.state}</div>
                                 </div>
                             </div>
-                            <div className={styles.infoRow}>
+                            <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>Zip Code</div>
                                 <div className={styles.infoValue}>{profile.address.zipCode}</div>
                             </div>
@@ -600,188 +616,220 @@ const Profile: React.FC = () => {
 
                 {/* Main Content Area with Tabs */}
                 <div className={styles.mainContent}>
-                    {/* Tabs Header */}
-                    <div className={styles.tabsHeader}>
-                        {tabs.map((tab) => (
+                    {/* Desktop Tabs Header */}
+                    <div className={`${styles.tabsHeader} ${styles.desktopOnly}`}>
+                        {tabs.map(tab => (
                             <div
                                 key={tab.id}
-                                className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ""}`}
+                                className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
                                 onClick={() => setActiveTab(tab.id)}
                             >
                                 {tab.label}
                             </div>
                         ))}
-                        {activeTab === "services" && (
+                        {activeTab === 'services' && (
                             <div className={styles.addServicesBtn} onClick={() => setServicesModalOpen(true)}>
-                                <PlusIcon /> Add Services
+                                <span style={{ color: '#f07c00' }}>+ Add Services</span>
+                                <EditIcon color="#666" />
                             </div>
                         )}
-                        {activeTab === "jobs" && (
+                        {activeTab === 'jobs' && (
                             <div className={styles.addServicesBtn} onClick={() => setJobsModalOpen(true)}>
-                                <PlusIcon /> Add Jobs
+                                <span style={{ color: '#f07c00' }}>+ Add Jobs</span>
+                                <EditIcon color="#666" />
                             </div>
                         )}
-                        {activeTab === "testimonials" && (
-                            <div className={styles.addServicesBtn} onClick={() => {
-                                setEditingTestimonial(null);
-                                setFeedbackModalOpen(true);
-                            }}>
-                                <PlusIcon /> Add Feedback
+                        {activeTab === 'testimonials' && (
+                            <div className={styles.addServicesBtn} onClick={() => { setEditingTestimonial(null); setFeedbackModalOpen(true); }}>
+                                <span style={{ color: '#f07c00' }}>+ Add Feedback</span>
                             </div>
                         )}
                     </div>
 
-                    {/* Tab Content */}
-                    <div className={styles.tabContent}>
-                        {activeTab === "services" && (
-                            <>
-                                {profile.services.map((service) => (
-                                    <div key={service.id} className={styles.serviceCard}>
-                                        <div className={styles.serviceHeader}>
-                                            <div className={`${styles.serviceIcon} ${getServiceIconClass(service.iconType)}`}>
-                                                {service.icon}
-                                            </div>
-                                            <h4 className={styles.serviceTitle}>{service.title}</h4>
-                                        </div>
-
-                                        <div className={styles.serviceDetails}>
-                                            <div className={styles.serviceDetail}>
-                                                <span className={styles.detailLabel}>Category</span>
-                                                <span className={styles.detailValue}>{service.category}</span>
-                                            </div>
-                                            <div className={styles.serviceDetail}>
-                                                <span className={styles.detailLabel}>Experience</span>
-                                                <span className={styles.detailValue}>{service.experience}</span>
-                                            </div>
-                                            <div className={styles.serviceDetail}>
-                                                <span className={styles.detailLabel}>Available</span>
-                                                <span className={styles.detailValue}>{service.available}</span>
-                                            </div>
-                                        </div>
-
-                                        {service.description && expandedService === service.id && (
-                                            <p className={styles.serviceDescription}>{service.description}</p>
-                                        )}
-
-                                        {service.description && (
-                                            <button
-                                                className={styles.showMoreBtn}
-                                                onClick={() => setExpandedService(
-                                                    expandedService === service.id ? null : service.id
-                                                )}
-                                            >
-                                                {expandedService === service.id ? "Show Less..." : "Show More..."}
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
-                            </>
-                        )}
-
-                        {activeTab === "jobs" && (
-                            <>
-                                {profile.jobsOffered && profile.jobsOffered.length > 0 ? (
-                                    profile.jobsOffered.map((job) => (
-                                        <div key={job.id} className={styles.jobCard}>
-                                            <div className={styles.jobHeader}>
-                                                <div className={styles.jobIcon}>
-                                                    <img src="/assets/icons/nanny_icon.png" alt="Job" onError={(e) => {
-                                                        (e.target as HTMLImageElement).style.display = 'none';
-                                                        (e.target as HTMLImageElement).parentElement!.innerHTML = job.icon;
-                                                    }} />
-                                                </div>
-                                                <h4 className={styles.jobTitle}>{job.title}</h4>
-                                            </div>
-
-                                            <div className={styles.jobDetailsGrid}>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Location</span>
-                                                    <span className={styles.jobDetailValue}>{job.location}</span>
-                                                </div>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Start Date</span>
-                                                    <span className={styles.jobDetailValue}>{job.startDate}</span>
-                                                </div>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Req Experience (in years)</span>
-                                                    <span className={styles.jobDetailValue}>{job.reqExperience}</span>
-                                                </div>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Work Type</span>
-                                                    <span className={styles.jobDetailValue}>{job.workType}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className={styles.jobDetailsGrid}>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Days per week</span>
-                                                    <span className={styles.jobDetailValue}>{job.daysPerWeek}</span>
-                                                </div>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Pay Range</span>
-                                                    <span className={styles.jobDetailValue}>{job.payRange}</span>
-                                                </div>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Dietary Preference</span>
-                                                    <span className={styles.jobDetailValue}>{job.dietaryPreference}</span>
-                                                </div>
-                                                <div className={styles.jobDetail}>
-                                                    <span className={styles.jobDetailLabel}>Posted Date</span>
-                                                    <span className={styles.jobDetailValue}>{job.postedDate}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className={styles.jobDescription}>
-                                                {expandedJob === job.id ? (
-                                                    <p>{job.description}</p>
-                                                ) : (
-                                                    <p>{job.description.slice(0, 350)}...</p>
-                                                )}
-                                            </div>
-
-                                            <button
-                                                className={styles.readMoreBtn}
-                                                onClick={() => setExpandedJob(
-                                                    expandedJob === job.id ? null : job.id
-                                                )}
-                                            >
-                                                {expandedJob === job.id ? "Show Less..." : "Read More..."}
-                                            </button>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                        No jobs offered yet
-                                    </div>
-                                )}
-                            </>
-                        )}
-
-                        {activeTab === "testimonials" && (
-                            <>
-                                {/* Received/Given Toggle */}
-                                <div className={styles.testimonialToggle}>
-                                    <button
-                                        className={`${styles.toggleBtn} ${testimonialFilter === "received" ? styles.toggleBtnActive : ""}`}
-                                        onClick={() => setTestimonialFilter("received")}
-                                    >
-                                        Received
-                                    </button>
-                                    <button
-                                        className={`${styles.toggleBtn} ${testimonialFilter === "given" ? styles.toggleBtnActive : ""}`}
-                                        onClick={() => setTestimonialFilter("given")}
-                                    >
-                                        Given
-                                    </button>
+                    {/* Services Section */}
+                    <div className={activeTab === 'services' ? styles.activeTabContent : styles.mobileOnly}>
+                        <div className={`${styles.sidebarCard} ${activeTab === 'services' ? styles.tabSection : ""}`}>
+                            <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('services')} style={{ cursor: 'pointer' }}>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Services Provided</h3>
+                                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                    <span className={styles.editIcon} onClick={(e) => { e.stopPropagation(); setServicesModalOpen(true); }}><EditIcon /></span>
+                                    <span style={{ transform: expandedSections.services ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
+                                        <ChevronUpIcon />
+                                    </span>
                                 </div>
+                            </div>
+                            {(expandedSections.services || activeTab === 'services') && (
+                                <div className={styles.cardContent} style={{ padding: '0' }}>
+                                    {profile.services.map((service) => (
+                                        <div key={service.id} className={styles.serviceCard}>
+                                            <div className={styles.serviceHeader}>
+                                                <div className={`${styles.serviceIcon} ${getServiceIconClass(service.iconType)}`}>
+                                                    {service.icon}
+                                                </div>
+                                                <h4 className={styles.serviceTitle} style={{ color: '#003385' }}>{service.title}</h4>
+                                            </div>
 
-                                {/* Testimonials List */}
-                                <div className={styles.testimonialsList}>
-                                    {testimonialFilter === "received" && profile.testimonialsReceived && profile.testimonialsReceived.length > 0 ? (
-                                        profile.testimonialsReceived.map((testimonial) => (
-                                            <div key={testimonial.id} className={styles.testimonialCard}>
-                                                {/* Star Rating & Edit Action */}
-                                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <div className={styles.serviceDetails}>
+                                                <div className={styles.serviceDetail}>
+                                                    <span className={styles.detailLabel}>Category</span>
+                                                    <span className={styles.detailValue}>{service.category}</span>
+                                                </div>
+                                                <div className={styles.serviceDetail}>
+                                                    <span className={styles.detailLabel}>Experience</span>
+                                                    <span className={styles.detailValue}>{service.experience}</span>
+                                                </div>
+                                                <div className={styles.serviceDetail}>
+                                                    <span className={styles.detailLabel}>Available</span>
+                                                    <span className={styles.detailValue}>{service.available}</span>
+                                                </div>
+                                            </div>
+
+                                            {service.description && expandedService === service.id && (
+                                                <p className={styles.serviceDescription}>{service.description}</p>
+                                            )}
+
+                                            {service.description && (
+                                                <button
+                                                    className={styles.showMoreBtn}
+                                                    onClick={() => setExpandedService(
+                                                        expandedService === service.id ? null : service.id
+                                                    )}
+                                                >
+                                                    {expandedService === service.id ? "Show Less..." : "Show More..."}
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Jobs Section */}
+                    <div className={activeTab === 'jobs' ? styles.activeTabContent : styles.mobileOnly}>
+                        <div className={`${styles.sidebarCard} ${activeTab === 'jobs' ? styles.tabSection : ""}`}>
+                            <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('jobs')} style={{ cursor: 'pointer' }}>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Jobs Offered by Me</h3>
+                                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                    <span className={styles.editIcon} style={{ color: '#ff6b35' }} onClick={(e) => { e.stopPropagation(); setJobsModalOpen(true); }}><PlusIcon /></span>
+                                    <span style={{ transform: expandedSections.jobs ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
+                                        <ChevronUpIcon />
+                                    </span>
+                                </div>
+                            </div>
+                            {(expandedSections.jobs || activeTab === 'jobs') && (
+                                <div className={styles.cardContent} style={{ padding: '0' }}>
+                                    {profile.jobsOffered && profile.jobsOffered.length > 0 ? (
+                                        profile.jobsOffered.map((job) => (
+                                            <div key={job.id} className={styles.jobCard}>
+                                                <div className={styles.jobHeader}>
+                                                    <div className={styles.jobIcon}>{job.icon}</div>
+                                                    <div className={styles.jobTitleArea}>
+                                                        <h4 className={styles.jobTitle} style={{ color: '#003385' }}>{job.title}</h4>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.jobDetailsGrid}>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Location</span>
+                                                        <span className={styles.jobDetailValue}>{job.location}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Start Date</span>
+                                                        <span className={styles.jobDetailValue}>{job.startDate}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Req Experience (in years)</span>
+                                                        <span className={styles.jobDetailValue}>{job.reqExperience}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Work Type</span>
+                                                        <span className={styles.jobDetailValue}>{job.workType}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Days per week</span>
+                                                        <span className={styles.jobDetailValue}>{job.daysPerWeek}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Pay Range</span>
+                                                        <span className={styles.jobDetailValue}>{job.payRange}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Dietary Preference</span>
+                                                        <span className={styles.jobDetailValue}>{job.dietaryPreference}</span>
+                                                    </div>
+                                                    <div className={styles.jobDetail}>
+                                                        <span className={styles.jobDetailLabel}>Posted Date</span>
+                                                        <span className={styles.jobDetailValue}>{job.postedDate}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.jobDescription}>
+                                                    {expandedJob === job.id ? (
+                                                        <p>{job.description}</p>
+                                                    ) : (
+                                                        <p>{job.description.slice(0, 300)}...</p>
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    className={styles.readMoreBtn}
+                                                    onClick={() => setExpandedJob(
+                                                        expandedJob === job.id ? null : job.id
+                                                    )}
+                                                >
+                                                    {expandedJob === job.id ? "Show Less..." : "Read More..."}
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
+                                            No jobs offered yet
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Testimonials Section */}
+                    <div className={activeTab === 'testimonials' ? styles.activeTabContent : styles.mobileOnly}>
+                        <div className={`${styles.sidebarCard} ${activeTab === 'testimonials' ? styles.tabSection : ""}`}>
+                            <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('testimonials')} style={{ cursor: 'pointer' }}>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Testimonials</h3>
+                                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                    <span className={styles.editIcon} style={{ color: '#ff6b35' }} onClick={(e) => { e.stopPropagation(); setEditingTestimonial(null); setFeedbackModalOpen(true); }}>
+                                        <PlusIcon />
+                                    </span>
+                                    <span style={{ transform: expandedSections.testimonials ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
+                                        <ChevronUpIcon />
+                                    </span>
+                                </div>
+                            </div>
+                            {(expandedSections.testimonials || activeTab === 'testimonials') && (
+                                <div className={styles.cardContent} style={{ padding: '0' }}>
+                                    {/* Received/Given Toggle */}
+                                    <div className={styles.testimonialToggle}>
+                                        <button
+                                            className={`${styles.toggleBtn} ${testimonialFilter === "received" ? styles.toggleBtnActive : ""}`}
+                                            onClick={() => setTestimonialFilter("received")}
+                                        >
+                                            Received
+                                        </button>
+                                        <button
+                                            className={`${styles.toggleBtn} ${testimonialFilter === "given" ? styles.toggleBtnActive : ""}`}
+                                            onClick={() => setTestimonialFilter("given")}
+                                        >
+                                            Given
+                                        </button>
+                                    </div>
+
+                                    {/* Testimonials List */}
+                                    <div className={styles.testimonialsList}>
+                                        {testimonialFilter === "received" && profile.testimonialsReceived && profile.testimonialsReceived.length > 0 ? (
+                                            profile.testimonialsReceived.map((testimonial) => (
+                                                <div key={testimonial.id} className={styles.testimonialCard}>
+                                                    {/* Star Rating */}
                                                     <div className={styles.testimonialStars}>
                                                         {Array(5).fill(0).map((_, i) => (
                                                             <span
@@ -792,129 +840,125 @@ const Profile: React.FC = () => {
                                                             </span>
                                                         ))}
                                                     </div>
-                                                    <button
-                                                        className={styles.editIcon}
-                                                        onClick={() => {
-                                                            setEditingTestimonial(testimonial);
-                                                            setFeedbackModalOpen(true);
-                                                        }}
-                                                        style={{ background: 'none', border: 'none', padding: 0 }}
-                                                    >
-                                                        <EditIcon />
-                                                    </button>
-                                                </div>
 
-                                                {/* Testimonial Text */}
-                                                <p className={styles.testimonialText}>
-                                                    "{testimonial.text.split(testimonial.highlightName).map((part, index, array) => (
-                                                        <React.Fragment key={index}>
-                                                            {part}
-                                                            {index < array.length - 1 && (
-                                                                <strong className={styles.highlightName}>{testimonial.highlightName}</strong>
-                                                            )}
-                                                        </React.Fragment>
-                                                    ))}"
-                                                </p>
+                                                    {/* Testimonial Text */}
+                                                    <p className={styles.testimonialText}>
+                                                        "{testimonial.text.split(testimonial.highlightName).map((part, index, array) => (
+                                                            <React.Fragment key={index}>
+                                                                {part}
+                                                                {index < array.length - 1 && (
+                                                                    <strong className={styles.highlightName}>{testimonial.highlightName}</strong>
+                                                                )}
+                                                            </React.Fragment>
+                                                        ))}"
+                                                    </p>
 
-                                                {/* Reviewer Info */}
-                                                <div className={styles.reviewerInfo}>
-                                                    <img
-                                                        src={testimonial.reviewerPhoto}
-                                                        alt={testimonial.reviewerName}
-                                                        className={styles.reviewerPhoto}
-                                                        onError={(e) => {
-                                                            (e.target as HTMLImageElement).src = "/assets/icons/icon_user.svg";
-                                                        }}
-                                                    />
-                                                    <div className={styles.reviewerDetails}>
-                                                        <span className={styles.reviewerName}>{testimonial.reviewerName}</span>
-                                                        <span className={styles.reviewerLocation}>
-                                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                                                <circle cx="12" cy="10" r="3" />
-                                                            </svg>
-                                                            {testimonial.reviewerLocation}
-                                                        </span>
+                                                    {/* Reviewer Info */}
+                                                    <div className={styles.reviewerInfo}>
+                                                        <img
+                                                            src={testimonial.reviewerPhoto}
+                                                            alt={testimonial.reviewerName}
+                                                            className={styles.reviewerPhoto}
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = "/assets/icons/icon_user.svg";
+                                                            }}
+                                                        />
+                                                        <div className={styles.reviewerDetails}>
+                                                            <span className={styles.reviewerName}>{testimonial.reviewerName}</span>
+                                                            <span className={styles.reviewerLocation}>
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                                                    <circle cx="12" cy="10" r="3" />
+                                                                </svg>
+                                                                {testimonial.reviewerLocation}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            ))
+                                        ) : testimonialFilter === "given" && profile.testimonialsGiven && profile.testimonialsGiven.length > 0 ? (
+                                            <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
+                                                Testimonials given will appear here
                                             </div>
-                                        ))
-                                    ) : testimonialFilter === "given" && profile.testimonialsGiven && profile.testimonialsGiven.length > 0 ? (
-                                        <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                            Testimonials given will appear here
-                                        </div>
-                                    ) : (
-                                        <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                            {testimonialFilter === "received" ? "No testimonials received yet" : "No testimonials given yet"}
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                        )}
-
-                        {activeTab === "gallery" && (
-                            <div className={styles.galleryContainer}>
-                                {/* My Photos / Tagged Toggle */}
-                                <div className={styles.testimonialToggle}>
-                                    <button className={`${styles.toggleBtn} ${styles.toggleBtnActive}`}>
-                                        My Photos
-                                    </button>
-                                    <button className={styles.toggleBtn}>
-                                        Tagged
-                                    </button>
-                                </div>
-
-                                <div className={styles.galleryGrid}>
-                                    {/* Photo Cards */}
-                                    {profile.photoGallery && profile.photoGallery.map((photo) => (
-                                        <div key={photo.id} className={styles.photoCard}>
-                                            <img
-                                                src={photo.url}
-                                                alt={photo.alt}
-                                                className={styles.photoImage}
-                                                onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = "/assets/icons/icon_image.svg";
-                                                }}
-                                            />
-                                            <div className={styles.photoActions}>
-                                                <button
-                                                    className={styles.photoActionBtn}
-                                                    title="Expand"
-                                                    onClick={() => setExpandedPhoto({ url: photo.url, alt: photo.alt })}
-                                                >
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <polyline points="15 3 21 3 21 9" />
-                                                        <polyline points="9 21 3 21 3 15" />
-                                                        <line x1="21" y1="3" x2="14" y2="10" />
-                                                        <line x1="3" y1="21" x2="10" y2="14" />
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    className={styles.photoActionBtn}
-                                                    title="Delete"
-                                                    onClick={() => handleDeletePhoto(photo.id)}
-                                                >
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
-                                                        <polyline points="3 6 5 6 21 6" />
-                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                                        <line x1="10" y1="11" x2="10" y2="17" />
-                                                        <line x1="14" y1="11" x2="14" y2="17" />
-                                                    </svg>
-                                                </button>
+                                        ) : (
+                                            <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
+                                                {testimonialFilter === "received" ? "No testimonials received yet" : "No testimonials given yet"}
                                             </div>
-                                        </div>
-                                    ))}
-
-                                    {/* Add Photo Placeholder */}
-                                    <div className={styles.addPhotoPlaceholder} onClick={() => setPhotoModalOpen(true)}>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
-                                            <line x1="12" y1="5" x2="12" y2="19" />
-                                            <line x1="5" y1="12" x2="19" y2="12" />
-                                        </svg>
+                                        )}
                                     </div>
                                 </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Photo Gallery Section */}
+                    <div className={activeTab === 'gallery' ? styles.activeTabContent : styles.mobileOnly}>
+                        <div className={`${styles.sidebarCard} ${activeTab === 'gallery' ? styles.tabSection : ""}`}>
+                            <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('gallery')} style={{ cursor: 'pointer' }}>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Photo Gallery</h3>
+                                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                                    <span style={{ transform: expandedSections.gallery ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
+                                        <ChevronUpIcon />
+                                    </span>
+                                </div>
                             </div>
-                        )}
+                            {(expandedSections.gallery || activeTab === 'gallery') && (
+                                <div className={styles.cardContent} style={{ padding: '20px' }}>
+                                    <div className={styles.galleryContainer}>
+
+                                        <div className={styles.galleryGrid}>
+                                            {/* Photo Cards */}
+                                            {profile.photoGallery && profile.photoGallery.map((photo) => (
+                                                <div key={photo.id} className={styles.photoCard}>
+                                                    <img
+                                                        src={photo.url}
+                                                        alt={photo.alt}
+                                                        className={styles.photoImage}
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).src = "/assets/icons/icon_image.svg";
+                                                        }}
+                                                    />
+                                                    <div className={styles.photoActions}>
+                                                        <button
+                                                            className={styles.photoActionBtn}
+                                                            title="Expand"
+                                                            onClick={() => setExpandedPhoto({ url: photo.url, alt: photo.alt })}
+                                                        >
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <polyline points="15 3 21 3 21 9" />
+                                                                <polyline points="9 21 3 21 3 15" />
+                                                                <line x1="21" y1="3" x2="14" y2="10" />
+                                                                <line x1="3" y1="21" x2="10" y2="14" />
+                                                            </svg>
+                                                        </button>
+                                                        <button
+                                                            className={styles.photoActionBtn}
+                                                            title="Delete"
+                                                            onClick={() => handleDeletePhoto(photo.id)}
+                                                        >
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                                <line x1="10" y1="11" x2="10" y2="17" />
+                                                                <line x1="14" y1="11" x2="14" y2="17" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            {/* Add Photo Placeholder */}
+                                            <div className={styles.addPhotoPlaceholder} onClick={() => setPhotoModalOpen(true)}>
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
+                                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

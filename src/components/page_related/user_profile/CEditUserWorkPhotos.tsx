@@ -21,6 +21,40 @@ type Props = {
   files: File[];
 };
 
+const WorkPhotoImage = ({ s3Path, onSizeClick }: { s3Path: string, onSizeClick: (url: string) => void }) => {
+  const [photoUrl, setPhotoUrl] = useState<string>("/assets/icons/form_icons/icon_dummy_user.svg");
+
+  useEffect(() => {
+    const fetchPhotoUrl = async () => {
+      const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "";
+      if (bucketName && s3Path) {
+        try {
+          const urls = await getWorkPhotoUrls(bucketName, [s3Path]);
+          if (urls.length > 0) setPhotoUrl(urls[0]);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    fetchPhotoUrl();
+  }, [s3Path]);
+
+  return (
+    <>
+      <img
+        src={photoUrl}
+        alt="Work photo"
+        className="card-img-top seekerPhoto"
+      />
+      <div className="p-2">
+        <Button variant="light" onClick={() => onSizeClick(photoUrl)}>
+          <SlSizeFullscreen size={20} className="textPrimary" />
+        </Button>
+      </div>
+    </>
+  );
+};
+
 export const CEditUserWorkPhotos: FunctionComponent<Props> = ({
   formik,
   workPhotos,
@@ -44,10 +78,10 @@ export const CEditUserWorkPhotos: FunctionComponent<Props> = ({
         console.error('Bucket name is missing');
         return;
       }
-      const urls = getWorkPhotoUrls(bucketName, workPhotos);
+      const urls = await getWorkPhotoUrls(bucketName, workPhotos);
       setWorkPhotoUrls(urls);
     };
-  
+
     fetchPhotoUrls();
   }, [workPhotos]);
 
@@ -91,21 +125,20 @@ export const CEditUserWorkPhotos: FunctionComponent<Props> = ({
     // Filter out any invalid or blank entries from newImages
     const validImages = newImages.filter((image) => image && image.trim() !== "");
 
-    const totalImages = [...workPhotos, ...addImages].length; 
+    const totalImages = [...workPhotos, ...addImages].length;
     // Check if the total images exceed the limit of 3
     if (totalImages + validImages.length > 3) {
       const maxAllowed = 3 - totalImages;
       Swal.fire({
         icon: "warning",
         title: `Upload Limit Reached`,
-        text: `Only ${maxAllowed} more ${
-          maxAllowed === 1 ? "photo" : "photos allowed"
-        } or please remove existing photos to upload new ones.`,
+        text: `Only ${maxAllowed} more ${maxAllowed === 1 ? "photo" : "photos allowed"
+          } or please remove existing photos to upload new ones.`,
       });
     } else {
       // Add new valid images if within the limit
       setAddImages([...addImages, ...validImages]);
-  
+
       // Ensure you're setting valid images in formik values
       // formik.setFieldValue(
       //   "uploadPhotoOfWork",
@@ -113,7 +146,7 @@ export const CEditUserWorkPhotos: FunctionComponent<Props> = ({
       // );
     }
   };
-  
+
 
   return (
     <CExpandablePanel
@@ -122,42 +155,23 @@ export const CEditUserWorkPhotos: FunctionComponent<Props> = ({
       isExpanded="show"
     >
       <Row className="g-2">
-       {/* Display existing files from S3 bucket */}
-       {workPhotos.map((image: string, index: number) => {
-          const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
-          if (!bucketName) {
-            console.error("Bucket name is missing");
-            return null; // Avoid rendering undefined elements
-          }
-
-          const newImageArray = getWorkPhotoUrls(bucketName, [image]); // Get the array of processed URLs
-          const newImage = newImageArray[0]; // Extract the first URL (assuming that's what you need)
-
-          return (
-            <Col xs={12} sm={2} key={index} className="mt-2 me-4">
-              <Card>
-                <img
-                  src={newImage} // Use the first image URL from the array
-                  alt={`Work photo ${index + 1}`}
-                  className="card-img-top seekerPhoto"
+        {/* Display existing files from S3 bucket */}
+        {workPhotos.map((image: string, index: number) => (
+          <Col xs={12} sm={2} key={index} className="mt-2 me-4">
+            <Card>
+              <WorkPhotoImage s3Path={image} onSizeClick={(url) => handleOpen(url)} />
+              <Card.Footer className="d-flex flex-row justify-content-between">
+                <CTextIconButton
+                  label="Delete"
+                  icon="/assets/icons/icon_delete.svg"
+                  buttonStyle="btn"
+                  textStyle="text-danger"
+                  onClick={() => handleDeleteClick(image)}
                 />
-                <Card.Footer className="d-flex flex-row justify-content-between">
-                  <Button variant="light" onClick={() => handleOpen(newImage)}>
-                    <SlSizeFullscreen size={20} className="textPrimary" />
-                  </Button>
-
-                  <CTextIconButton
-                    label="Delete"
-                    icon="/assets/icons/icon_delete.svg"
-                    buttonStyle="btn"
-                    textStyle="text-danger"
-                    onClick={() => handleDeleteClick(image)}
-                  />
-                </Card.Footer>
-              </Card>
-            </Col>
-          );
-        })}
+              </Card.Footer>
+            </Card>
+          </Col>
+        ))}
         {/* If new file(s) have been added by the user then show a temp icon with filename */}
         {addImages.length > 0 &&
           addImages.map((e) => (

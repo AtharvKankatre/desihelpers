@@ -80,11 +80,11 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
                 </div>
 
                 <div className={styles.servicesModalActions}>
-                    <p className={styles.modalSubtitle}>
+                    <p className={styles.modalSubtitle} style={{ margin: 0 }}>
                         Add/Delete services to get listed on deshihelper
                     </p>
                     <div className={styles.addServicesLink} onClick={handleAddService}>
-                        <span>+</span> Add Services
+                        <span style={{ fontSize: '18px', fontWeight: '400' }}>+</span> Add Services
                     </div>
                 </div>
 
@@ -97,13 +97,15 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
                             >
                                 <span className={styles.accordionTitle}>{service.title}</span>
                                 <div className={styles.accordionHeaderActions}>
-                                    <button
-                                        className={styles.removeServiceBtn}
-                                        onClick={(e) => handleRemoveService(service.id, e)}
-                                        title="Remove Service"
-                                    >
-                                        ×
-                                    </button>
+                                    {services.length > 1 && (
+                                        <button
+                                            className={styles.removeServiceBtn}
+                                            onClick={(e) => handleRemoveService(service.id, e)}
+                                            title="Remove Service"
+                                        >
+                                            ×
+                                        </button>
+                                    )}
                                     <div className={`${styles.accordionChevron} ${service.isExpanded ? styles.rotate180 : ""}`}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                             <path d="M6 9l6 6 6-6" />
@@ -114,8 +116,8 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
 
                             {service.isExpanded && (
                                 <div className={styles.accordionContent}>
-                                    <div className={styles.formRow}>
-                                        <div className={styles.formSection}>
+                                    <div className={styles.formRow} style={{ marginBottom: '15px' }}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Category</label>
                                             <select
                                                 className={styles.formSelect}
@@ -127,7 +129,7 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
                                                 <option value="Home Services">Home Services</option>
                                             </select>
                                         </div>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Sub-Category</label>
                                             <select
                                                 className={styles.formSelect}
@@ -142,30 +144,34 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
                                         </div>
                                     </div>
 
-                                    <div className={styles.formSection}>
+                                    <div className={styles.formSection} style={{ padding: 0, marginBottom: '15px' }}>
                                         <label className={styles.fieldLabel}>Service Description</label>
-                                        <textarea
-                                            className={styles.textarea}
-                                            value={service.description}
-                                            onChange={(e) => updateServiceField(service.id, 'description', e.target.value)}
-                                            placeholder="Describe the service..."
-                                        />
-                                        <span className={styles.wordCount}>{service.description.length}/250 words</span>
+                                        <div className={styles.textareaContainer}>
+                                            <textarea
+                                                className={styles.textarea}
+                                                value={service.description}
+                                                onChange={(e) => updateServiceField(service.id, 'description', e.target.value)}
+                                                placeholder="greeting customers, assisting with product selection, operating cash registers, processing transactions, maintaining store cleanliness."
+                                                style={{ minHeight: '80px', padding: '15px' }}
+                                            />
+                                            <span className={styles.wordCount}>{service.description.length}/250 words</span>
+                                        </div>
                                     </div>
 
                                     <div className={styles.formRow}>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Experience <span className={styles.labelHint}>(in yrs)</span></label>
                                             <input
                                                 type="text"
                                                 className={styles.formInput}
                                                 value={service.experience}
                                                 onChange={(e) => updateServiceField(service.id, 'experience', e.target.value)}
+                                                placeholder="5"
                                             />
                                         </div>
-                                        <div className={styles.formSection}>
+                                        <div className={styles.formSection} style={{ padding: 0 }}>
                                             <label className={styles.fieldLabel}>Offering Now</label>
-                                            <div className={styles.radioGroup}>
+                                            <div className={styles.radioGroup} style={{ marginTop: '8px' }}>
                                                 <label className={styles.radioLabel}>
                                                     <input
                                                         type="radio"
@@ -205,3 +211,4 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
 };
 
 export default CServicesModal;
+

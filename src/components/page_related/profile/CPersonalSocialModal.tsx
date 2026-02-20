@@ -58,7 +58,7 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
 
     return (
         <div className={styles.modalOverlay}>
-            <div className={styles.modalContainer}>
+            <div className={`${styles.modalContainer} ${styles.modalContainerWithBorder}`}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>Personal & Social Details</h2>
                     <button className={styles.closeBtn} onClick={onClose}>×</button>

@@ -76,69 +76,81 @@
 }
 
 .readySection {
-    background-color: #fff5eb;
-    position: relative;
+    background: linear-gradient(135deg, #fff1eb 0%, #ffeecf 100%);
     padding: 80px 20px;
-    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    text-align: left;
+    position: relative;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
 }
 
-.ctaBackground {
+.readySection::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("/assets/img_text_language_cloud.svg");
-    background-repeat: no-repeat;
+    background-image: url('/assets/img_text_language_cloud.svg');
     background-size: cover;
-    opacity: 0.12;
+    background-position: center;
+    opacity: 0.15;
+    z-index: 0;
     pointer-events: none;
 }
 
 .readyContent {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    position: relative;
+    z-index: 1;
+    gap: 40px;
+    width: 100%;
+}
+
+.readyTextGroup {
+    flex: 1;
 }
 
 .readyTitle {
-    font-size: 36px;
-    font-weight: 800;
-    color: #ff6a00;
-    margin: 0;
+    font-size: 48px;
+    font-weight: 700;
+    color: #ea580c;
+    margin-bottom: 16px;
+    line-height: 1.2;
 }
 
 .readySubtitle {
     font-size: 16px;
-    color: #333333;
-    margin: 0 0 16px 0;
-    line-height: 1.5;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.6;
     max-width: 600px;
 }
 
 .readyButton {
-    background-color: #FF6B35;
+    background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
+    box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
     color: white;
-    padding: 12px 32px;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 16px;
-    text-decoration: none;
-    transition: all 0.2s ease;
+    padding: 16px 40px;
+    border-radius: 50px;
     border: none;
+    font-weight: 700;
+    font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    transition: transform 0.2s;
+    white-space: nowrap;
+    text-decoration: none;
 }
 
 .readyButton:hover {
-    background-color: #E85A2A;
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
     color: white;
 }
 
@@ -161,10 +173,21 @@
     }
 
     .readyTitle {
-        font-size: 28px;
+        font-size: 32px;
     }
 
     .readySection {
         padding: 60px 20px;
+        text-align: center;
+    }
+
+    .readyContent {
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+    }
+
+    .readyTextGroup {
+        text-align: center;
     }
 }

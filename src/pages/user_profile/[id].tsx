@@ -9,7 +9,7 @@ import CUserProfileCard from "@/components/page_related/user_profile/CUserProfil
 import withAuth from "@/services/authorization/ProfileService";
 
 
-const ProfilePage = ({ profile, ogImageUrl,displayName ,description}: { profile: IUserProfileModel , ogImageUrl : string, displayName : string, description: string}) => {
+const ProfilePage = ({ profile, ogImageUrl, displayName, description }: { profile: IUserProfileModel, ogImageUrl: string, displayName: string, description: string }) => {
   const base_url = process.env.NEXT_PUBLIC_Base_API_URL;
   const dummyImage = `https://avatar.iran.liara.run/username?username=${displayName}+`;
 
@@ -20,32 +20,32 @@ const ProfilePage = ({ profile, ogImageUrl,displayName ,description}: { profile:
   return (
     <>
       <Head>
-  {/* <title>{`${displayName || "Loading"}'s Profile`}</title> */}
-  <meta property="fb:app_id" content={`${process.env.FACEBOOK_APP_ID}`} />
-  {/* <meta
+        {/* <title>{`${displayName || "Loading"}'s Profile`}</title> */}
+        <meta property="fb:app_id" content={`${process.env.FACEBOOK_APP_ID}`} />
+        {/* <meta
     name="description"
     content={des || "View the user's profile details."}
   /> */}
-  <meta property="og:title" content={`${displayName}'s Profile`} />
-  <meta
-    property="og:description"
-    content={description || ""}
-  />
-  <meta
-    property="og:image"
-    content={`${ogImageUrl}` || dummyImage}
-  />
-  <meta property="og:url" content={`${base_url}user_profile/${profile?._id}`} />
-  <meta name="twitter:card" content="summary_large_image" />
-</Head>
+        <meta property="og:title" content={`${displayName}'s Profile`} />
+        <meta
+          property="og:description"
+          content={description || ""}
+        />
+        <meta
+          property="og:image"
+          content={`${ogImageUrl}` || dummyImage}
+        />
+        <meta property="og:url" content={`${base_url}user_profile/${profile?._id}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
 
 
       <div
         className={`container-fluid mb-4 ${commonStyles.displayDetailsWrapper}`}
       >
 
-      <CUserProfileCard profile={profile!}  />     
-       </div>
+        <CUserProfileCard profile={profile!} />
+      </div>
     </>
   );
 };
@@ -64,9 +64,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const fetchedUserData = await ApiService.crud(APIDetails.ShareProfileSeeker, id);
   const profile = fetchedUserData[1] as IUserProfileModel;
   const dummyImage = `https://avatar.iran.liara.run/username?username=${profile?.displayName}+`;
-  const validBucketName = bucketName ?? ""; 
-  const profilePhoto = profile?.profilePhoto ?? ""; 
-  const ogImageUrl = profilePhoto ? getWorkPhotoUrls(validBucketName, [profilePhoto]) : dummyImage;
+  const validBucketName = bucketName ?? "";
+  const profilePhoto = profile?.profilePhoto ?? "";
+  const photoUrls = profilePhoto ? await getWorkPhotoUrls(validBucketName, [profilePhoto]) : [];
+  const ogImageUrl = photoUrls.length > 0 ? photoUrls[0] : dummyImage;
   const displayName = profile?.displayName ?? "";
   const servicesProvided = (profile?.jobDetails ?? [])
     .map((job) => job.jobType)
@@ -82,7 +83,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       profile,
-      ogImageUrl, 
+      ogImageUrl,
       displayName,
       description,
     }

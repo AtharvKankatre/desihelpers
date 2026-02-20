@@ -64,13 +64,13 @@ export const CUserPhoto: React.FC<Props> = ({ ...Props }) => {
       }
       const photo = Props.profile?.profilePhoto;
       const photosArray = photo ? [photo] : [];
-      const urls = getWorkPhotoUrls(bucketName, photosArray);
+      const urls = await getWorkPhotoUrls(bucketName, photosArray);
       setPhotoUrls(urls.length > 0 ? urls[0] : undefined);  // Expecting only one URL
     };
-  
+
     fetchPhotoUrls();
   }, [Props.profile?.profilePhoto]);
-  
+
 
   return (
     <>
@@ -78,10 +78,9 @@ export const CUserPhoto: React.FC<Props> = ({ ...Props }) => {
         <Ratio aspectRatio="1x1">
           <Image
             roundedCircle
-            src={`${
-              PhotoUrls??
+            src={`${PhotoUrls ??
               "/assets/icons/form_icons/icon_dummy_user.svg"
-            }`}
+              }`}
           />
         </Ratio>
         {!Props.hideEditIcon && (

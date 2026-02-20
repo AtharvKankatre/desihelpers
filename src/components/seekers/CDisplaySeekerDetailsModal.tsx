@@ -1,6 +1,6 @@
 import { IUserProfileModel } from "@/models/UserProfileModel";
 import { FunctionComponent, useEffect, useState } from "react";
-import { Col, Image, Modal, Row,} from "react-bootstrap";
+import { Col, Image, Modal, Row, } from "react-bootstrap";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { CExperienceDetails } from "../page_related/user_profile/CExperienceDetails";
 import { CUserWorkPhotos } from "../page_related/user_profile/CUserWorkPhotos";
@@ -70,10 +70,10 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
       }
       const photo = profile.profilePhoto;
       const photosArray = photo ? [photo] : [];
-      const urls = getWorkPhotoUrls(bucketName, photosArray);
+      const urls = await getWorkPhotoUrls(bucketName, photosArray);
       setPhotoUrls(urls.length > 0 ? urls[0] : undefined);  // Expecting only one URL
     };
-  
+
     fetchPhotoUrls();
   }, [profile.profilePhoto]);
 
@@ -158,11 +158,11 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
                     label={profile?.phone ?? "Not Mentioned"}
                   />
                 </Col>
-                </>
+              </>
             )}
-              {profile.showMobile && (
+            {profile.showMobile && (
               <>
-               <Col sm={12} md={4}>
+                <Col sm={12} md={4}>
                   <div
                     className="d-flex flex-row align-items-center"
                     onClick={handleWhatsAppClick}
@@ -175,11 +175,11 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
                       label={profile?.mobile ?? "Not Mentioned"}
                     />
                   </div>
-               
+
                 </Col>
               </>
             )}
-               
+
 
           </Row>
 
@@ -219,13 +219,12 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
               <CDisplay
                 heading="OK With Pets"
                 icon="/assets/icons/form_icons/icon_pets.svg"
-                label={`${
-                  profile?.okWithPets == true
-                    ? "Yes"
-                    : profile?.okWithPets == false
+                label={`${profile?.okWithPets == true
+                  ? "Yes"
+                  : profile?.okWithPets == false
                     ? "No"
                     : "Not mentioned"
-                }`}
+                  }`}
               />
             </Col>
           </Row>
@@ -235,16 +234,16 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
               <CDisplay
                 heading="Facebook"
                 icon="/assets/icons/form_icons/icon_facebook.svg"
-               
+
                 label={
                   typeof profile?.facebookLink === 'undefined' || profile?.facebookLink?.length == 0 ? (
                     "Not provided"
                   ) : (
                     <Link
                       href={`${profile?.facebookLink!}`}
-                       target="_blank"
-                        rel="noopener noreferrer"
-                      style={{ cursor: "pointer" }} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ cursor: "pointer" }}
                     >
                       Click to open link
                     </Link>
@@ -262,11 +261,11 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
                   ) : (
                     <Link
                       href={`${profile?.instagram!}`}
-                       target="_blank"
-                        rel="noopener noreferrer"
-                      style={{ cursor: "pointer" }} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ cursor: "pointer" }}
                     >
-                        Click to open link
+                      Click to open link
                     </Link>
                   )
                 }
@@ -282,11 +281,11 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
                   ) : (
                     <Link
                       href={`${profile?.websiteLink!}`}
-                       target="_blank"
-                        rel="noopener noreferrer"
-                      style={{ cursor: "pointer" }} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ cursor: "pointer" }}
                     >
-                       Click to open link
+                      Click to open link
                     </Link>
                   )
                 }

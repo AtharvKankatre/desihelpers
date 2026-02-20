@@ -95,7 +95,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const validBucketName = bucketName ?? "";
   const dummyImage = `https://avatar.iran.liara.run/username?username=${profile?.userProfile?.displayName}+`;
   const profilePhoto = profile?.userProfile?.profilePhoto ?? "";
-  const ogImageUrl = profilePhoto ? getWorkPhotoUrls(validBucketName, [profilePhoto]) : dummyImage;
+  const photoUrls = profilePhoto ? await getWorkPhotoUrls(validBucketName, [profilePhoto]) : [];
+  const ogImageUrl = photoUrls.length > 0 ? photoUrls[0] : dummyImage;
   const jobType = profile?.jobType?.name
   const location = `${profile?.city},${profile?.state},${profile?.zipCode}`
   const description = `Required: ${jobType} | Location: ${location}`;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/PopularServices.module.css";
 import ApiService from "@/services/data/crud/crud";
@@ -24,7 +24,7 @@ const fallbackServices = [
         type: "helper",
         name: "Sukhreet Kaur",
         location: "Bothell, Washington",
-        image: "/assets/helpers/helper1.jpg",
+        image: "/assets/helpers/sukhreet-kaur-1.png",
         skills: ["babysitting", "cooking", "cleaning", "tutoring"],
     },
     {
@@ -54,7 +54,7 @@ const fallbackServices = [
         type: "helper",
         name: "Sukhreet Kaur",
         location: "Bothell, Washington",
-        image: "/assets/helpers/helper2.jpg",
+        image: "/assets/helpers/sukhreet-kaur-2.jpg",
         skills: ["babysitting", "cooking", "cleaning", "tutoring"],
     },
     {
@@ -73,7 +73,7 @@ const fallbackServices = [
         type: "helper",
         name: "Sukhreet Kaur",
         location: "Bothell, Washington",
-        image: "/assets/helpers/helper3.jpg",
+        image: "/assets/helpers/sukhreet-kaur-1.png",
         skills: ["babysitting", "cooking", "cleaning", "tutoring"],
     },
 ];
@@ -148,7 +148,7 @@ export const PopularServicesSection: React.FC = () => {
                         type: "helper",
                         name: seeker.displayName || `${seeker.firstName || ""} ${seeker.lastName || ""}`.trim() || "Helper",
                         location: `${seeker.city || ""}, ${seeker.state || ""}`.trim() || "Location specified",
-                        image: seeker.profilePhoto || "/assets/helpers/helper1.jpg",
+                        image: seeker.profilePhoto || "/assets/helpers/sukhreet-kaur-1.png",
                         skills: seeker.jobDetails?.map((jd: any) => jd.jobType).filter(Boolean).slice(0, 4) || ["babysitting", "cooking"]
                     }));
                     combinedRes = [...combinedRes, ...apiSeekers];
@@ -170,6 +170,78 @@ export const PopularServicesSection: React.FC = () => {
         router.push(Routes.register);
     };
 
+    const marqueeRef = useRef<HTMLDivElement>(null);
+
+    const renderCard = (item: any, index: number) => (
+        <div key={`${item.id}-${index}`} className={styles.card}>
+            {/* Job Card */}
+            {item.type === "job" && (
+                <>
+                    {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
+                    <div className={styles.jobImageContainer}>
+                        <img src={item.image} alt={item.title} className={styles.jobImage} />
+                    </div>
+                    <h3 className={styles.cardTitle}>{item.title}</h3>
+                    <p className={styles.cardDescription}>{item.description}</p>
+                    <div className={styles.cardLocation}>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                        {item.location}
+                    </div>
+                    <div className={styles.cardFooter}>
+                        <span className={styles.cardDate}>{item.date}</span>
+                        <span className={styles.cardRate}>{item.rate}</span>
+                    </div>
+                    <div className={styles.skillIcons}>
+                        {Object.values(skillIcons).map((icon, idx) => (
+                            <span key={idx} className={styles.skillIcon}>{icon}</span>
+                        ))}
+                    </div>
+                </>
+            )}
+
+            {/* Helper Card */}
+            {item.type === "helper" && (
+                <>
+                    <div className={styles.helperImageContainer}>
+                        <img src={item.image} alt={item.name} className={styles.helperImage} />
+                    </div>
+                    <h3 className={styles.cardTitle}>{item.name}</h3>
+                    <div className={styles.cardLocation}>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                        {item.location}
+                    </div>
+                    <div className={styles.skillIcons}>
+                        {item.skills?.map((skill: string, idx: number) => (
+                            <span key={idx} className={styles.skillIcon}>
+                                {skillIcons[skill.toLowerCase()] || "✨"}
+                            </span>
+                        ))}
+                    </div>
+                </>
+            )}
+
+            {/* Advertisement Card */}
+            {item.type === "ad" && (
+                <>
+                    <span className={styles.advtBadge}>ADVT</span>
+                    <div className={styles.adContainer}>
+                        <div className={styles.adPlaceholder}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21,15 16,10 5,21" />
+                            </svg>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+
     return (
         <section className={styles.popularSection}>
             <div className={styles.container}>
@@ -179,77 +251,20 @@ export const PopularServicesSection: React.FC = () => {
                     <p className={styles.subtitle}>Trending Jobs and Top rated Helpers</p>
                 </div>
 
-                {/* Cards Grid */}
-                <div className={styles.cardsGrid}>
-                    {popularServices.map((item, index) => (
-                        <div key={item.id} className={styles.card}>
-                            {/* Job Card */}
-                            {item.type === "job" && (
-                                <>
-                                    {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
-                                    <div className={styles.jobImageContainer}>
-                                        <img src={item.image} alt={item.title} className={styles.jobImage} />
-                                    </div>
-                                    <h3 className={styles.cardTitle}>{item.title}</h3>
-                                    <p className={styles.cardDescription}>{item.description}</p>
-                                    <div className={styles.cardLocation}>
-                                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
-                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                        </svg>
-                                        {item.location}
-                                    </div>
-                                    <div className={styles.cardFooter}>
-                                        <span className={styles.cardDate}>{item.date}</span>
-                                        <span className={styles.cardRate}>{item.rate}</span>
-                                    </div>
-                                    <div className={styles.skillIcons}>
-                                        {Object.values(skillIcons).map((icon, idx) => (
-                                            <span key={idx} className={styles.skillIcon}>{icon}</span>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-
-                            {/* Helper Card */}
-                            {item.type === "helper" && (
-                                <>
-                                    <div className={styles.helperImageContainer}>
-                                        <img src={item.image} alt={item.name} className={styles.helperImage} />
-                                    </div>
-                                    <h3 className={styles.cardTitle}>{item.name}</h3>
-                                    <div className={styles.cardLocation}>
-                                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
-                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                        </svg>
-                                        {item.location}
-                                    </div>
-                                    <div className={styles.skillIcons}>
-                                        {item.skills?.map((skill: string, idx: number) => (
-                                            <span key={idx} className={styles.skillIcon}>
-                                                {skillIcons[skill.toLowerCase()] || "✨"}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-
-                            {/* Advertisement Card */}
-                            {item.type === "ad" && (
-                                <>
-                                    <span className={styles.advtBadge}>ADVT</span>
-                                    <div className={styles.adContainer}>
-                                        <div className={styles.adPlaceholder}>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
-                                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                                <circle cx="8.5" cy="8.5" r="1.5" />
-                                                <polyline points="21,15 16,10 5,21" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    ))}
+                {/* Marquee Carousel */}
+                <div
+                    className={styles.marqueeWrapper}
+                    onMouseEnter={() => {
+                        if (marqueeRef.current) marqueeRef.current.style.animationPlayState = 'paused';
+                    }}
+                    onMouseLeave={() => {
+                        if (marqueeRef.current) marqueeRef.current.style.animationPlayState = 'running';
+                    }}
+                >
+                    <div className={styles.marqueeTrack} ref={marqueeRef}>
+                        {popularServices.map((item, index) => renderCard(item, index))}
+                        {popularServices.map((item, index) => renderCard(item, index + popularServices.length))}
+                    </div>
                 </div>
 
                 {/* Register / Explore Section - Only for non-logged in users */}
