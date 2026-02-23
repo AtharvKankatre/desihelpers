@@ -162,8 +162,8 @@
   display: flex;
   gap: 20px;
   width: max-content;
-  animation: marquee 60s linear infinite;
-  /* Slower for better readability and performance */
+  animation: marquee 400s linear infinite;
+  /* Extremely slow and smooth for high-end feel */
   padding: 10px;
   will-change: transform;
 }
@@ -184,12 +184,12 @@
 
 /* Job Card - Split Design */
 .jobCard {
-  flex: 0 0 210px;
-  min-height: 300px;
+  flex: 0 0 120px;
+  min-height: 380px;
   background: white;
   border-radius: 12px;
   padding: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   position: relative;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -210,54 +210,59 @@
   right: 8px;
   background: #EF4444;
   color: white;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   z-index: 2;
 }
 
 /* Card Image - Top Section (Light Blue) */
 .cardImage {
   width: 100%;
-  height: 120px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #E8F4FC 0%, #D4EBFA 100%);
   border-radius: 12px 12px 0 0;
   overflow: hidden;
-  padding: 20px;
+  padding: 8px;
 }
 
 .cardImage img {
-  max-height: 80px;
-  max-width: 80px;
+  max-height: 50px;
+  max-width: 50px;
   object-fit: contain;
 }
 
 /* Card Content - Bottom Section (White) */
 .cardTitle {
-  font-size: var(--body-medium-size);
-  font-weight: var(--body-medium-weight-semibold);
+  font-size: 11px;
+  font-weight: 600;
   color: #1e40af;
-  margin: 8px 0 4px;
+  margin: 6px 0 4px;
   text-align: center;
-  line-height: var(--body-medium-line-height);
-  padding: 0 12px;
+  line-height: 1.2;
+  padding: 0 4px;
 }
 
 .cardDescription {
-  font-size: var(--body-small-size);
+  font-size: 10px;
   color: #6b7280;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: center;
-  line-height: var(--body-small-line-height);
+  line-height: 1.3;
   font-style: italic;
-  padding: 0 12px;
-  min-height: 30px;
+  padding: 0 4px;
+  min-height: 60px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .cardLocation {

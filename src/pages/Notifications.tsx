@@ -3,80 +3,9 @@ import Head from "next/head";
 import { Box, GlobalStyles, Button, Container } from "@mui/material";
 import { CHeader } from "@/components/global/header/CHeader";
 import { FaBell } from "react-icons/fa";
-
+import { useNotification, NotificationItem } from "@/context/NotificationContext";
 const Notifications: React.FC = () => {
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            message: "Good news! Mr. Jasbinder just viewed your profile. Keep your details updated to get hired faster.",
-            name: "Mr. Jasbinder",
-            time: "30 mins ago",
-            date: "Today",
-            isRead: false,
-        },
-        {
-            id: 2,
-            message: "You recently visited Tania's profile. Did you provide services to them? Share your feedback to build trust.",
-            name: "Tania",
-            time: "2 hrs ago",
-            date: "Today",
-            isRead: false,
-        },
-        {
-            id: 3,
-            message: "Did you and Mr. Raman connect for work? If yes, let us know your experience by leaving a quick rating.",
-            name: "Mr. Raman",
-            time: "Yesterday",
-            date: "Yesterday",
-            isRead: false,
-        },
-        {
-            id: 4,
-            message: "Help the community grow! Rate your recent engagement with Sara and add a short testimonial.",
-            name: "Sara",
-            time: "Yesterday",
-            date: "Yesterday",
-            isRead: false,
-        },
-        {
-            id: 5,
-            message: "Your opinion matters! Leave a quick review for Mrs. Meea and strengthen their chances of getting hired.",
-            name: "Mrs. Meea",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-        {
-            id: 6,
-            message: "Did you recently connect with miss. Nagma? Share your experience to help others hire with confidence.",
-            name: "miss. Nagma",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-        {
-            id: 7,
-            message: "Trust grows with feedback — rate your recent interaction with [Name] to build credibility in the community.",
-            name: "[Name]",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-        {
-            id: 8,
-            message: "Help the community grow! Rate your recent engagement with Sara and add a short testimonial.",
-            name: "Sara",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-    ]);
-
-    const markAllAsRead = () => {
-        setNotifications((prev) =>
-            prev.map((notif) => ({ ...notif, isRead: true }))
-        );
-    };
+    const { notifications, markAllAsRead, markAsRead } = useNotification();
 
     const groupedNotifications = notifications.reduce((groups, notification) => {
         const date = notification.date;
@@ -234,21 +163,24 @@ const Notifications: React.FC = () => {
                                 {notifs.map((notification) => (
                                     <Box
                                         key={notification.id}
+                                        onClick={() => markAsRead(notification.id)}
                                         sx={{
-                                            backgroundColor: "#ffffff",
+                                            backgroundColor: notification.isRead ? "#f9f9f9" : "#ffffff",
                                             borderRadius: "8px",
                                             padding: "1.25rem",
                                             mb: 2,
                                             display: "flex",
                                             gap: 2,
-                                            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                                            boxShadow: notification.isRead ? "none" : "0 1px 3px rgba(0,0,0,0.1)",
+                                            border: notification.isRead ? "1px solid #eee" : "none",
                                             position: "relative",
+                                            cursor: "pointer",
                                         }}
                                     >
                                         {/* Bell Icon */}
                                         <Box
                                             sx={{
-                                                backgroundColor: "#FFE8D6",
+                                                backgroundColor: notification.isRead ? "#eee" : "#FFE8D6",
                                                 borderRadius: "50%",
                                                 width: "40px",
                                                 height: "40px",
@@ -258,7 +190,7 @@ const Notifications: React.FC = () => {
                                                 flexShrink: 0,
                                             }}
                                         >
-                                            <FaBell color="#fd7e14" size={18} />
+                                            <FaBell color={notification.isRead ? "#999" : "#fd7e14"} size={18} />
                                         </Box>
 
                                         {/* Content */}

@@ -13,6 +13,9 @@ import CPhotoUploadModal from "@/components/page_related/profile/CPhotoUploadMod
 import CServicesModal from "@/components/page_related/profile/CServicesModal";
 import CJobsOfferingModal from "@/components/page_related/profile/CJobsOfferingModal";
 import CFeedbackModal from "@/components/page_related/profile/CFeedbackModal";
+import { userProfileStore } from "@/stores/UserProfileStore";
+import Cookies from "js-cookie";
+import { cookieParams } from "@/constants/ECookieParams";
 
 // Icons as components
 const LocationIcon = () => (
@@ -85,6 +88,7 @@ const sampleProfile = {
     email: "taniamal@gmail.com",
     mobileNumber: "425-555-0156",
     whatsappNumber: "425-555-0156",
+    whatsappSameAsMobile: true,
     rating: 5,
     location: "Bellevue, Washington",
     photo: "/assets/images/profile_pic.jpg",
@@ -186,11 +190,12 @@ const sampleProfile = {
         }
     ],
     socialLinks: {
-        facebook: "#",
-        whatsapp: "#",
-        instagram: "#",
-        twitter: "#",
-        linkedin: "#"
+        facebook: "",
+        whatsapp: "",
+        instagram: "",
+        twitter: "",
+        linkedin: "",
+        website: ""
     }
 };
 
@@ -226,12 +231,56 @@ interface PersonalSocialUpdateData {
     email: string;
     mobileNumber: string;
     whatsappNumber: string;
+    whatsappSameAsMobile: boolean;
     facebookLink: string;
     instagramLink: string;
+    linkedInLink: string;
+    twitterLink: string;
+    websiteLink: string;
+}
+
+interface ProfileData {
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    gender: string;
+    email: string;
+    mobileNumber: string;
+    whatsappNumber: string;
+    whatsappSameAsMobile: boolean;
+    rating: number;
+    location: string;
+    photo: string;
+    aboutMe: string;
+    languages: string;
+    commutePreference: string;
+    dietaryPreference: string;
+    okWithPets: string;
+    address: {
+        line1: string;
+        line2: string;
+        city: string;
+        state: string;
+        zipCode: string;
+    };
+    services: any[];
+    jobsOffered: any[];
+    testimonialsReceived: any[];
+    testimonialsGiven: any[];
+    photoGallery: any[];
+    socialLinks: {
+        facebook: string;
+        whatsapp: string;
+        instagram: string;
+        twitter: string;
+        linkedin: string;
+        website: string;
+    };
 }
 
 
 const Profile: React.FC = () => {
+    const { userProfile } = userProfileStore();
     const [activeTab, setActiveTab] = useState("services"); // Keeping for possible desktop fallback not requested
     const [expandedSections, setExpandedSections] = useState({
         services: true,
@@ -244,7 +293,7 @@ const Profile: React.FC = () => {
         setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
     };
 
-    const [profile, setProfile] = useState(sampleProfile);
+    const [profile, setProfile] = useState<ProfileData>(sampleProfile as any);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [servicesModalOpen, setServicesModalOpen] = useState(false);
     const [addressModalOpen, setAddressModalOpen] = useState(false);
@@ -343,10 +392,14 @@ const Profile: React.FC = () => {
             email: updatedData.email,
             mobileNumber: updatedData.mobileNumber,
             whatsappNumber: updatedData.whatsappNumber,
+            whatsappSameAsMobile: updatedData.whatsappSameAsMobile,
             socialLinks: {
                 ...profile.socialLinks,
                 facebook: updatedData.facebookLink,
-                instagram: updatedData.instagramLink
+                instagram: updatedData.instagramLink,
+                linkedin: updatedData.linkedInLink,
+                twitter: updatedData.twitterLink,
+                website: updatedData.websiteLink
             }
         });
         setPersonalSocialModalOpen(false);
@@ -390,14 +443,24 @@ const Profile: React.FC = () => {
             });
         } else {
             // Add new
+            const email = Cookies.get(cookieParams.email) || "";
+            const emailPrefix = email ? email.split("@")[0] : null;
+
+            const reviewerName = userProfile?.displayName ||
+                (userProfile?.firstName ? `${userProfile.firstName} ${userProfile.lastName || ''}`.trim() : null) ||
+                (userProfile?.email ? userProfile.email.split('@')[0] : null) ||
+                emailPrefix ||
+                "User";
+            const reviewerLocation = userProfile?.city && userProfile?.state ? `${userProfile.city}, ${userProfile.state}` : "";
+
             const newFeedback = {
                 id: Date.now(),
                 rating: data.rating,
                 text: data.text,
                 highlightName: profile.firstName + " " + profile.lastName,
-                reviewerName: "Guest User",
-                reviewerLocation: "Unknown",
-                reviewerPhoto: "/assets/icons/icon_user.svg"
+                reviewerName: reviewerName,
+                reviewerLocation: reviewerLocation,
+                reviewerPhoto: userProfile?.profilePhoto || "/assets/icons/icon_user.svg"
             };
             setProfile({
                 ...profile,
@@ -429,7 +492,7 @@ const Profile: React.FC = () => {
                     </Link>
                     <div className={styles.navbarLinks}>
                         <Link href={Routes.viewAllJobs} className={styles.navLink}>Find Job</Link>
-                        <Link href="/Landing" className={styles.navLink}>Hire Help</Link>
+                        <Link href="/seekers/ViewAllSeekers" className={styles.navLink}>Hire Help</Link>
                         <Link href="/about" className={styles.navLink}>About Us</Link>
                         <Link href="/resources" className={styles.navLink}>Resources</Link>
                     </div>
@@ -472,19 +535,19 @@ const Profile: React.FC = () => {
 
                 {/* Social Icons row - Positioned absolutely via CSS */}
                 <div className={styles.socialIconsRow}>
-                    <a href="#" className={styles.socialIcon} title="Facebook">
+                    <a href={profile.socialLinks.facebook || "#"} className={styles.socialIcon} title="Facebook" target="_blank" rel="noopener noreferrer">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" /></svg>
                     </a>
-                    <a href="#" className={styles.socialIcon} title="WhatsApp">
+                    <a href={profile.socialLinks.whatsapp ? `https://wa.me/${profile.socialLinks.whatsapp}` : "#"} className={styles.socialIcon} title="WhatsApp" target="_blank" rel="noopener noreferrer">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.888 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .018 5.394 0 12.03c0 2.12.553 4.189 1.603 5.923L0 24l6.126-1.608a11.846 11.846 0 005.918 1.586h.005c6.632 0 12.028-5.396 12.032-12.033a11.833 11.833 0 00-3.535-8.503" /></svg>
                     </a>
-                    <a href="#" className={styles.socialIcon} title="Instagram">
+                    <a href={profile.socialLinks.instagram || "#"} className={styles.socialIcon} title="Instagram" target="_blank" rel="noopener noreferrer">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.171.054 1.81.247 2.23.408.56.216.96.474 1.38.894.42.42.678.82.894 1.38.161.42.354 1.059.408 2.23.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.054 1.171-.247 1.81-.408 2.23-.216.56-.474.96-.894 1.38-.42.42-.82.678-1.38.894-.42.161-1.059.354-2.23.408-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.171-.054-1.81-.247-2.23-.408-.56-.216-.96-.474-1.38-.894-.42-.42-.678-.82-.894-1.38-.42-.42-.354-1.059-.408-2.23C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.054-1.171.247-1.81.408-2.23.216-.56.474-.96.894-1.38.42-.42.82-.678 1.38-.894.42-.161 1.059-.354 2.23-.408 1.266-.058 1.646-.07 4.85-.07M12 0C8.741 0 8.333.014 7.053.072 5.775.129 4.903.332 4.145.627c-.783.304-1.447.712-2.108 1.373S.931 3.362.627 4.145c-.295.758-.498 1.63-.555 2.908C.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.057 1.278.26 2.15.555 2.908.304.783.712 1.447 1.373 2.108s1.322 1.069 2.108 1.373c.758.295 1.63.498 2.908.555 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.278-.057 2.15-.26 2.908-.555.783-.304 1.447-.712 2.108-1.373s1.069-1.322 1.373-2.108c.295-.758.498-1.63.555-2.908.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.057-1.278-.26-2.15-.555-2.908-.304-.783-.712-1.447-1.373-2.108s-1.322-1.069-2.108-1.373c-.758-.295-1.63-.498-2.908-.555C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z" /></svg>
                     </a>
-                    <a href="#" className={styles.socialIcon} title="X">
+                    <a href={profile.socialLinks.twitter || "#"} className={styles.socialIcon} title="X" target="_blank" rel="noopener noreferrer">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                     </a>
-                    <a href="#" className={styles.socialIcon} title="LinkedIn">
+                    <a href={profile.socialLinks.linkedin || "#"} className={styles.socialIcon} title="LinkedIn" target="_blank" rel="noopener noreferrer">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                     </a>
                 </div>
@@ -510,25 +573,27 @@ const Profile: React.FC = () => {
                     </div>
 
                     <div className={styles.profileDetails}>
-                        <h1 className={styles.profileName}>{profile.firstName} {profile.lastName}</h1>
+                        <h1 className={styles.profileName}>
+                            {(profile.firstName || profile.lastName) ? `${profile.firstName} ${profile.lastName}` : "Enter Name"}
+                        </h1>
                         <div className={styles.starRating}>
                             {renderStars(profile.rating)}
                         </div>
                         <div className={styles.profileLocation}>
                             <LocationIcon />
-                            <span>{profile.location}</span>
+                            <span>{profile.location || "Enter Location"}</span>
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <button className={`${styles.actionBtn} ${styles.callBtn}`}>
+                            <a href={`tel:${profile.mobileNumber}`} className={`${styles.actionBtn} ${styles.callBtn}`}>
                                 <PhoneIcon /> Call ME
-                            </button>
-                            <button className={`${styles.actionBtn} ${styles.emailBtn}`}>
+                            </a>
+                            <a href={`mailto:${profile.email}`} className={`${styles.actionBtn} ${styles.emailBtn}`}>
                                 <EmailIcon /> Email Me
-                            </button>
-                            <button className={`${styles.actionBtn} ${styles.whatsappBtn}`}>
+                            </a>
+                            <a href={`https://wa.me/${profile.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className={`${styles.actionBtn} ${styles.whatsappBtn}`}>
                                 <WhatsAppIcon /> Whatsapp Me
-                            </button>
+                            </a>
                         </div>
 
                         {/* Contact Info Row */}
@@ -550,28 +615,28 @@ const Profile: React.FC = () => {
                         </div>
                         <div className={styles.cardContent}>
                             <p style={{ margin: 0, color: '#444', fontSize: '14px', lineHeight: '1.5' }}>
-                                {profile.aboutMe} <span className={styles.readMore} style={{ fontWeight: 500 }}>Read more...</span>
+                                {profile.aboutMe || "Enter about me details"} <span className={styles.readMore} style={{ fontWeight: 500 }}>Read more...</span>
                             </p>
 
                             <div className={styles.infoRow} style={{ marginTop: "20px" }}>
                                 <div className={styles.infoLabel}>Languages Spoken</div>
-                                <div className={styles.infoValue}>{profile.languages}</div>
+                                <div className={styles.infoValue}>{profile.languages || "Enter languages spoken"}</div>
                             </div>
 
                             <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>Commute Preference</div>
-                                    <div className={styles.infoValue}>{profile.commutePreference}</div>
+                                    <div className={styles.infoValue}>{profile.commutePreference || "Enter commute preference"}</div>
                                 </div>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>Dietary Preference</div>
-                                    <div className={styles.infoValue}>{profile.dietaryPreference}</div>
+                                    <div className={styles.infoValue}>{profile.dietaryPreference || "Enter dietary preference"}</div>
                                 </div>
                             </div>
 
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>OK With Pets</div>
-                                <div className={styles.infoValue}>{profile.okWithPets}</div>
+                                <div className={styles.infoValue}>{profile.okWithPets || "Enter preference"}</div>
                             </div>
                         </div>
                     </div>
@@ -590,25 +655,25 @@ const Profile: React.FC = () => {
                         <div className={styles.cardContent}>
                             <div className={styles.infoRow}>
                                 <div className={styles.infoLabel}>Address Line 1</div>
-                                <div className={styles.infoValue}>{profile.address.line1}</div>
+                                <div className={styles.infoValue}>{profile.address.line1 || "Enter Address Line 1"}</div>
                             </div>
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>Address Line 2</div>
-                                <div className={styles.infoValue}>{profile.address.line2}</div>
+                                <div className={styles.infoValue}>{profile.address.line2 || "Enter Address Line 2"}</div>
                             </div>
                             <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>City</div>
-                                    <div className={styles.infoValue}>{profile.address.city}</div>
+                                    <div className={styles.infoValue}>{profile.address.city || "Enter City"}</div>
                                 </div>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>State</div>
-                                    <div className={styles.infoValue}>{profile.address.state}</div>
+                                    <div className={styles.infoValue}>{profile.address.state || "Enter State"}</div>
                                 </div>
                             </div>
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>Zip Code</div>
-                                <div className={styles.infoValue}>{profile.address.zipCode}</div>
+                                <div className={styles.infoValue}>{profile.address.zipCode || "Enter Zip Code"}</div>
                             </div>
                         </div>
                     </div>
@@ -843,7 +908,7 @@ const Profile: React.FC = () => {
 
                                                     {/* Testimonial Text */}
                                                     <p className={styles.testimonialText}>
-                                                        "{testimonial.text.split(testimonial.highlightName).map((part, index, array) => (
+                                                        "{testimonial.text.split(testimonial.highlightName).map((part: string, index: number, array: string[]) => (
                                                             <React.Fragment key={index}>
                                                                 {part}
                                                                 {index < array.length - 1 && (
@@ -903,7 +968,7 @@ const Profile: React.FC = () => {
                                 </div>
                             </div>
                             {(expandedSections.gallery || activeTab === 'gallery') && (
-                                <div className={styles.cardContent} style={{ padding: '20px' }}>
+                                <div className={styles.cardContent} style={{ padding: '0' }}>
                                     <div className={styles.galleryContainer}>
 
                                         <div className={styles.galleryGrid}>
@@ -1014,16 +1079,19 @@ const Profile: React.FC = () => {
                 onClose={() => setPersonalSocialModalOpen(false)}
                 onUpdate={handlePersonalSocialUpdate}
                 initialData={{
-                    firstName: profile.firstName || "Tania",
-                    lastName: profile.lastName || "Mal",
-                    displayName: profile.displayName || "Tania",
-                    gender: profile.gender || "Female",
-                    email: profile.email || "taniamal@gmail.com",
-                    mobileNumber: profile.mobileNumber || "425-555-0156",
-                    whatsappNumber: profile.whatsappNumber || "425-555-0156",
-                    whatsappSameAsMobile: profile.whatsappNumber === profile.mobileNumber,
-                    facebookLink: profile.socialLinks.facebook || "#",
-                    instagramLink: profile.socialLinks.instagram || "#"
+                    firstName: profile.firstName || "",
+                    lastName: profile.lastName || "",
+                    displayName: profile.displayName || "",
+                    gender: profile.gender || "Male",
+                    email: profile.email || "",
+                    mobileNumber: profile.mobileNumber || "",
+                    whatsappNumber: profile.whatsappNumber || "",
+                    whatsappSameAsMobile: profile.whatsappSameAsMobile || false,
+                    facebookLink: profile.socialLinks.facebook === "#" ? "" : (profile.socialLinks.facebook || ""),
+                    instagramLink: profile.socialLinks.instagram === "#" ? "" : (profile.socialLinks.instagram || ""),
+                    linkedInLink: profile.socialLinks.linkedin === "#" ? "" : (profile.socialLinks.linkedin || ""),
+                    twitterLink: profile.socialLinks.twitter === "#" ? "" : (profile.socialLinks.twitter || ""),
+                    websiteLink: profile.socialLinks.website === "#" ? "" : (profile.socialLinks.website || ""),
                 }}
             />
             <CPhotoUploadModal

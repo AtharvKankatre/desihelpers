@@ -55,7 +55,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
 
     const menuItems = [
         { label: "Find Job", icon: <FaSearch />, path: Routes.viewAllJobs },
-        { label: "Hire Help", icon: <FaHandsHelping />, path: Routes.landing },
+        { label: "Hire Help", icon: <FaHandsHelping />, path: Routes.viewAllSeekers },
         { label: "About Us", icon: <FaInfoCircle />, path: "/about" },
         { label: "Resources", icon: <FaBookOpen />, path: "/resources" },
         { label: "My Profile", icon: <FaUser />, path: Routes.userProfile },

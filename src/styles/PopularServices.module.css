@@ -53,9 +53,9 @@
 /* Marquee Track - holds duplicated cards and animates */
 .marqueeTrack {
     display: flex;
-    gap: 24px;
+    gap: 20px;
     width: max-content;
-    animation: marqueeScroll 35s linear infinite;
+    animation: marqueeScroll 400s linear infinite;
 }
 
 @keyframes marqueeScroll {
@@ -70,16 +70,20 @@
 
 /* Card - 200px width, 8px radius */
 .card {
-    flex: 0 0 380px;
-    /* Even Bigger cards */
-    min-height: 360px;
+    flex: 0 0 120px;
+    width: 120px;
+    max-width: 120px;
+    min-height: 380px;
     background: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 12px 6px;
     box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.08);
     position: relative;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .card:hover {
@@ -95,12 +99,12 @@
     left: 8px;
     background: #EF4444;
     color: white;
-    font-size: 9px;
+    font-size: 7px;
     font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 2px 6px;
+    border-radius: 3px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .advtBadge {
@@ -119,22 +123,22 @@
 
 /* Job Card Image */
 .jobImageContainer {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 16px auto;
+    margin: 0 auto 12px auto;
     background: #e8f4fc;
     border-radius: 50%;
-    padding: 18px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease;
 }
 
 .jobImage {
-    max-height: 100%;
-    max-width: 100%;
+    max-height: 40px;
+    max-width: 40px;
     object-fit: contain;
     mix-blend-mode: multiply;
 }
@@ -142,21 +146,22 @@
 /* Helper Card Image */
 .helperImageContainer {
     width: 100%;
-    height: 140px;
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     border-radius: 8px;
     overflow: hidden;
     background: linear-gradient(270.67deg, #FF812B 21.43%, #EB5F00 73.82%);
-    box-shadow: 0px 0px 16px 0px rgba(252, 124, 36, 0.4);
+    box-shadow: 0px 0px 8px 0px rgba(252, 124, 36, 0.4);
 }
 
 .helperImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scale(1.1);
 }
 
 /* Advertisement Card */
@@ -177,20 +182,26 @@
 
 /* Card Content */
 .cardTitle {
-    font-size: var(--body-small-semibold);
-    font-weight: var(--body-small-weight-semibold);
+    font-size: 11px;
+    font-weight: 600;
     color: #1e40af;
     margin-bottom: 4px;
     text-align: center;
-    line-height: var(--body-small-line-height);
+    line-height: 1.2;
 }
 
 .cardDescription {
-    font-size: var(--caption-size);
+    font-size: 10px;
     color: #6b7280;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-align: center;
-    line-height: var(--caption-line-height);
+    line-height: 1.3;
+    min-height: 50px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .cardLocation {
@@ -207,8 +218,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 10px;
-    margin-bottom: 10px;
+    font-size: 8px;
+    margin-bottom: 8px;
+    margin-top: auto;
 }
 
 .cardDate {
@@ -229,14 +241,14 @@
 }
 
 .skillIcon {
-    width: 32px;
-    height: 41px;
+    width: 24px;
+    height: 30px;
     background: #fff5f5;
-    border-radius: 6px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 12px;
     border: 1px solid #fee2e2;
 }
 

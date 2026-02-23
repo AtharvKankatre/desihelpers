@@ -25,6 +25,11 @@ const nextConfig = {
         hostname: 'devappapi.desihelpers.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'desi-helpers-prod-bucket.s3.us-east-2.amazonaws.com',
+        pathname: '/**',
+      },
     ],
   },
 };

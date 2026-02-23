@@ -180,7 +180,8 @@ export const PopularServicesSection: React.FC = () => {
                             className={styles.jobImage}
                             width={280}
                             height={180}
-                            style={{ objectFit: 'cover' }}
+                            style={{ objectFit: 'contain', padding: '10px' }}
+                            unoptimized={true}
                         />
                     </div>
                     <h3 className={styles.cardTitle}>{item.title}</h3>

@@ -9,6 +9,8 @@ import Head from 'next/head';
 import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { HelmetProvider } from "react-helmet-async";
+import { NotificationProvider } from "@/context/NotificationContext";
+
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GOOGLEANALYTICS_TRACKINGID;
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -56,10 +58,12 @@ export default function App({ Component, pageProps }: AppProps) {
         }}
       />
       <AuthProvider>
-        <PageLoader />
-        <CGlobalLayout>
-          <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
-        </CGlobalLayout>{" "}
+        <NotificationProvider>
+          <PageLoader />
+          <CGlobalLayout>
+            <HelmetProvider> <Component {...pageProps} /></HelmetProvider>
+          </CGlobalLayout>{" "}
+        </NotificationProvider>
       </AuthProvider>
     </>
   );

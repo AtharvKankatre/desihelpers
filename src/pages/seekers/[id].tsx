@@ -10,6 +10,9 @@ import jobStyles from "@/styles/ViewAllJobs.module.css";
 import profileStyles from "@/styles/Profile.module.css"; // Added to use profile-specific modal styles
 import { CH3Label } from "@/components/reusable/labels/CH3Label";
 import { CTitlePlusLabel } from "@/components/reusable/labels/CTitlePlusLabel";
+import { userProfileStore } from "@/stores/UserProfileStore";
+import Cookies from "js-cookie";
+import { cookieParams } from "@/constants/ECookieParams";
 
 // Define interface for Sample Seeker to match ViewAllJobs data
 // Define interface for Sample Seeker to match ViewAllJobs data + Profile Screenshot fields
@@ -39,6 +42,7 @@ interface PageProps {
 
 const SeekerProfilePage = ({ seeker }: PageProps) => {
     const router = useRouter();
+    const { userProfile } = userProfileStore();
     const [activeTab, setActiveTab] = useState<'services' | 'jobs' | 'testimonials' | 'gallery'>('services');
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [feedback, setFeedback] = useState("");
@@ -104,11 +108,20 @@ const SeekerProfilePage = ({ seeker }: PageProps) => {
     const handleFeedbackSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const email = Cookies.get(cookieParams.email) || "";
+            const emailPrefix = email ? email.split("@")[0] : null;
+
+            const rName = userProfile?.displayName ||
+                (userProfile?.firstName ? `${userProfile.firstName} ${userProfile.lastName || ''}`.trim() : null) ||
+                (userProfile?.email ? userProfile.email.split('@')[0] : null) ||
+                emailPrefix ||
+                "User";
+
             const payload = {
                 seekerId: seeker.id,
                 rating: modalRating,
                 feedback: feedback,
-                reviewerName: "Guest User" // Should get real name if logged in
+                reviewerName: rName
             };
 
             let res;

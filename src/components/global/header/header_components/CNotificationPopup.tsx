@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Button, IconButton, Fade, Zoom } from "@mui/mat
 import { styled } from "@mui/system";
 import { FaBell } from "react-icons/fa";
 import Link from "next/link";
+import { useNotification } from "@/context/NotificationContext";
 
 const NotificationItem = styled(Box)(({ theme }) => ({
     padding: "16px",
@@ -35,6 +36,9 @@ interface CNotificationPopupProps {
 }
 
 export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, onClose, onFeedbackClick }) => {
+    const { notifications, markAllAsRead, markAsRead } = useNotification();
+    const recentNotifications = notifications.slice(0, 3);
+
     return (
         <Zoom in={open} style={{ transformOrigin: 'top right' }}>
             <Paper
@@ -43,10 +47,12 @@ export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, on
                 style={{ color: '#000' }}
                 sx={{
                     position: "absolute",
-                    top: "60px",
-                    right: "20px",
-                    width: "360px",
-                    borderRadius: "8px",
+                    top: { xs: "55px", sm: "60px" },
+                    right: { xs: "5vw", sm: "20px" },
+                    width: { xs: "90vw", sm: "360px" },
+                    maxWidth: "360px",
+                    borderRadius: "12px",
+                    boxShadow: "0px 8px 24px rgba(0,0,0,0.12)",
                     zIndex: 1400,
                     backgroundColor: "white",
                     overflow: "hidden",
@@ -59,72 +65,39 @@ export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, on
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#003366 !important" }}>
                         Notifications
                     </Typography>
-                    <Typography variant="caption" sx={{ color: "#fd7e14 !important", fontWeight: 700, cursor: "pointer" }}>
+                    <Typography
+                        variant="caption"
+                        sx={{ color: "#fd7e14 !important", fontWeight: 700, cursor: "pointer" }}
+                        onClick={markAllAsRead}
+                    >
                         MARK ALL AS READ
                     </Typography>
                 </Box>
-                <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
-                    {/* Notification 1 */}
-                    <NotificationItem>
-                        <NotificationIcon>
-                            <FaBell color="#fd7e14" size={16} />
-                        </NotificationIcon>
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" sx={{ color: "#444 !important", mb: 1, fontSize: "0.9rem" }}>
-                                Good news! <b style={{ color: "#444 !important" }}>Mr. Jasbinder</b> just viewed your profile. Keep your details updated to get hired faster.
-                            </Typography>
-                            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 0.5 }}>
-                                <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer" }}>YES</Typography>
-                                <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer" }}>No</Typography>
-                            </Box>
-                            <Typography variant="caption" sx={{ color: "#999 !important" }}>30 mins ago</Typography>
+                <Box sx={{ maxHeight: { xs: "60vh", sm: "400px" }, overflowY: "auto" }}>
+                    {recentNotifications.length > 0 ? (
+                        recentNotifications.map((notif) => (
+                            <NotificationItem key={notif.id} onClick={() => markAsRead(notif.id)}>
+                                <NotificationIcon>
+                                    <FaBell color="#fd7e14" size={16} />
+                                </NotificationIcon>
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="body2" sx={{ color: "#444 !important", mb: 1, fontSize: "0.9rem" }} dangerouslySetInnerHTML={{ __html: notif.message.replace(notif.name, `<b style="color: #444 !important">${notif.name}</b>`) }} />
+                                    <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 0.5 }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer", "&:hover": { color: "#fd7e14 !important" } }} onClick={(e) => { e.stopPropagation(); if (notif.id === 3) { onFeedbackClick(); onClose(); } }}>YES</Typography>
+                                        <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer", "&:hover": { color: "#fd7e14 !important" } }} onClick={(e) => { e.stopPropagation(); }}>No</Typography>
+                                    </Box>
+                                    <Typography variant="caption" sx={{ color: "#999 !important" }}>{notif.time}</Typography>
+                                </Box>
+                                {!notif.isRead && (
+                                    <Box sx={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#fd7e14", mt: 1 }} />
+                                )}
+                            </NotificationItem>
+                        ))
+                    ) : (
+                        <Box sx={{ p: 3, textAlign: 'center' }}>
+                            <Typography variant="body2" sx={{ color: "#666 !important" }}>No new notifications</Typography>
                         </Box>
-                        <Box sx={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#fd7e14", mt: 1 }} />
-                    </NotificationItem>
-
-                    {/* Notification 2 */}
-                    <NotificationItem>
-                        <NotificationIcon>
-                            <FaBell color="#fd7e14" size={16} />
-                        </NotificationIcon>
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" sx={{ color: "#444 !important", mb: 1, fontSize: "0.9rem" }}>
-                                You recently visited <b style={{ color: "#444 !important" }}>Tania's</b> profile. Did you provide services to them? Share your feedback to build trust.
-                            </Typography>
-                            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 0.5 }}>
-                                <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer" }}>YES</Typography>
-                                <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer" }}>No</Typography>
-                            </Box>
-                            <Typography variant="caption" sx={{ color: "#999 !important" }}>2 hrs ago</Typography>
-                        </Box>
-                        <Box sx={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#fd7e14", mt: 1 }} />
-                    </NotificationItem>
-
-                    {/* Notification 3 - Trigger for Feedback */}
-                    <NotificationItem>
-                        <NotificationIcon>
-                            <FaBell color="#fd7e14" size={16} />
-                        </NotificationIcon>
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" sx={{ color: "#444 !important", mb: 1, fontSize: "0.9rem" }}>
-                                Did you and <b style={{ color: "#444 !important" }}>Mr. Raman</b> connect for work? If yes, let us know your experience by leaving a quick rating.
-                            </Typography>
-                            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 0.5 }}>
-                                <Typography
-                                    variant="caption"
-                                    sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer", "&:hover": { color: "#fd7e14 !important" } }}
-                                    onClick={() => {
-                                        onFeedbackClick();
-                                        onClose(); // Optional: close notifications when opening modal
-                                    }}
-                                >
-                                    YES
-                                </Typography>
-                                <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer" }}>No</Typography>
-                            </Box>
-                            <Typography variant="caption" sx={{ color: "#999 !important" }}>10 hrs ago</Typography>
-                        </Box>
-                    </NotificationItem>
+                    )}
                 </Box>
                 <Box sx={{ p: 1.5, textAlign: "center", borderTop: "1px solid #eee" }}>
                     <Link href="/Notifications" passHref style={{ textDecoration: 'none' }}>

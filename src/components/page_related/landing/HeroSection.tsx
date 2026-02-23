@@ -235,7 +235,7 @@ const _HeroSection: React.FC = () => {
           </button>
           <button
             className={`${styles.toggleButton} ${activeTab === "hireSomeone" ? styles.hireSomeoneActive : ""}`}
-            onClick={() => setActiveTab("hireSomeone")}
+            onClick={() => router.push(Routes.viewAllSeekers)}
           >
             Hire Someone
           </button>
@@ -286,9 +286,10 @@ const _HeroSection: React.FC = () => {
                 <Image
                   src={job.image}
                   alt={job.title}
-                  width={200}
+                  width={150}
                   height={150}
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'contain', padding: '10px' }}
+                  unoptimized={true}
                 />
               </div>
 

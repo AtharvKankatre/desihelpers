@@ -151,7 +151,7 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
                                                 className={styles.textarea}
                                                 value={service.description}
                                                 onChange={(e) => updateServiceField(service.id, 'description', e.target.value)}
-                                                placeholder="greeting customers, assisting with product selection, operating cash registers, processing transactions, maintaining store cleanliness."
+                                                placeholder="Description of the service provided"
                                                 style={{ minHeight: '80px', padding: '15px' }}
                                             />
                                             <span className={styles.wordCount}>{service.description.length}/250 words</span>
@@ -166,7 +166,7 @@ const CServicesModal: React.FC<CServicesModalProps> = ({
                                                 className={styles.formInput}
                                                 value={service.experience}
                                                 onChange={(e) => updateServiceField(service.id, 'experience', e.target.value)}
-                                                placeholder="5"
+                                                placeholder="Years of Experience"
                                             />
                                         </div>
                                         <div className={styles.formSection} style={{ padding: 0 }}>

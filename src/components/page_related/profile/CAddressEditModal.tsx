@@ -50,6 +50,7 @@ const CAddressEditModal: React.FC<CAddressEditModalProps> = ({
                         <input
                             type="text"
                             name="line1"
+                            placeholder="Address Line 1"
                             className={styles.formInput}
                             value={formData.line1}
                             onChange={handleChange}
@@ -61,6 +62,7 @@ const CAddressEditModal: React.FC<CAddressEditModalProps> = ({
                         <input
                             type="text"
                             name="line2"
+                            placeholder="Address Line 2"
                             className={styles.formInput}
                             value={formData.line2}
                             onChange={handleChange}
@@ -76,6 +78,7 @@ const CAddressEditModal: React.FC<CAddressEditModalProps> = ({
                                 value={formData.city}
                                 onChange={handleChange}
                             >
+                                <option value="" disabled>Select City</option>
                                 <option value="Bellevue">Bellevue</option>
                                 <option value="Seattle">Seattle</option>
                                 <option value="Redmond">Redmond</option>
@@ -90,6 +93,7 @@ const CAddressEditModal: React.FC<CAddressEditModalProps> = ({
                                 value={formData.state}
                                 onChange={handleChange}
                             >
+                                <option value="" disabled>Select State</option>
                                 <option value="Washington">Washington</option>
                                 <option value="Oregon">Oregon</option>
                                 <option value="California">California</option>
@@ -101,6 +105,7 @@ const CAddressEditModal: React.FC<CAddressEditModalProps> = ({
                             <input
                                 type="text"
                                 name="zipCode"
+                                placeholder="Zip Code"
                                 className={styles.formInput}
                                 value={formData.zipCode}
                                 onChange={handleChange}

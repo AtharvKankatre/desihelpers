@@ -147,7 +147,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 className={styles.textarea}
                                                 value={job.jobRequirements}
                                                 onChange={(e) => updateJobField(job.id, 'jobRequirements', e.target.value)}
-                                                placeholder="Need nanny for a 6 month old baby"
+                                                placeholder="Needs of the job (e.g. Nanny for 6 month old)"
                                                 maxLength={1250}
                                                 style={{ minHeight: '100px', padding: '15px' }}
                                             />
@@ -209,7 +209,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 className={styles.formInput}
                                                 value={job.reqExperience}
                                                 onChange={(e) => updateJobField(job.id, 'reqExperience', e.target.value)}
-                                                placeholder="5"
+                                                placeholder="Required Experience"
                                             />
                                         </div>
                                     </div>

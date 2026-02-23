@@ -18,9 +18,7 @@ import { cookieParams } from "@/constants/ECookieParams";
 import Roles from "@/constants/ERoles";
 import styles from "@/styles/Common.module.css";
 import Image from "next/image";
-
-
-// ... imports
+import { useNotification } from "@/context/NotificationContext";// ... imports
 // ... imports
 
 const _CHeader = () => {
@@ -33,6 +31,7 @@ const _CHeader = () => {
   // New State for Notifications and Feedback
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const { unreadCount } = useNotification();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -68,7 +67,7 @@ const _CHeader = () => {
 
   const navLinks = [
     { label: "Find Job", href: Routes.viewAllJobs },
-    { label: "Hire Help", href: Routes.landing },
+    { label: "Hire Help", href: Routes.viewAllSeekers },
     { label: "About Us", href: "/about" },
     { label: "Resources", href: "/resources" },
   ];
@@ -145,7 +144,7 @@ const _CHeader = () => {
               </svg>
             </button>
             <Zoom in={langDropdownOpen} style={{ transformOrigin: 'top right' }}>
-              <div className={styles.langDropdown}>
+              <div className={`${styles.langDropdown} language-dropdown`}>
                 <button
                   className={styles.langOption}
                   onClick={() => setLangDropdownOpen(false)}
@@ -175,16 +174,18 @@ const _CHeader = () => {
                 style={{ position: 'relative' }}
               >
                 <FaBell style={{ color: "white", fontSize: "24px" }} />
-                <span style={{
-                  position: 'absolute',
-                  top: '2px',
-                  right: '2px',
-                  width: '8px',
-                  height: '8px',
-                  backgroundColor: '#ff0000',
-                  borderRadius: '50%',
-                  border: '1.5px solid #001838'
-                }}></span>
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '2px',
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#ff0000',
+                    borderRadius: '50%',
+                    border: '1.5px solid #001838'
+                  }}></span>
+                )}
               </button>
               <CNotificationPopup
                 open={notificationOpen}

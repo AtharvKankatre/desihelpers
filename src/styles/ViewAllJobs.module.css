@@ -876,22 +876,40 @@
     .searchContainerMobile {
         display: flex;
         align-items: center;
-        background-color: #f5f5f5;
+        background-color: #ffffff;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         border-radius: 8px;
         padding: 6px 10px;
         flex: 1;
         min-width: 0;
         position: relative;
+        transition: all 0.2s ease;
+    }
+
+    .searchContainerMobile:focus-within {
+        border-color: #00479d;
+        box-shadow: 0 4px 12px rgba(0, 71, 157, 0.1);
     }
 
     .searchContainerMobile .newSearchInput {
         font-size: 12px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #333;
+        width: 100%;
+        flex: 1;
+        text-overflow: ellipsis;
     }
 
     .searchContainerMobile .newSearchInput::placeholder {
         font-size: 12px;
-        color: #aaa;
-        text-align: center;
+        font-weight: 400;
+        color: #777;
+        /* crisper gray */
+        text-align: left;
     }
 
     .mobileFilterBtn {

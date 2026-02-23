@@ -1066,7 +1066,7 @@
   border: none;
   text-align: left;
   font-size: 14px;
-  color: #333;
+  color: #333 !important;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
