@@ -199,3 +199,30 @@
 #address-input input::placeholder {
   color: #999 !important;
 }
+
+/* Custom Orange Map Markers */
+.dhOrangePin {
+  width: 24px;
+  height: 24px;
+  background-color: #f07c00;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.dhOrangePin:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dhOrangePinInner {
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+}

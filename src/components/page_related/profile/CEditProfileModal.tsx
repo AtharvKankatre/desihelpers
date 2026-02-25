@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "@/styles/Profile.module.css";
+import LanguageSelect from "@/components/form/CMultiSelect";
 
 interface CEditProfileModalProps {
     open: boolean;
@@ -67,21 +68,14 @@ const CEditProfileModal: React.FC<CEditProfileModalProps> = ({
                     </div>
 
                     <div className={styles.formSection} style={{ marginTop: '10px' }}>
-                        <label className={styles.fieldLabel}>Spoken Languages</label>
-                        <div className={styles.multiSelect}>
-                            {languages.length === 0 ? (
-                                <span style={{ color: '#888', flex: 1 }}>Select Languages</span>
-                            ) : languages.map((lang, index) => (
-                                <span key={index} className={styles.langTag}>
-                                    {lang} <span className={styles.removeTag}>×</span>
-                                </span>
-                            ))}
-                            <div className={styles.chevronIcon}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </div>
-                        </div>
+                        <LanguageSelect
+                            value={languages}
+                            onChange={(selected) => setLanguages(selected)}
+                            onBlur={() => { }}
+                            name="Spoken Languages"
+                            id="languages"
+                            hideError={true}
+                        />
                     </div>
 
                     <div className={styles.formSection}>
@@ -93,23 +87,23 @@ const CEditProfileModal: React.FC<CEditProfileModalProps> = ({
                                         <input
                                             type="radio"
                                             name="commute"
-                                            value="Have a Ride"
-                                            checked={commute === "Have a Ride"}
+                                            value="Have a ride"
+                                            checked={commute === "Have a ride"}
                                             onChange={(e) => setCommute(e.target.value)}
                                         />
                                         <span className={styles.radioCircle}></span>
-                                        Have a Ride
+                                        Have a ride
                                     </label>
                                     <label className={styles.radioLabel}>
                                         <input
                                             type="radio"
                                             name="commute"
-                                            value="Require a Ride"
-                                            checked={commute === "Require a Ride"}
+                                            value="Will need a ride"
+                                            checked={commute === "Will need a ride"}
                                             onChange={(e) => setCommute(e.target.value)}
                                         />
                                         <span className={styles.radioCircle}></span>
-                                        Require a Ride
+                                        Will need a ride
                                     </label>
                                 </div>
                             </div>

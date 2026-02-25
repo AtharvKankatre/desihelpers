@@ -52,8 +52,7 @@ const Login = () => {
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
-  const [loginOtp, setLoginOtp] = useState(["", "", "", "", "", ""]);
-  const [isLoginOtpSent, setIsLoginOtpSent] = useState(false);
+  const [loginPassword, setLoginPassword] = useState("");
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
@@ -247,24 +246,15 @@ const Login = () => {
     }
   };
 
-  // Handle OTP input
-  const handleOtpChange = (index: number, value: string, isLogin = false) => {
+  // Handle OTP input for signup
+  const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) return;
 
-    if (isLogin) {
-      const newOtp = [...loginOtp];
-      newOtp[index] = value;
-      setLoginOtp(newOtp);
-      if (value && index < 5) {
-        document.getElementById(`login-otp-${index + 1}`)?.focus();
-      }
-    } else {
-      const newOtp = [...formik.values.otp];
-      newOtp[index] = value;
-      formik.setFieldValue("otp", newOtp);
-      if (value && index < 5) {
-        document.getElementById(`otp-${index + 1}`)?.focus();
-      }
+    const newOtp = [...formik.values.otp];
+    newOtp[index] = value;
+    formik.setFieldValue("otp", newOtp);
+    if (value && index < 5) {
+      document.getElementById(`otp-${index + 1}`)?.focus();
     }
   };
 
@@ -353,78 +343,46 @@ const Login = () => {
     window.location.href = `${apiUrl}auth/facebook?redirect_uri=${apiBaseUrl}api/auth/facebook/callback`;
   };
 
-  // Login OTP handlers
-  const sendLoginOtp = async () => {
-    if (!loginEmail) return;
-    setIsLoading(true);
-    const response = await ApiService.crud(
-      APIDetails.resendOTP,
-      JSON.stringify({ email: loginEmail })
-    );
-    setIsLoading(false);
-    if (response[0]) {
-      setIsLoginOtpSent(true);
-      Swal.fire({ title: "OTP Sent!", icon: "success", timer: 1500 });
-    } else {
-      Swal.fire({ title: "Error", text: response[1], icon: "error" });
-    }
-  };
-
-  const verifyLoginOtp = async () => {
-    console.log("Current loginOtp state:", loginOtp);
-    const otpString = loginOtp.join("");
-    if (otpString.length !== 6) {
-      Swal.fire({ title: "Error", text: "Please enter complete OTP", icon: "error" });
+  // Login handler
+  const handleLoginSubmit = async () => {
+    if (!loginEmail || !loginPassword) {
+      Swal.fire({ title: "Error", text: "Please enter both email and password", icon: "error" });
       return;
     }
 
     const sanitizedEmail = loginEmail.trim().toLowerCase();
     setIsLoading(true);
 
-    // 1. Verify OTP
-    console.log("Verifying OTP for email:", sanitizedEmail, "OTP:", otpString);
-    const verifyRes = await ApiService.crud(
-      APIDetails.verifyOTP,
-      JSON.stringify({ email: sanitizedEmail, otp: otpString })
+    const loginRes = await ApiService.crud(
+      APIDetails.login,
+      JSON.stringify({ email: sanitizedEmail, password: loginPassword })
     );
-    console.log("Verify OTP Response:", verifyRes);
 
-    if (verifyRes[0]) {
-      // 2. OTP verified - Login with temp password (used during registration)
-      const loginRes = await ApiService.crud(
-        APIDetails.login,
-        JSON.stringify({ email: sanitizedEmail, password: "TempPass123!" })
-      );
+    setIsLoading(false);
+    if (loginRes[0]) {
+      // Debugging Token Structure
+      console.log("Login Response Data:", loginRes[1]);
 
-      setIsLoading(false);
-      if (loginRes[0]) {
-        // Debugging Token Structure
-        console.log("Login Response Data:", loginRes[1]);
-
-        if (loginRes[1] && loginRes[1].access_token) {
-          // Set cookies with the response data (tokens, user info)
-          CookieService.SetCookies(loginRes[1]);
-        } else {
-          console.error("Login successful but no access_token found in response:", loginRes[1]);
-          // Show error but don't redirect if critical auth data is missing
-          Swal.fire({ title: "Login Error", text: "Invalid server response. Please try again.", icon: "error" });
-          return;
-        }
-
-        Swal.fire({
-          title: "Login Successful",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false
-        }).then(() => {
-          router.push("/Landing");
-        });
+      if (loginRes[1] && loginRes[1].access_token) {
+        // Set cookies with the response data (tokens, user info)
+        CookieService.SetCookies(loginRes[1]);
       } else {
-        Swal.fire({ title: "Login Failed", text: "Please try again", icon: "error" });
+        console.error("Login successful but no access_token found in response:", loginRes[1]);
+        // Show error but don't redirect if critical auth data is missing
+        Swal.fire({ title: "Login Error", text: "Invalid server response. Please try again.", icon: "error" });
+        return;
       }
+
+      Swal.fire({
+        title: "Login Successful",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false
+      }).then(() => {
+        router.push("/Landing");
+      });
     } else {
-      setIsLoading(false);
-      Swal.fire({ title: "Invalid OTP", text: verifyRes[1] || "Verification failed", icon: "error" });
+      Swal.fire({ title: "Login Failed", text: loginRes[1] || "Please try again", icon: "error" });
     }
   };
 
@@ -959,7 +917,7 @@ const Login = () => {
 
           <div className={style.stepContent}>
             <p className={style.stepSubtitle}>
-              Enter your email to receive a login OTP.
+              Enter your email and password to log in.
             </p>
 
             <div className={style.formGroup}>
@@ -970,52 +928,34 @@ const Login = () => {
                 onChange={(e) => setLoginEmail(e.target.value)}
                 placeholder="Enter email ID"
                 className={style.formInput}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleLoginSubmit();
+                }}
               />
             </div>
 
-            {!isLoginOtpSent && (
-              <button
-                onClick={sendLoginOtp}
-                className={style.signupButton}
-                disabled={isLoading || !loginEmail}
-              >
-                {isLoading ? "Sending..." : "Send OTP"}
-              </button>
-            )}
+            <div className={style.formGroup}>
+              <label className={style.formLabel}>Password <span className={style.required}>*</span></label>
+              <input
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Enter password"
+                className={style.formInput}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleLoginSubmit();
+                }}
+              />
+            </div>
 
-            {isLoginOtpSent && (
-              <>
-                <p className={style.otpHint}>Enter the OTP sent to your email</p>
-                <div className={style.signupOtpInputs}>
-                  {loginOtp.map((digit, index) => (
-                    <input
-                      key={index}
-                      id={`login-otp-${index}`}
-                      type="text"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value, true)}
-                      className={style.signupOtpInput}
-                    />
-                  ))}
-                </div>
-                <button
-                  onClick={verifyLoginOtp}
-                  className={style.signupButton}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Verifying..." : "Verify & Login"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setIsLoginOtpSent(false); setLoginOtp(["", "", "", "", "", ""]); }}
-                  className={style.linkButton}
-                  style={{ marginTop: '12px' }}
-                >
-                  ← Change Email
-                </button>
-              </>
-            )}
+            <button
+              onClick={handleLoginSubmit}
+              className={style.signupButton}
+              disabled={isLoading || !loginEmail || !loginPassword}
+              style={{ marginTop: '16px' }}
+            >
+              {isLoading ? "Logging in..." : "Log In"}
+            </button>
 
             <div className={style.dividerWithText}>
               <span>OR</span>

@@ -3,16 +3,8 @@ import styles from "@/styles/ViewAllJobs.module.css";
 import { useRouter } from "next/router";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import { FaList, FaSlidersH } from "react-icons/fa";
-
-// Sample seeker data to match the working ViewAllJobs reference
-const sampleSeekers = [
-  { id: "sk1", name: "Shrutika Patil", rating: 4.5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-  { id: "sk2", name: "Dipali Khedekar", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Maharashtra", country: "India", languages: ["English", "Marathi", "Hindi"], services: ["Music teacher", "Event planning"] },
-  { id: "sk3", name: "Amit More", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["Hindi"], services: ["Music teacher", "Event planning"] },
-  { id: "sk4", name: "Neelam Mane", rating: 4.5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-  { id: "sk5", name: "Abhishek Bajaj", rating: 5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-  { id: "sk6", name: "Priya Sharma", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Delhi", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-];
+import ApiService from "@/services/data/crud/crud";
+import { APIDetails } from "@/services/data/constants/ApiDetails";
 
 const ViewAllSeekers: FunctionComponent = () => {
   const router = useRouter();
@@ -26,34 +18,56 @@ const ViewAllSeekers: FunctionComponent = () => {
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [allSeekers, setAllSeekers] = useState<any[]>([]);
 
   useEffect(() => {
-    // Simulate quick load to match fast UX
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
+    const fetchSeekers = async () => {
+      try {
+        setIsLoading(true);
+        const result = await ApiService.crud(APIDetails.getSeekers, `?skip=0&limit=100&state=&radius=50`);
+        if (result[0] && Array.isArray(result[1])) {
+          const mapped = result[1].map((s: any) => ({
+            id: s._id || s.id,
+            name: `${s.firstName || ""} ${s.lastName || ""}`.trim() || s.displayName || "Service Provider",
+            rating: s.rating || 4,
+            photo: s.profilePhoto || "",
+            bio: s.aboutMe || "Experienced service provider.",
+            city: s.city || "",
+            country: s.state || "",
+            languages: s.languagesSpoken || [],
+            services: s.jobDetails?.map((j: any) => j.subCategory || j.jobType || "Service") || [],
+          }));
+          setAllSeekers(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch seekers:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSeekers();
   }, []);
 
   const getUniqueServiceTypes = () => {
-    const serviceTypes = sampleSeekers.flatMap(seeker => seeker.services);
+    const serviceTypes = allSeekers.flatMap(seeker => seeker.services);
     return Array.from(new Set(serviceTypes.filter(Boolean))).sort();
   };
 
-  const filteredSeekers = sampleSeekers.filter(seeker => {
+  const filteredSeekers = allSeekers.filter(seeker => {
     const query = searchQuery.toLowerCase();
     const locQuery = locationSearch.toLowerCase();
 
     const matchesSearch = !query ||
       seeker.name.toLowerCase().includes(query) ||
       seeker.bio.toLowerCase().includes(query) ||
-      seeker.services.some(svc => svc.toLowerCase().includes(query));
+      seeker.services.some((svc: string) => svc.toLowerCase().includes(query));
 
     const matchesLocation = !locQuery ||
       seeker.city.toLowerCase().includes(locQuery) ||
       seeker.country.toLowerCase().includes(locQuery);
 
     const matchesCategory = !categoryFilter ||
-      seeker.services.some(svc => svc.toLowerCase() === categoryFilter.toLowerCase());
+      seeker.services.some((svc: string) => svc.toLowerCase() === categoryFilter.toLowerCase());
 
     return matchesSearch && matchesLocation && matchesCategory;
   });
@@ -256,14 +270,14 @@ const ViewAllSeekers: FunctionComponent = () => {
                     <path d="M5 8l6 6" /><path d="M4 14l6-6 2-3" /><path d="M2 5h12" /><path d="M7 2h1" />
                     <path d="M22 22l-5-10-5 10" /><path d="M14 18h6" />
                   </svg>
-                  {seeker.languages.map((lang, i) => (
+                  {seeker.languages.map((lang: string, i: number) => (
                     <span key={`${seeker.id}-lang-${i}`} className={styles.seekerLangTag}>{lang}</span>
                   ))}
                 </div>
                 <div className={styles.seekerServices}>
                   <span className={styles.seekerServicesLabel}>Offer Services</span>
                   <div className={styles.seekerServiceTags}>
-                    {seeker.services.map((svc, i) => (
+                    {seeker.services.map((svc: string, i: number) => (
                       <span key={`${seeker.id}-svc-${i}`} className={styles.seekerServiceTag}>{svc}</span>
                     ))}
                   </div>

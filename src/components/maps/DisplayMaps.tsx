@@ -131,15 +131,19 @@ const DisplayMap: React.FC<Props & { onLocationSelect?: (lat: number, lng: numbe
             ]);
             element.onclick = () => onJobClick(markerData);
             if (turf.booleanPointInPolygon(markerPoint, buffered)) {
+              const iconEl = document.createElement('img');
+              iconEl.src = "/assets/maps/dh_orange_pin.svg";
+              iconEl.style.width = "32px";
+              iconEl.style.height = "40px";
+              iconEl.style.cursor = "pointer";
+
               const marker = Radar.ui
                 .marker({
-                  url: "/assets/maps/icon_dh_pin.svg",
+                  element: iconEl,
                   popup: {
                     element: element,
                     className: `${mapStyles.radarPinCard}`,
                   },
-                  width: "30px",
-                  height: "38px",
                 })
                 .setLngLat([
                   markerData.location.coordinates[0],
@@ -164,15 +168,19 @@ const DisplayMap: React.FC<Props & { onLocationSelect?: (lat: number, lng: numbe
             ]);
             element.onclick = () => onProfileClick(seeker);
             if (turf.booleanPointInPolygon(markerPoint, buffered)) {
+              const iconEl = document.createElement('img');
+              iconEl.src = "/assets/maps/dh_orange_pin.svg";
+              iconEl.style.width = "32px";
+              iconEl.style.height = "40px";
+              iconEl.style.cursor = "pointer";
+
               const marker = Radar.ui
                 .marker({
-                  url: "/assets/maps/icon_dh_pin.svg",
+                  element: iconEl,
                   popup: {
                     element: element,
                     className: `${mapStyles.radarPinCard}`,
                   },
-                  width: "30px",
-                  height: "38px",
                 })
                 .setLngLat([
                   seeker.location.coordinates[0],
@@ -205,7 +213,6 @@ const DisplayMap: React.FC<Props & { onLocationSelect?: (lat: number, lng: numbe
             parseFloat(process.env.NEXT_PUBLIC_DEFAULT_LATITUDE || "47.673988")
           ];
 
-      // Create a new instance of a radar map
       const map = Radar.ui.map({
         container: "map",
         style: "radar-default-v1",
@@ -213,6 +220,7 @@ const DisplayMap: React.FC<Props & { onLocationSelect?: (lat: number, lng: numbe
         zoom: 8,
       });
       mapRef.current = map;
+
 
       mapRef.current.once("load", () => {
         setIsLoading(false);

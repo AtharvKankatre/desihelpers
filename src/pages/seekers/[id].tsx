@@ -584,54 +584,36 @@ const SeekerProfilePage = ({ seeker }: PageProps) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { id } = context.params as { id: string };
 
-    // Sample seeker data matching ViewAllJobs.tsx + new Profile fields
-    const sampleSeekers: SampleSeeker[] = [
-        {
-            id: "sk1",
-            name: "Shrutika Patil",
-            rating: 4.5,
-            photo: "",
-            bio: "Snaps by Shelley is a professional photography service that specializes in capturing memorable moments. Whether it's a wedding... Read more...",
-            city: "Bhopal",
-            state: "Madhya Pradesh",
-            country: "India",
-            zipCode: "462001",
-            addressLine1: "123 Main St",
-            addressLine2: "Apt 4B",
-            languages: ["English", "Hindi", "Marathi"],
-            services: ["Music teacher", "Event planning", "Photography Services"],
-            dietary: "Veg, Non-Veg",
-            commute: "Have a ride",
-            pets: "No",
-            experience: 15
-        },
-        // ... (other samples can simply use defaults or copy structure)
-        {
-            id: "sk2",
-            name: "Dipali Khedekar",
-            rating: 4,
-            photo: "",
-            bio: "Dedicated professional with years of experience.",
-            city: "Pune",
-            state: "Maharashtra",
-            country: "India",
-            zipCode: "411001",
-            addressLine1: "45 Pune Rd",
-            addressLine2: "",
-            languages: ["English", "Marathi", "Hindi"],
-            services: ["Music teacher"],
-            dietary: "Veg",
-            commute: "Public Transport",
-            pets: "Yes",
-            experience: 5
-        },
-        { id: "sk3", name: "Amit More", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", state: "Madhya Pradesh", country: "India", zipCode: "462001", addressLine1: "789 Park Ave", addressLine2: "", languages: ["Hindi"], services: ["Music teacher", "Event planning"], dietary: "Non-Veg", commute: "Walk", pets: "No", experience: 8 },
-        { id: "sk4", name: "Neelam Mane", rating: 4.5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", state: "Madhya Pradesh", country: "India", zipCode: "462001", addressLine1: "101 Garden Rd", addressLine2: "Suite 200", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"], dietary: "Veg", commute: "Car", pets: "Yes", experience: 12 },
-        { id: "sk5", name: "Abhishek Bajaj", rating: 5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", state: "Madhya Pradesh", country: "India", zipCode: "462001", addressLine1: "222 Lake View", addressLine2: "", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"], dietary: "Veg", commute: "Public Transport", pets: "No", experience: 10 },
-        { id: "sk6", name: "Priya Sharma", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Delhi", state: "Delhi", country: "India", zipCode: "110001", addressLine1: "333 River St", addressLine2: "Flat 5", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"], dietary: "Non-Veg", commute: "Have a ride", pets: "Yes", experience: 7 },
-    ];
+    // Fetch real seeker profile from API
+    let seeker: SampleSeeker | null = null;
 
-    const seeker = sampleSeekers.find(s => s.id === id) || sampleSeekers[0]; // Fallback to first if not found for demo
+    try {
+        const result = await ApiService.crud(APIDetails.ShareProfileSeeker, id);
+        if (result[0] && result[1]) {
+            const s = result[1];
+            seeker = {
+                id: s._id || s.id || id,
+                name: `${s.firstName || ""} ${s.lastName || ""}`.trim() || s.displayName || "Service Provider",
+                rating: s.rating || 0,
+                photo: s.profilePhoto || "",
+                bio: s.aboutMe || "",
+                city: s.city || "",
+                state: s.state || "",
+                country: s.country || s.state || "",
+                zipCode: s.zipCode || "",
+                addressLine1: s.addressLine1 || "",
+                addressLine2: s.addressLine2 || "",
+                languages: s.languagesSpoken || [],
+                services: s.jobDetails?.map((j: any) => j.subCategory || j.jobType || "Service") || [],
+                dietary: s.dietaryRestrictions || "",
+                commute: s.commutePreference || "",
+                pets: s.okWithPets === true ? "Yes" : s.okWithPets === false ? "No" : "",
+                experience: s.yearsOfExperience || s.experience || 0,
+            };
+        }
+    } catch (err) {
+        console.error("Failed to fetch seeker profile:", err);
+    }
 
     if (!seeker) {
         return {

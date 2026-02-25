@@ -11,8 +11,11 @@ import { IJobCategories, ISubCategory } from "@/models/JobCategories";
 import { userProfileStore } from "@/stores/UserProfileStore";
 import dynamic from "next/dynamic";
 import styles from "@/styles/ViewAllJobs.module.css";
+import { PageLoader } from "@/components/global/loader/PageLoader";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import { FaMapMarkedAlt, FaList, FaSlidersH, FaSortAmountDown, FaBell, FaArrowLeft } from "react-icons/fa";
+import ApiService from "@/services/data/crud/crud";
+import { APIDetails } from "@/services/data/constants/ApiDetails";
 
 // Dynamically import map component for SSR compatibility
 const DisplayMap = dynamic(() => import("@/components/maps/DisplayMaps"), {
@@ -61,24 +64,32 @@ const ViewAllJobs = () => {
     // View type: 'jobs' or 'seekers'
     const [viewType, setViewType] = useState<"jobs" | "seekers">("jobs");
 
-    // Sample seeker data
-    const sampleSeekers = [
-        { id: "sk1", name: "Shrutika Patil", rating: 4.5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-        { id: "sk2", name: "Dipali Khedekar", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Maharashtra", country: "India", languages: ["English", "Marathi", "Hindi"], services: ["Music teacher", "Event planning"] },
-        { id: "sk3", name: "Amit More", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["Hindi"], services: ["Music teacher", "Event planning"] },
-        { id: "sk4", name: "Neelam Mane", rating: 4.5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-        { id: "sk5", name: "Abhishek Bajaj", rating: 5, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Bhopal", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-        { id: "sk6", name: "Priya Sharma", rating: 4, photo: "", bio: "Mrunalini, a dedicated educator from Bharat, India, specializes in Shashtriya Sangeet, offering personalized lessons for all skill levels.", city: "Delhi", country: "India", languages: ["English", "Hindi"], services: ["Music teacher", "Event planning"] },
-    ];
+    // Dynamic seeker data from API
+    const [seekersList, setSeekersList] = useState<any[]>([]);
 
     // Filter state
-    const [locationSearch, setLocationSearch] = useState("");
+    const [locationSearch, setLocationSearch] = useState("Seattle, WA US");
+    const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const [workTypeFilter, setWorkTypeFilter] = useState("Part Time");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("");
     const [radiusFilter, setRadiusFilter] = useState(50);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalOpen, setFilterModalOpen] = useState(false);
+
+    // Fetch user geolocation on mount
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation([position.coords.latitude, position.coords.longitude]);
+                },
+                (error) => {
+                    console.warn("User location could not be fetched. Using default.", error);
+                }
+            );
+        }
+    }, []);
 
     // Sort state
     const [sortKey, setSortKey] = useState<SortKey | null>(null);
@@ -106,27 +117,6 @@ const ViewAllJobs = () => {
     // Job service instance (must be at component level since it uses Zustand hooks)
     const jobServices = new JobServices();
 
-    // Sample data matching the reference screenshot
-    const sampleJobs: IJobs[] = [
-        { _id: "s1", jobType: { name: "Mother's Helper" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-20"), urgent: true, city: "Oakland", state: "California", distance: 2.5, userProfile: { displayName: "kaka" } as any },
-        { _id: "s2", jobType: { name: "Baking" } as any, subCategory: "Cake Bakers", workType: "Full time", startDate: new Date("2025-10-12"), urgent: true, city: "Issaquah", state: "Washington", distance: 1.5, userProfile: { displayName: "Neha" } as any },
-        { _id: "s3", jobType: { name: "Baking" } as any, subCategory: "Speciality Deserts", workType: "Part Time", startDate: new Date("2025-10-21"), urgent: true, city: "Austin", state: "Texas", distance: 1.2, userProfile: { displayName: "Anil & Ridhika" } as any },
-        { _id: "s4", jobType: { name: "Mother's Helper" } as any, subCategory: "All", workType: "Full time", startDate: new Date("2025-10-18"), urgent: true, city: "Miami", state: "Florida", distance: 1.2, userProfile: { displayName: "Julia Martinez" } as any },
-        { _id: "s5", jobType: { name: "Mother's Helper" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-08-20"), urgent: true, city: "Los Angeles", state: "California", distance: 2.2, userProfile: { displayName: "Jose Ramirez" } as any },
-        { _id: "s6", jobType: { name: "Gardener" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-18"), urgent: true, city: "Austin", state: "Texas", distance: 2.1, userProfile: { displayName: "Sarah Johnson" } as any },
-        { _id: "s7", jobType: { name: "Nanny" } as any, subCategory: "All", workType: "Full time", startDate: new Date("2025-08-20"), urgent: true, city: "Oakland", state: "California", distance: 1.8, userProfile: { displayName: "kaka" } as any },
-        { _id: "s8", jobType: { name: "Mother's Helper" } as any, subCategory: "All", workType: "Full time", startDate: new Date("2025-10-12"), urgent: true, city: "Oakland", state: "California", distance: 1.5, userProfile: { displayName: "Mark & Lisa" } as any },
-        { _id: "s9", jobType: { name: "House Cleaner" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-18"), urgent: true, city: "Austin", state: "Texas", distance: 2.5, userProfile: { displayName: "Julia Martinez" } as any },
-        { _id: "s10", jobType: { name: "Nanny" } as any, subCategory: "All", workType: "Full time", startDate: new Date("2025-10-21"), urgent: true, city: "Oakland", state: "California", distance: 2.5, userProfile: { displayName: "Sarah Johnson" } as any },
-        { _id: "s11", jobType: { name: "Gardener" } as any, subCategory: "All", workType: "Full time", startDate: new Date("2025-08-20"), urgent: true, city: "Denver", state: "Colorado", distance: 2.5, userProfile: { displayName: "kaka" } as any },
-        { _id: "s12", jobType: { name: "Mother's Helper" } as any, subCategory: "All", workType: "Full time", startDate: new Date("2025-10-18"), urgent: true, city: "Miami", state: "Florida", distance: 2.5, userProfile: { displayName: "Jose Ramirez" } as any },
-        { _id: "s13", jobType: { name: "House Cleaner" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-12"), urgent: true, city: "Austin", state: "Texas", distance: 2.5, userProfile: { displayName: "kaka" } as any },
-        { _id: "s14", jobType: { name: "Elder Caregiver" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-21"), urgent: true, city: "New York", state: "New York", distance: 1.5, userProfile: { displayName: "Megan Lee" } as any },
-        { _id: "s15", jobType: { name: "Nanny" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-18"), urgent: true, city: "Austin", state: "Texas", distance: 1.2, userProfile: { displayName: "kaka" } as any },
-        { _id: "s16", jobType: { name: "Gardener" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-08-20"), urgent: true, city: "Oakland", state: "California", distance: 2.3, userProfile: { displayName: "Mark & Lisa" } as any },
-        { _id: "s17", jobType: { name: "Mother's Helper" } as any, subCategory: "All", workType: "Part Time", startDate: new Date("2025-10-21"), urgent: true, city: "Miami", state: "Florida", distance: 1.1, userProfile: { displayName: "Sarah Johnson" } as any },
-    ];
-
     // Fetch jobs
     useEffect(() => {
         const fetchData = async () => {
@@ -137,15 +127,47 @@ const ViewAllJobs = () => {
                     radius: radiusFilter,
                     limit: 500,
                 });
-                setAllJobs(jobs.length > 0 ? jobs : sampleJobs);
+                setAllJobs(jobs.length > 0 ? jobs : []);
             } catch (err) {
                 console.error("Failed to fetch jobs:", err);
-                setAllJobs(sampleJobs);
+                setAllJobs([]);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchData();
+    }, [radiusFilter]);
+
+    // Fetch seekers for seekers tab
+    useEffect(() => {
+        const fetchSeekers = async () => {
+            try {
+                const result = await ApiService.crud(APIDetails.getSeekers, `?skip=0&limit=50&state=${userProfile?.state ?? ""}&radius=${radiusFilter}`);
+                if (result[0] && Array.isArray(result[1])) {
+                    const mapped = result[1].map((s: any) => ({
+                        id: s._id || s.id,
+                        name: `${s.firstName || ""} ${s.lastName || ""}`.trim() || s.displayName || "Service Provider",
+                        rating: s.rating || 4,
+                        photo: s.profilePhoto || "",
+                        bio: s.aboutMe || "Experienced service provider.",
+                        city: s.city || "",
+                        country: s.state || "",
+                        languages: s.languagesSpoken || [],
+                        services: s.jobDetails?.map((j: any) => j.subCategory || j.jobType || "Service") || [],
+                        location: s.location || {
+                            coordinates: [
+                                -122.121512 + (Math.random() * 0.2 - 0.1), // spoofed nearby longitude
+                                47.673988 + (Math.random() * 0.2 - 0.1)    // spoofed nearby latitude
+                            ]
+                        }, // EXTREMELY IMPORTANT for DisplayMaps
+                    }));
+                    setSeekersList(mapped);
+                }
+            } catch (err) {
+                console.error("Failed to fetch seekers:", err);
+            }
+        };
+        fetchSeekers();
     }, [radiusFilter]);
 
     // Helper: format date as "20 Oct, 2025"
@@ -257,18 +279,19 @@ const ViewAllJobs = () => {
     }, [allJobs, workTypeFilter, categoryFilter, subCategoryFilter, locationSearch, searchQuery, sortKey, sortDir]);
 
     // Map filters derivation
-    const mapFilters: IMapSearchFilters = useMemo(() => ({
-        category: categoryFilter,
-        subCategory: subCategoryFilter,
-        role: viewType === "jobs" ? ViewTypesForMap.viewJobs : ViewTypesForMap.viewJobSeekers,
-        diet: "",
-        pets: "",
-        radius: radiusFilter,
-        coordinates: [
-            Number(process.env.NEXT_PUBLIC_DEFAULT_LATITUDE) || 47.673988,
-            Number(process.env.NEXT_PUBLIC_DEFAULT_LONGITUDE) || -122.121512
-        ],
-    }), [categoryFilter, subCategoryFilter, viewType, radiusFilter]);
+    const mapFilters: IMapSearchFilters = useMemo(() => {
+        const defaultLat = Number(process.env.NEXT_PUBLIC_DEFAULT_LATITUDE) || 47.673988;
+        const defaultLng = Number(process.env.NEXT_PUBLIC_DEFAULT_LONGITUDE) || -122.121512;
+        return {
+            category: categoryFilter,
+            subCategory: subCategoryFilter,
+            role: viewType === "jobs" ? ViewTypesForMap.viewJobs : ViewTypesForMap.viewJobSeekers,
+            diet: "",
+            pets: "",
+            radius: radiusFilter,
+            coordinates: userLocation ? userLocation : [defaultLat, defaultLng],
+        };
+    }, [categoryFilter, subCategoryFilter, viewType, radiusFilter, userLocation]);
 
     // Toggle sort
     const handleSort = (key: SortKey) => {
@@ -539,10 +562,10 @@ const ViewAllJobs = () => {
                     </div>
                 ) : viewType === "seekers" ? (
                     <div className={styles.seekerGrid}>
-                        {sampleSeekers.filter(seeker => {
+                        {seekersList.filter(seeker => {
                             const matchesSearch = !searchQuery ||
                                 seeker.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                seeker.services.some(s => s.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                seeker.services.some((s: string) => s.toLowerCase().includes(searchQuery.toLowerCase())) ||
                                 seeker.bio.toLowerCase().includes(searchQuery.toLowerCase());
 
                             const matchesLocation = !locationSearch ||
@@ -584,14 +607,14 @@ const ViewAllJobs = () => {
                                         <path d="M5 8l6 6" /><path d="M4 14l6-6 2-3" /><path d="M2 5h12" /><path d="M7 2h1" />
                                         <path d="M22 22l-5-10-5 10" /><path d="M14 18h6" />
                                     </svg>
-                                    {seeker.languages.map((lang, i) => (
+                                    {seeker.languages.map((lang: string, i: number) => (
                                         <span key={`${seeker.id}-lang-${i}`} className={styles.seekerLangTag}>{lang}</span>
                                     ))}
                                 </div>
                                 <div className={styles.seekerServices}>
                                     <span className={styles.seekerServicesLabel}>Offer Services</span>
                                     <div className={styles.seekerServiceTags}>
-                                        {seeker.services.map((svc, i) => (
+                                        {seeker.services.map((svc: string, i: number) => (
                                             <span key={`${seeker.id}-svc-${i}`} className={styles.seekerServiceTag}>{svc}</span>
                                         ))}
                                     </div>
@@ -618,8 +641,7 @@ const ViewAllJobs = () => {
                     <>
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center p-20 text-gray-400">
-                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-desi-orange mb-4"></div>
-                                Loading jobs...
+                                <PageLoader />
                             </div>
                         ) : displayJobs.length === 0 ? (
                             <div className="text-center p-20">

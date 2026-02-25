@@ -333,10 +333,9 @@
 
 .mapViewContainer {
     width: 100%;
-    flex: 1;
-    /* Changed from fixed calc height */
+    height: calc(100vh - 140px);
+    min-height: 500px;
     position: relative;
-    overflow: hidden;
     background-color: #f1f4f9;
 }
 

@@ -16,6 +16,7 @@ import CFeedbackModal from "@/components/page_related/profile/CFeedbackModal";
 import { userProfileStore } from "@/stores/UserProfileStore";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
+import Swal from "sweetalert2";
 
 // Icons as components
 const LocationIcon = () => (
@@ -79,116 +80,35 @@ const ChevronUpIcon = ({ style }: { style?: React.CSSProperties }) => (
     </svg>
 );
 
-// Sample profile data (replace with API data)
-const sampleProfile = {
-    firstName: "Tania",
-    lastName: "Mal",
-    displayName: "Tania",
-    gender: "Female",
-    email: "taniamal@gmail.com",
-    mobileNumber: "425-555-0156",
-    whatsappNumber: "425-555-0156",
-    whatsappSameAsMobile: true,
-    rating: 5,
-    location: "Bellevue, Washington",
-    photo: "/assets/images/profile_pic.jpg",
-    aboutMe: "Snaps by Shelley is a professional photography service that specializes in capturing memorable moments. Whether it's a wedding...",
-    languages: "Punjabi, Hindi, and Marathi",
-    commutePreference: "Have a ride",
-    dietaryPreference: "Veg., Non-Veg",
+const defaultProfile = {
+    firstName: "",
+    lastName: "",
+    displayName: "",
+    gender: "",
+    email: "",
+    mobileNumber: "",
+    whatsappNumber: "",
+    whatsappSameAsMobile: false,
+    rating: 0,
+    location: "",
+    photo: "/newassets/account_circle.png",
+    aboutMe: "",
+    languages: "",
+    commutePreference: "",
+    dietaryPreference: "",
     okWithPets: "No",
     address: {
-        line1: "425 108th Ave NE",
-        line2: "Apt 1203",
-        city: "Bellevue",
-        state: "Washington",
-        zipCode: "98004"
+        line1: "",
+        line2: "",
+        city: "",
+        state: "",
+        zipCode: ""
     },
-    services: [
-        {
-            id: 1,
-            title: "Photography Services",
-            icon: "📷",
-            iconType: "photo",
-            category: "Professionals",
-            experience: "15 Years",
-            available: "Yes",
-            description: "Greeting customers, assisting with product selection, operating cash registers, processing transactions, maintaining store cleanliness."
-        },
-        {
-            id: 2,
-            title: "Event Management Services",
-            icon: "🎯",
-            iconType: "event",
-            category: "Professionals",
-            experience: "5 Years",
-            available: "Yes",
-            description: ""
-        },
-        {
-            id: 3,
-            title: "Baking Services",
-            icon: "🍞",
-            iconType: "baking",
-            category: "Professionals",
-            experience: "3 Years",
-            available: "Yes",
-            description: ""
-        }
-    ],
-    jobsOffered: [
-        {
-            id: 1,
-            title: "Looking Nanny Services",
-            icon: "👶",
-            location: "Bothell, Washington",
-            startDate: "Apr 21, 2025, 9:30 PM",
-            reqExperience: "5",
-            workType: "Full Time",
-            daysPerWeek: "5",
-            payRange: "$15 - $25",
-            dietaryPreference: "Veg/Non-Veg",
-            postedDate: "Apr 16, 2025",
-            description: "Hello, I am looking for an English/Telugu speaking nanny for our 7 month old starting mid April until mid July in Bothell. We are looking to hire for an average of 30 hours per week.\nResponsibilities include:\n1. Feeding baby\n2. Baby activities (reading, safe play, engaging, changing diapers)\n3. Baby bottle cleaning, baby laundry, cleaning toys, baby room cleanup (taking the diaper pail out, etc.)\nMust have requirements:\n1. Experience with newborns; would like to see references from previous families that you cared for"
-        }
-    ],
-    testimonialsReceived: [
-        {
-            id: 1,
-            rating: 5,
-            text: "I recently used the airport drop service and it was fantastic! Tania Mal arrived right on time and made my journey to the airport so smooth. I really appreciate the convenience and professionalism of the team. Thank you for making my travel experience stress-free!",
-            highlightName: "Tania Mal",
-            reviewerName: "Arjun Reddy",
-            reviewerLocation: "Seattle, Washington",
-            reviewerPhoto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-        },
-        {
-            id: 2,
-            rating: 4,
-            text: "Tania Mal was amazing! She was punctual, courteous, and made the entire ride super comfortable. I felt completely at ease throughout the journey. Highly recommended for anyone looking for a reliable airport drop service!",
-            highlightName: "Tania Mal",
-            reviewerName: "Neha Sharma",
-            reviewerLocation: "Dallas, Texas",
-            reviewerPhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face"
-        },
-        {
-            id: 3,
-            rating: 5,
-            text: "Great experience with Tania Mal! She handled everything so smoothly — from timely pickup to helping with my luggage. The ride was pleasant and hassle-free. Truly impressed with her professionalism and friendly nature!",
-            highlightName: "Tania Mal",
-            reviewerName: "Deepak Nair",
-            reviewerLocation: "Boston, Massachusetts",
-            reviewerPhoto: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face"
-        }
-    ],
+    services: [],
+    jobsOffered: [],
+    testimonialsReceived: [],
     testimonialsGiven: [],
-    photoGallery: [
-        {
-            id: 1,
-            url: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop",
-            alt: "Colorful birthday cake with sprinkles"
-        }
-    ],
+    photoGallery: [],
     socialLinks: {
         facebook: "",
         whatsapp: "",
@@ -293,7 +213,7 @@ const Profile: React.FC = () => {
         setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
     };
 
-    const [profile, setProfile] = useState<ProfileData>(sampleProfile as any);
+    const [profile, setProfile] = useState<ProfileData>(defaultProfile as any);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [servicesModalOpen, setServicesModalOpen] = useState(false);
     const [addressModalOpen, setAddressModalOpen] = useState(false);
@@ -308,6 +228,96 @@ const Profile: React.FC = () => {
     const [expandedPhoto, setExpandedPhoto] = useState<{ url: string; alt: string } | null>(null);
     const [langDropdownOpen, setLangDropdownOpen] = useState(false);
     const [selectedLang, setSelectedLang] = useState("Eng");
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            const result = await ApiService.crud(APIDetails.getUserProfile);
+            if (result[0]) {
+                const apiProfile = result[1];
+                setProfile((prev: any) => ({
+                    ...prev,
+                    firstName: apiProfile.firstName || "",
+                    lastName: apiProfile.lastName || "",
+                    displayName: apiProfile.displayName || "",
+                    gender: apiProfile.gender || "Not specified",
+                    email: apiProfile.email || "",
+                    mobileNumber: apiProfile.mobile || "",
+                    whatsappNumber: apiProfile.phone || "",
+                    whatsappSameAsMobile: apiProfile.mobile === apiProfile.phone,
+                    location: `${apiProfile.city || ""}, ${apiProfile.state || ""}`.replace(/^, | , $/g, ''),
+                    photo: apiProfile.profilePhoto || "/newassets/account_circle.png",
+                    aboutMe: apiProfile.aboutMe || "",
+                    languages: apiProfile.languagesSpoken?.join(", ") || "",
+                    commutePreference: apiProfile.commutePreference || "Not specified",
+                    dietaryPreference: apiProfile.dietaryRestrictions || "Not specified",
+                    okWithPets: apiProfile.okWithPets ? "Yes" : "No",
+                    address: {
+                        line1: apiProfile.addressLine1 || "",
+                        line2: apiProfile.addressLine2 || "",
+                        city: apiProfile.city || "",
+                        state: apiProfile.state || "",
+                        zipCode: apiProfile.zipCode || "",
+                    },
+                    services: apiProfile.jobDetails ? apiProfile.jobDetails.map((j: any, i: number) => ({
+                        id: j.id || j._id || i,
+                        title: j.subCategory || j.jobType || "Service",
+                        icon: j.icons || "🛠️",
+                        iconType: "photo",
+                        category: "Professionals",
+                        experience: `${j.yearsOfExperience || 0} Years`,
+                        available: j.available ? "Yes" : "No",
+                        description: j.description || ""
+                    })) : [],
+                    socialLinks: {
+                        facebook: apiProfile.facebookLink || "",
+                        whatsapp: apiProfile.phone || "",
+                        instagram: apiProfile.instagram || "",
+                        website: apiProfile.websiteLink || "",
+                        twitter: apiProfile.twitterLink || "",
+                        linkedin: apiProfile.linkedinLink || ""
+                    }
+                }));
+                // Try fetching testimonials if user ID is present
+                if (apiProfile._id || apiProfile.id) {
+                    const userId = apiProfile._id || apiProfile.id;
+                    const feedbackRes = await ApiService.crud(APIDetails.getFeedback, userId);
+                    if (Array.isArray(feedbackRes)) {
+                        setProfile((prev: any) => ({
+                            ...prev,
+                            testimonialsReceived: feedbackRes.map((f: any) => ({
+                                id: f._id,
+                                rating: f.rating,
+                                text: f.feedback,
+                                highlightName: "", // dynamic highlightName is tricky, leave blank to not cause splitting issues
+                                reviewerName: f.reviewerName || "Anonymous",
+                                reviewerLocation: "", // Backend might not have this
+                                reviewerPhoto: f.reviewerPhoto || "/assets/icons/icon_user.svg"
+                            }))
+                        }));
+                    }
+                }
+            }
+        };
+
+        const fetchJobs = async () => {
+            const email = Cookies.get(cookieParams.email);
+            if (email) {
+                const result = await ApiService.crud([APIDetails.getJobsByUser[0] + email, APIDetails.getJobsByUser[1], APIDetails.getJobsByUser[2]], null);
+                if (result[0] && Array.isArray(result[1])) {
+                    setProfile((prev: any) => ({
+                        ...prev,
+                        jobsOffered: result[1].map((j: any, i: number) => ({
+                            ...j,
+                            icon: "👶",
+                        }))
+                    }));
+                }
+            }
+        };
+
+        fetchProfileData();
+        fetchJobs();
+    }, []);
 
     // Delete photo handler
     const handleDeletePhoto = (photoId: number) => {
@@ -346,15 +356,57 @@ const Profile: React.FC = () => {
         setLangDropdownOpen(false);
     };
 
-    const handleProfileUpdate = (updatedData: ProfileUpdateData) => {
-        setProfile({
-            ...profile,
+    const handleProfileUpdate = async (updatedData: ProfileUpdateData) => {
+        const payload = {
             aboutMe: updatedData.aboutMe,
             commutePreference: updatedData.commutePreference,
-            dietaryPreference: updatedData.dietaryPreference,
-            okWithPets: updatedData.okWithPets,
-        });
-        setEditModalOpen(false);
+            dietaryRestrictions: updatedData.dietaryPreference,
+            okWithPets: updatedData.okWithPets === "Yes"
+        };
+        const isProfileBuild = Cookies.get(cookieParams.isProfileBuild) === "true";
+        let result;
+
+        if (isProfileBuild) {
+            result = await ApiService.crud(APIDetails.updateUserProfile, null, payload);
+        } else {
+            const fullPayload = {
+                firstName: profile.firstName || "User",
+                lastName: profile.lastName || "Name",
+                displayName: profile.displayName || "User Name",
+                gender: profile.gender || "Not specified",
+                email: profile.email || Cookies.get(cookieParams.email) || "test@test.com",
+                mobile: profile.mobileNumber || "",
+                phone: profile.whatsappNumber || profile.mobileNumber || "0000000000",
+                addressLine1: profile.address?.line1 || "Not specified",
+                city: profile.address?.city || "Not specified",
+                state: profile.address?.state || "Not specified",
+                zipCode: profile.address?.zipCode || "12345",
+                languagesSpoken: profile.languages ? profile.languages.split(",").map(l => l.trim()) : ["English"],
+                location: { type: "Point", coordinates: [0, 0] },
+                ...payload,
+                commutePreference: payload.commutePreference,
+            };
+            result = await ApiService.crud(APIDetails.postUserProfile, fullPayload);
+        }
+
+        if (result[0]) {
+            if (!isProfileBuild) {
+                Cookies.set(cookieParams.isProfileBuild, "true");
+                window.dispatchEvent(new Event("isProfileBuildChanged"));
+            }
+            setProfile({
+                ...profile,
+                aboutMe: updatedData.aboutMe,
+                commutePreference: updatedData.commutePreference,
+                dietaryPreference: updatedData.dietaryPreference,
+                okWithPets: updatedData.okWithPets,
+            });
+            setEditModalOpen(false);
+            Swal.fire({ title: "Success", text: "Profile updated successfully!", icon: "success", timer: 1500 });
+        } else {
+            console.error("Profile update failed:", result[1]);
+            Swal.fire({ title: "Error", text: result[1] || "Failed to update profile", icon: "error" });
+        }
     };
 
     const handleServicesUpdate = (updatedServices: ServiceUpdateData[]) => {
@@ -374,35 +426,127 @@ const Profile: React.FC = () => {
         setServicesModalOpen(false);
     };
 
-    const handleAddressUpdate = (updatedAddress: AddressUpdateData) => {
-        setProfile({
-            ...profile,
-            address: updatedAddress
-        });
-        setAddressModalOpen(false);
+    const handleAddressUpdate = async (updatedAddress: AddressUpdateData) => {
+        const payload = {
+            addressLine1: updatedAddress.line1,
+            addressLine2: updatedAddress.line2,
+            city: updatedAddress.city,
+            state: updatedAddress.state,
+            zipCode: updatedAddress.zipCode
+        };
+        const isProfileBuild = Cookies.get(cookieParams.isProfileBuild) === "true";
+        let result;
+
+        if (isProfileBuild) {
+            result = await ApiService.crud(APIDetails.updateUserProfile, null, payload);
+        } else {
+            const fullPayload = {
+                firstName: profile.firstName || "User",
+                lastName: profile.lastName || "Name",
+                displayName: profile.displayName || "User Name",
+                gender: profile.gender || "Not specified",
+                email: profile.email || Cookies.get(cookieParams.email) || "test@test.com",
+                mobile: profile.mobileNumber || "",
+                phone: profile.whatsappNumber || profile.mobileNumber || "0000000000",
+                languagesSpoken: profile.languages ? profile.languages.split(",").map(l => l.trim()) : ["English"],
+                location: { type: "Point", coordinates: [0, 0] },
+                ...payload,
+                commutePreference: profile.commutePreference === "Have a Ride" ? "Have a ride" : profile.commutePreference === "Require a Ride" ? "Will need a ride" : profile.commutePreference === "Not specified" ? "" : profile.commutePreference
+            };
+            result = await ApiService.crud(APIDetails.postUserProfile, fullPayload);
+        }
+
+        if (result[0]) {
+            if (!isProfileBuild) {
+                Cookies.set(cookieParams.isProfileBuild, "true");
+                window.dispatchEvent(new Event("isProfileBuildChanged"));
+            }
+            setProfile({
+                ...profile,
+                address: updatedAddress,
+                location: `${updatedAddress.city || ""}, ${updatedAddress.state || ""}`.replace(/^, | , $/g, '')
+            });
+            setAddressModalOpen(false);
+            Swal.fire({ title: "Success", text: "Address updated successfully!", icon: "success", timer: 1500 });
+        } else {
+            console.error("Address update failed:", result[1]);
+            Swal.fire({ title: "Error", text: result[1] || "Failed to update address", icon: "error" });
+        }
     };
 
-    const handlePersonalSocialUpdate = (updatedData: PersonalSocialUpdateData) => {
-        setProfile({
-            ...profile,
+    const handlePersonalSocialUpdate = async (updatedData: PersonalSocialUpdateData) => {
+        const payload: Record<string, any> = {
             firstName: updatedData.firstName,
             lastName: updatedData.lastName,
-            displayName: updatedData.displayName,
+            displayName: (updatedData.displayName || "").trim() !== "" ? updatedData.displayName : `${updatedData.firstName} ${updatedData.lastName}`.trim(),
             gender: updatedData.gender,
             email: updatedData.email,
-            mobileNumber: updatedData.mobileNumber,
-            whatsappNumber: updatedData.whatsappNumber,
-            whatsappSameAsMobile: updatedData.whatsappSameAsMobile,
-            socialLinks: {
-                ...profile.socialLinks,
-                facebook: updatedData.facebookLink,
-                instagram: updatedData.instagramLink,
-                linkedin: updatedData.linkedInLink,
-                twitter: updatedData.twitterLink,
-                website: updatedData.websiteLink
+            mobile: updatedData.mobileNumber,
+            phone: updatedData.whatsappNumber,
+            facebookLink: updatedData.facebookLink,
+            instagram: updatedData.instagramLink,
+            websiteLink: updatedData.websiteLink,
+            twitterLink: updatedData.twitterLink,
+            linkedinLink: updatedData.linkedInLink,
+        };
+
+        // Remove empty strings so backend doesn't run validation regex on them
+        Object.keys(payload).forEach(key => {
+            if (payload[key] === "") {
+                delete payload[key];
             }
         });
-        setPersonalSocialModalOpen(false);
+
+        const isProfileBuild = Cookies.get(cookieParams.isProfileBuild) === "true";
+        let result;
+
+        if (isProfileBuild) {
+            result = await ApiService.crud(APIDetails.updateUserProfile, null, payload);
+        } else {
+            const fullPayload = {
+                addressLine1: profile.address?.line1 || "Not specified",
+                city: profile.address?.city || "Not specified",
+                state: profile.address?.state || "Not specified",
+                zipCode: profile.address?.zipCode || "12345",
+                languagesSpoken: profile.languages ? profile.languages.split(",").map(l => l.trim()) : ["English"],
+                phone: payload.phone || payload.mobile || "0000000000",
+                location: { type: "Point", coordinates: [0, 0] },
+                ...payload,
+                commutePreference: profile.commutePreference === "Have a Ride" ? "Have a ride" : profile.commutePreference === "Require a Ride" ? "Will need a ride" : profile.commutePreference === "Not specified" ? "" : profile.commutePreference
+            };
+            result = await ApiService.crud(APIDetails.postUserProfile, fullPayload);
+        }
+
+        if (result[0]) {
+            if (!isProfileBuild) {
+                Cookies.set(cookieParams.isProfileBuild, "true");
+                window.dispatchEvent(new Event("isProfileBuildChanged"));
+            }
+            setProfile({
+                ...profile,
+                firstName: updatedData.firstName,
+                lastName: updatedData.lastName,
+                displayName: updatedData.displayName,
+                gender: updatedData.gender,
+                email: updatedData.email,
+                mobileNumber: updatedData.mobileNumber,
+                whatsappNumber: updatedData.whatsappNumber,
+                whatsappSameAsMobile: updatedData.whatsappSameAsMobile,
+                socialLinks: {
+                    ...profile.socialLinks,
+                    facebook: updatedData.facebookLink,
+                    instagram: updatedData.instagramLink,
+                    linkedin: updatedData.linkedInLink,
+                    twitter: updatedData.twitterLink,
+                    website: updatedData.websiteLink
+                }
+            });
+            setPersonalSocialModalOpen(false);
+            Swal.fire({ title: "Success", text: "Details updated successfully!", icon: "success", timer: 1500 });
+        } else {
+            console.error("Personal details update failed:", result[1]);
+            Swal.fire({ title: "Error", text: result[1] || "Failed to update details", icon: "error" });
+        }
     };
 
     const handlePhotoSave = (photos: File[]) => {
@@ -615,28 +759,28 @@ const Profile: React.FC = () => {
                         </div>
                         <div className={styles.cardContent}>
                             <p style={{ margin: 0, color: '#444', fontSize: '14px', lineHeight: '1.5' }}>
-                                {profile.aboutMe || "Enter about me details"} <span className={styles.readMore} style={{ fontWeight: 500 }}>Read more...</span>
+                                {profile.aboutMe || "-"} {profile.aboutMe && <span className={styles.readMore} style={{ fontWeight: 500 }}>Read more...</span>}
                             </p>
 
                             <div className={styles.infoRow} style={{ marginTop: "20px" }}>
                                 <div className={styles.infoLabel}>Languages Spoken</div>
-                                <div className={styles.infoValue}>{profile.languages || "Enter languages spoken"}</div>
+                                <div className={styles.infoValue}>{profile.languages || "-"}</div>
                             </div>
 
                             <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>Commute Preference</div>
-                                    <div className={styles.infoValue}>{profile.commutePreference || "Enter commute preference"}</div>
+                                    <div className={styles.infoValue}>{profile.commutePreference || "-"}</div>
                                 </div>
                                 <div className={styles.infoRow}>
                                     <div className={styles.infoLabel}>Dietary Preference</div>
-                                    <div className={styles.infoValue}>{profile.dietaryPreference || "Enter dietary preference"}</div>
+                                    <div className={styles.infoValue}>{profile.dietaryPreference || "-"}</div>
                                 </div>
                             </div>
 
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>OK With Pets</div>
-                                <div className={styles.infoValue}>{profile.okWithPets || "Enter preference"}</div>
+                                <div className={styles.infoValue}>{profile.okWithPets || "-"}</div>
                             </div>
                         </div>
                     </div>
@@ -908,14 +1052,14 @@ const Profile: React.FC = () => {
 
                                                     {/* Testimonial Text */}
                                                     <p className={styles.testimonialText}>
-                                                        "{testimonial.text.split(testimonial.highlightName).map((part: string, index: number, array: string[]) => (
+                                                        "{testimonial.highlightName ? testimonial.text.split(testimonial.highlightName).map((part: string, index: number, array: string[]) => (
                                                             <React.Fragment key={index}>
                                                                 {part}
                                                                 {index < array.length - 1 && (
                                                                     <strong className={styles.highlightName}>{testimonial.highlightName}</strong>
                                                                 )}
                                                             </React.Fragment>
-                                                        ))}"
+                                                        )) : testimonial.text}"
                                                     </p>
 
                                                     {/* Reviewer Info */}

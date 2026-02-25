@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/styles/Profile.module.css";
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaGlobe } from "react-icons/fa6";
+import Swal from "sweetalert2";
 
 interface PersonalSocialData {
     firstName: string;
@@ -56,7 +57,70 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
     };
 
     const handleUpdate = () => {
-        onUpdate(formData);
+        // Only these 4 fields are required
+        if (!formData.firstName.trim()) {
+            Swal.fire("Required", "First name is required", "warning");
+            return;
+        }
+        if (!formData.lastName.trim()) {
+            Swal.fire("Required", "Last name is required", "warning");
+            return;
+        }
+        if (!formData.gender || formData.gender === "") {
+            Swal.fire("Required", "Please select a gender", "warning");
+            return;
+        }
+        if (!formData.mobileNumber.trim()) {
+            Swal.fire("Required", "Mobile number is required", "warning");
+            return;
+        }
+        // Validate Email - backend requires a valid email format if present
+        if (formData.email && formData.email.trim() !== "") {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email.trim())) {
+                Swal.fire("Required", "Please enter a valid email address (e.g., dishamehta838@gmail.com)", "warning");
+                return;
+            }
+        } else {
+            // If the user clears the email, warn them because the backend will reject it
+            Swal.fire("Required", "Email ID cannot be empty. The system requires a valid email.", "warning");
+            return;
+        }
+
+        // Validate and Format URLs
+        const processUrl = (url?: string) => {
+            if (!url || url.trim() === "") return "";
+            const trimmed = url.trim();
+            // Basic check: must have a dot to be a valid domain
+            if (!trimmed.includes(".")) {
+                return "INVALID_URL";
+            }
+            return trimmed.startsWith("http://") || trimmed.startsWith("https://")
+                ? trimmed
+                : `https://${trimmed}`;
+        };
+
+        const fbl = processUrl(formData.facebookLink);
+        const igl = processUrl(formData.instagramLink);
+        const lnl = processUrl(formData.linkedInLink);
+        const twl = processUrl(formData.twitterLink);
+        const wel = processUrl(formData.websiteLink);
+
+        if (fbl === "INVALID_URL" || igl === "INVALID_URL" || lnl === "INVALID_URL" || twl === "INVALID_URL" || wel === "INVALID_URL") {
+            Swal.fire("Invalid Link", "Please enter a valid URL with a domain (e.g., facebook.com/user). Simple words are not accepted.", "warning");
+            return;
+        }
+
+        const formattedData = {
+            ...formData,
+            facebookLink: fbl,
+            instagramLink: igl,
+            linkedInLink: lnl,
+            twitterLink: twl,
+            websiteLink: wel
+        };
+
+        onUpdate(formattedData);
         onClose();
     };
 
@@ -73,7 +137,7 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
 
                     <div className={styles.formRow}>
                         <div className={styles.formSection}>
-                            <label className={styles.fieldLabel}>First name</label>
+                            <label className={styles.fieldLabel}>First name <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 name="firstName"
@@ -81,10 +145,11 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                                 className={styles.formInput}
                                 value={formData.firstName}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className={styles.formSection}>
-                            <label className={styles.fieldLabel}>Last name</label>
+                            <label className={styles.fieldLabel}>Last name <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 name="lastName"
@@ -92,6 +157,7 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                                 className={styles.formInput}
                                 value={formData.lastName}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                     </div>
@@ -109,12 +175,13 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                             />
                         </div>
                         <div className={styles.formSection}>
-                            <label className={styles.fieldLabel}>Gender</label>
+                            <label className={styles.fieldLabel}>Gender <span style={{ color: 'red' }}>*</span></label>
                             <select
                                 name="gender"
                                 className={styles.formSelect}
                                 value={formData.gender}
                                 onChange={handleChange}
+                                required
                             >
                                 <option value="" disabled>Select gender</option>
                                 <option value="Male">Male</option>
@@ -137,7 +204,7 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                             />
                         </div>
                         <div className={styles.formSection}>
-                            <label className={styles.fieldLabel}>Mobile number</label>
+                            <label className={styles.fieldLabel}>Mobile number <span style={{ color: 'red' }}>*</span></label>
                             <input
                                 type="text"
                                 name="mobileNumber"
@@ -145,6 +212,7 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                                 className={styles.formInput}
                                 value={formData.mobileNumber}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                     </div>
