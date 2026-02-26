@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Chef/Catering icon -->
+  <!-- Chef hat -->
+  <ellipse cx="64" cy="22" rx="24" ry="12" fill="white" stroke="#DDD" stroke-width="1"/>
+  <rect x="44" y="22" width="40" height="14" rx="2" fill="white" stroke="#DDD" stroke-width="1"/>
+  <ellipse cx="64" cy="18" rx="8" ry="6" fill="white"/>
+  <!-- Head -->
+  <circle cx="64" cy="44" r="16" fill="#FFD6A0"/>
+  <ellipse cx="58" cy="42" rx="2" ry="2.5" fill="#333"/>
+  <ellipse cx="70" cy="42" rx="2" ry="2.5" fill="#333"/>
+  <path d="M60 48 Q64 52 68 48" stroke="#E8877C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Body/Apron -->
+  <path d="M44 60 L48 56 L80 56 L84 60 L84 100 Q84 106 78 106 L50 106 Q44 106 44 100 Z" fill="white" stroke="#DDD" stroke-width="1"/>
+  <path d="M52 60 L52 100 Q52 104 56 104 L72 104 Q76 104 76 100 L76 60" fill="#FF7043" stroke="none"/>
+  <!-- Buttons on apron -->
+  <circle cx="64" cy="70" r="2.5" fill="white"/>
+  <circle cx="64" cy="82" r="2.5" fill="white"/>
+  <circle cx="64" cy="94" r="2.5" fill="white"/>
+  <!-- Serving tray -->
+  <ellipse cx="100" cy="58" rx="16" ry="4" fill="#B0BEC5"/>
+  <rect x="96" y="58" width="8" height="28" rx="2" fill="#90A4AE"/>
+  <!-- Cloche on tray -->
+  <path d="M86 58 Q86 44 100 44 Q114 44 114 58" fill="#CFD8DC" stroke="#B0BEC5" stroke-width="1"/>
+  <circle cx="100" cy="44" r="3" fill="#90A4AE"/>
+  <!-- Steam -->
+  <path d="M96 40 Q94 34 96 28" stroke="#CCC" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M104 38 Q102 32 104 26" stroke="#CCC" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

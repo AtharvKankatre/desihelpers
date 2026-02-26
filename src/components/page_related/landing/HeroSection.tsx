@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import { IJobs } from "@/models/Jobs";
+import { getOptimizedIcon } from "@/utils/iconMapping";
 
 // Fallback Job card data matching the design
 const fallbackJobCards = [
@@ -17,7 +18,7 @@ const fallbackJobCards = [
     location: "Bothell, Washington",
     date: "Mon 25, 2025",
     rate: "$25-$35 / hr",
-    image: "/assets/daycare-center.png",
+    image: "/assets/icons/categories/nanny.svg",
     urgent: true,
   },
   {
@@ -27,7 +28,7 @@ const fallbackJobCards = [
     location: "Bothell, Washington",
     date: "Mon 25, 2025",
     rate: "-",
-    image: "/assets/mover-packer.png",
+    image: "/assets/icons/categories/movers.svg",
     urgent: true,
   },
   {
@@ -37,7 +38,7 @@ const fallbackJobCards = [
     location: "Oakland, California",
     date: "Sep 12, 2025",
     rate: "-",
-    image: "/assets/mothers_helper.png",
+    image: "/assets/icons/categories/mothers_helper.svg",
     urgent: true,
   },
   {
@@ -47,7 +48,7 @@ const fallbackJobCards = [
     location: "Oakland, California",
     date: "Oct 1, 2025",
     rate: "-",
-    image: "/assets/tiffin-services.png",
+    image: "/assets/icons/categories/tiffin.svg",
     urgent: true,
   },
   {
@@ -57,7 +58,7 @@ const fallbackJobCards = [
     location: "Issaquah, Washington",
     date: "Sep 12, 2025",
     rate: "$15-$25 / hr",
-    image: "/assets/house_cleaner.png",
+    image: "/assets/icons/categories/cleaner.svg",
     urgent: true,
   },
   {
@@ -67,7 +68,7 @@ const fallbackJobCards = [
     location: "Adair County, Kentucky",
     date: "Sep 19, 2025",
     rate: "$25-$35 / hr",
-    image: "/assets/cake-baker.png",
+    image: "/assets/icons/categories/baker.svg",
     urgent: true,
   },
   {
@@ -77,7 +78,7 @@ const fallbackJobCards = [
     location: "Morrisville, Pennsylvania",
     date: "Jul 1, 2025",
     rate: "$15-$25 / hr",
-    image: "/assets/server.png",
+    image: "/assets/icons/categories/server.svg",
     urgent: true,
   },
 ];
@@ -129,7 +130,15 @@ const _HeroSection: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [jobs, setJobs] = useState<any[]>(fallbackJobCards);
 
-  const [isPaused, setIsPaused] = useState(false);
+  // Drag-to-scroll state
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const velocity = useRef(0);
+  const lastX = useRef(0);
+  const lastTime = useRef(0);
+  const animFrameId = useRef<number>(0);
+  const hasDragged = useRef(false);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -143,7 +152,7 @@ const _HeroSection: React.FC = () => {
             location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location not specified",
             date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
             rate: job.payRange || "-",
-            image: job.jobType?.image || "/assets/daycare-center.png", // Use job type image or default
+            image: getOptimizedIcon(job.jobType?.name || job.subCategory || ""),
             urgent: job.urgent || false,
           }));
           setJobs(apiJobs);
@@ -155,7 +164,74 @@ const _HeroSection: React.FC = () => {
     fetchJobs();
   }, []);
 
+  // — Drag handlers (mouse + touch) with momentum —
+
+  const handlePointerDown = (clientX: number) => {
+    if (!carouselRef.current) return;
+    isDragging.current = true;
+    hasDragged.current = false;
+    startX.current = clientX;
+    scrollLeft.current = carouselRef.current.scrollLeft;
+    lastX.current = clientX;
+    lastTime.current = Date.now();
+    velocity.current = 0;
+    cancelAnimationFrame(animFrameId.current);
+    carouselRef.current.style.cursor = "grabbing";
+    carouselRef.current.style.scrollBehavior = "auto";
+  };
+
+  const handlePointerMove = (clientX: number) => {
+    if (!isDragging.current || !carouselRef.current) return;
+    const dx = clientX - startX.current;
+    if (Math.abs(dx) > 3) hasDragged.current = true;
+    carouselRef.current.scrollLeft = scrollLeft.current - dx;
+
+    // Track velocity for momentum
+    const now = Date.now();
+    const dt = now - lastTime.current;
+    if (dt > 0) {
+      velocity.current = (clientX - lastX.current) / dt;
+    }
+    lastX.current = clientX;
+    lastTime.current = now;
+  };
+
+  const handlePointerUp = () => {
+    if (!isDragging.current || !carouselRef.current) return;
+    isDragging.current = false;
+    carouselRef.current.style.cursor = "grab";
+
+    // Apply momentum glide
+    const el = carouselRef.current;
+    let v = velocity.current * 15; // amplify for smooth glide
+
+    const glide = () => {
+      if (Math.abs(v) < 0.5) return;
+      el.scrollLeft -= v;
+      v *= 0.95; // friction
+      animFrameId.current = requestAnimationFrame(glide);
+    };
+    glide();
+  };
+
+  // Mouse events
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handlePointerDown(e.clientX);
+  };
+  const onMouseMove = (e: React.MouseEvent) => handlePointerMove(e.clientX);
+  const onMouseUp = () => handlePointerUp();
+  const onMouseLeave = () => { if (isDragging.current) handlePointerUp(); };
+
+  // Touch events
+  const onTouchStart = (e: React.TouchEvent) => handlePointerDown(e.touches[0].clientX);
+  const onTouchMove = (e: React.TouchEvent) => handlePointerMove(e.touches[0].clientX);
+  const onTouchEnd = () => handlePointerUp();
+
   const handleCardClick = (jobTitle: string) => {
+    // Prevent click if user was dragging
+    if (hasDragged.current) return;
+
     if (!isActive) {
       Swal.fire({
         title: "Alert",
@@ -192,9 +268,6 @@ const _HeroSection: React.FC = () => {
     router.push(Routes.mapSearch);
   };
 
-  // Duplicate cards for infinite scroll effect
-  const infiniteCards = [...jobs, ...jobs];
-
   return (
     <div className={styles.heroContainer}>
       {/* Background Text Images - Left and Right */}
@@ -223,7 +296,7 @@ const _HeroSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Toggle Buttons with Horizontal Lines (Moved Above Headline) */}
+      {/* Toggle Buttons with Horizontal Lines */}
       <div className={styles.toggleWrapper}>
         <div className={styles.toggleLine}></div>
         <div className={styles.toggleContainer}>
@@ -263,18 +336,20 @@ const _HeroSection: React.FC = () => {
         </p>
       </div>
 
-
-
-      {/* Shared Job Cards Carousel (Now for both Desktop and Mobile as requested) */}
-      <div
-        className={`${styles.jobCardsWrapper} ${isPaused ? styles.paused : ""}`}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
-      >
-        <div className={styles.jobCardsContainer}>
-          {infiniteCards.length > 0 && infiniteCards.map((job, index) => (
+      {/* Drag-to-Scroll Job Cards Carousel */}
+      <div className={styles.jobCardsWrapper}>
+        <div
+          ref={carouselRef}
+          className={styles.jobCardsContainer}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {jobs.length > 0 && jobs.map((job, index) => (
             <div
               key={`${job.id}-${index}`}
               className={styles.jobCard}
@@ -286,10 +361,11 @@ const _HeroSection: React.FC = () => {
                 <Image
                   src={job.image}
                   alt={job.title}
-                  width={150}
-                  height={150}
-                  style={{ objectFit: 'contain', padding: '10px' }}
+                  width={90}
+                  height={90}
+                  style={{ objectFit: 'contain' }}
                   unoptimized={true}
+                  draggable={false}
                 />
               </div>
 
@@ -312,7 +388,7 @@ const _HeroSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Desktop Version - Additional CTA Links from Screenshot */}
+      {/* Desktop Version - Additional CTA Links */}
       <div className={styles.desktopOnly}>
         <div className={styles.exploreLinkWrapper} onClick={handleExploreJobs}>
           <span className={styles.exploreAvailableLink}>Explore available jobs Now</span>
@@ -330,4 +406,3 @@ const _HeroSection: React.FC = () => {
 
 export const HeroSection = memo(_HeroSection);
 export default HeroSection;
-

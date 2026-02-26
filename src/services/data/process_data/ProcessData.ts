@@ -151,6 +151,45 @@ class ProcessDataService {
         case APIDetails.ShareProfileSeeker[0]:
           res = data;
           break;
+        case APIDetails.sendLoginOTP[0]:
+          res = data;
+          break;
+        case APIDetails.verifyLoginOTP[0]:
+          res = data;
+          break;
+        case APIDetails.addRemovefavoriteJob[0]:
+          res = data;
+          break;
+        case APIDetails.getJobFavorites[0]:
+          res = data;
+          break;
+        case APIDetails.addRemoveFavoriteProfile[0]:
+          res = data;
+          break;
+        case APIDetails.getProfileFavorites[0]:
+          res = data;
+          break;
+        case APIDetails.getJobFavoriteCount[0]:
+          res = data;
+          break;
+        case APIDetails.getProfileFavoriteCount[0]:
+          res = data;
+          break;
+        case APIDetails.postFeedback[0]:
+          res = data;
+          break;
+        case APIDetails.getFeedback[0]:
+          res = data;
+          break;
+        case APIDetails.getJobsByUser[0]:
+          res = data;
+          break;
+        case APIDetails.updateFeedback[0]:
+          res = data;
+          break;
+        case APIDetails.deleteFeedback[0]:
+          res = data;
+          break;
         default:
           return [false, "Something went wrong"];
       }

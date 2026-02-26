@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Moving truck icon -->
+  <!-- Truck body -->
+  <rect x="8" y="40" width="60" height="48" rx="6" fill="#4A90D9"/>
+  <rect x="12" y="44" width="52" height="30" rx="3" fill="#E8F0FE"/>
+  <!-- Boxes on truck -->
+  <rect x="16" y="48" width="18" height="18" rx="2" fill="#FFB74D"/>
+  <rect x="36" y="52" width="14" height="14" rx="2" fill="#81C784"/>
+  <rect x="52" y="56" width="10" height="10" rx="2" fill="#E57373"/>
+  <!-- Box tape lines -->
+  <line x1="25" y1="48" x2="25" y2="66" stroke="#F57C00" stroke-width="2"/>
+  <line x1="43" y1="52" x2="43" y2="66" stroke="#388E3C" stroke-width="1.5"/>
+  <!-- Cab -->
+  <rect x="68" y="52" width="48" height="36" rx="6" fill="#2171C1"/>
+  <rect x="76" y="58" width="20" height="16" rx="3" fill="#B3D4FC"/>
+  <!-- Windshield reflection -->
+  <line x1="80" y1="60" x2="76" y2="72" stroke="white" stroke-width="1" opacity="0.5"/>
+  <!-- Wheels -->
+  <circle cx="30" cy="92" r="10" fill="#444"/>
+  <circle cx="30" cy="92" r="5" fill="#888"/>
+  <circle cx="92" cy="92" r="10" fill="#444"/>
+  <circle cx="92" cy="92" r="5" fill="#888"/>
+  <!-- Bumper -->
+  <rect x="112" y="72" width="8" height="6" rx="2" fill="#F57C00"/>
+</svg>

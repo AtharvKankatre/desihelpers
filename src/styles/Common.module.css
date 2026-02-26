@@ -631,6 +631,25 @@
   color: #005DE1;
 }
 
+.signupLogoContainer {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  z-index: 10;
+}
+
+.signupLogoLeft {
+  object-fit: contain;
+}
+
+.signupHighlightOrange {
+  color: #FF812B;
+}
+
+.signupHighlightGreen {
+  color: #00bfaf;
+}
+
 .signupDescription {
   color: rgba(255, 255, 255, 0.85);
   font-size: 0.95rem;

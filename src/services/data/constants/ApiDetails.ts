@@ -24,6 +24,8 @@ export const APIDetails = {
 
   updateSeekerStatus: ["users/update-jobseeker-status", ApiType.post, true],
   changePassword: ["users/change-password", ApiType.post, true],
+  sendLoginOTP: ["auth/signin_v3", ApiType.post, false],
+  verifyLoginOTP: ["auth/verify-otp", ApiType.post, false],
   registrationOTP: ["users/registration-otp", ApiType.post, false],
   verifyOTP: ["users/verify-otp", ApiType.post, false],
   resendOTP: ["users/resend-otp", ApiType.post, false],

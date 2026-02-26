@@ -21,6 +21,7 @@ export interface IUserProfileModel {
   state?: string;
   zipCode?: string;
   email?: string;
+  gender?: string;
   mobile?: string;
   phone?: string;
   showPhone?: boolean;
@@ -29,6 +30,8 @@ export interface IUserProfileModel {
   profilePhoto?: string;
   facebookLink?: string;
   instagram?: string;
+  linkedinLink?: string;
+  twitterLink?: string;
   websiteLink?: string;
   okWithPets?: boolean;
   uploadPhotoOfWork?: string[];

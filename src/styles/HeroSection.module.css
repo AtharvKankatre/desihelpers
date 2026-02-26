@@ -42,7 +42,6 @@
   object-fit: contain;
   object-position: center;
   opacity: 0.5;
-  /* Adjusted for better visibility with gradient */
 }
 
 .rightTextImage {
@@ -77,12 +76,10 @@
 .toggleContainer {
   display: flex;
   background: #003385;
-  /* Matching the blue in screenshot */
   border-radius: 50px;
   padding: 4px;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.6);
-  /* Thin white border from screenshot */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -104,13 +101,6 @@
   color: white;
   border-radius: 50px;
   font-weight: 700;
-  /* Bolder as per screenshot */
-}
-
-/* Inactive button text color */
-.toggleButton {
-  color: white;
-  font-weight: 600;
 }
 
 .toggleButton:not(.findJobActive):not(.hireSomeoneActive):hover {
@@ -124,7 +114,6 @@
   color: white;
   text-align: center;
   max-width: 1200px;
-  /* Increased to prevent wrapping */
   margin-bottom: 12px;
   position: relative;
   z-index: 2;
@@ -134,133 +123,137 @@
 .subtitle {
   font-size: var(--body-medium-size);
   color: white;
-  /* Pure white as per screenshot */
   text-align: center;
   max-width: 1100px;
-  /* Increased to prevent wrapping */
   margin-bottom: 25px;
   position: relative;
   z-index: 2;
   line-height: var(--body-medium-line-height);
 }
 
-/* Job Cards Container */
+/* ========================== */
+/* JOB CARDS CAROUSEL         */
+/* ========================== */
+
 .jobCardsWrapper {
   width: 100%;
   max-width: 100%;
   position: relative;
   z-index: 2;
   overflow: hidden;
-  padding: 20px 0;
-}
-
-.jobCardsWrapper.paused .jobCardsContainer {
-  animation-play-state: paused;
+  padding: 24px 0;
 }
 
 .jobCardsContainer {
   display: flex;
-  gap: 20px;
-  width: max-content;
-  animation: marquee 400s linear infinite;
-  /* Extremely slow and smooth for high-end feel */
-  padding: 10px;
-  will-change: transform;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
+  gap: 24px;
+  padding: 8px 24px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-overflow-scrolling: touch;
+  /* Hide scrollbar across browsers */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .jobCardsContainer::-webkit-scrollbar {
   display: none;
 }
 
-/* Job Card - Split Design */
+/* ========================== */
+/* JOB CARD — Redesigned      */
+/* ========================== */
+
 .jobCard {
-  flex: 0 0 120px;
-  min-height: 380px;
-  background: white;
-  border-radius: 12px;
+  flex: 0 0 215px;
+  background: #ffffff;
+  border-radius: 16px;
   padding: 0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border: 2px solid rgba(99, 140, 200, 0.25);
+  box-shadow:
+    0 4px 16px rgba(0, 20, 60, 0.10),
+    0 1.5px 4px rgba(0, 20, 60, 0.06);
   position: relative;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .jobCard:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 16px 40px rgba(0, 40, 120, 0.20),
+    0 6px 16px rgba(0, 20, 60, 0.10),
+    0 0 0 1px rgba(99, 140, 200, 0.15);
+  border-color: rgba(99, 140, 200, 0.5);
 }
 
 /* Urgent Badge */
 .urgentBadge {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   background: #EF4444;
   color: white;
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  z-index: 2;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
 }
 
-/* Card Image - Top Section (Light Blue) */
+/* Card Image - Top Section */
 .cardImage {
   width: 100%;
-  height: 80px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #E8F4FC 0%, #D4EBFA 100%);
-  border-radius: 12px 12px 0 0;
+  background: linear-gradient(135deg, #EAF0FA 0%, #D6E4F7 100%);
+  border-radius: 16px 16px 0 0;
   overflow: hidden;
-  padding: 8px;
+  position: relative;
+  padding: 12px;
 }
 
 .cardImage img {
-  max-height: 50px;
-  max-width: 50px;
+  max-height: 90px;
+  max-width: 90px;
   object-fit: contain;
 }
 
-/* Card Content - Bottom Section (White) */
+/* Card Content - Bottom Section */
 .cardTitle {
-  font-size: 11px;
-  font-weight: 600;
-  color: #1e40af;
-  margin: 6px 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin: 12px 0 4px;
   text-align: center;
-  line-height: 1.2;
-  padding: 0 4px;
+  line-height: 1.25;
+  padding: 0 12px;
+  letter-spacing: -0.01em;
 }
 
 .cardDescription {
-  font-size: 10px;
+  font-size: 12px;
   color: #6b7280;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   text-align: center;
-  line-height: 1.3;
+  line-height: 1.4;
   font-style: italic;
-  padding: 0 4px;
-  min-height: 60px;
+  padding: 0 12px;
+  min-height: 34px;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -270,41 +263,47 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 12px;
   color: #FF6B00;
   margin-bottom: 8px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0 12px;
 }
 
 .cardLocation svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   fill: #FF6B00;
+  flex-shrink: 0;
 }
 
 .cardFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
+  font-size: 12px;
   color: #6b7280;
   padding: 10px 14px;
   margin-top: auto;
   border-top: 1px solid #e5e7eb;
-  background: #fafafa;
+  background: #f9fafb;
+  border-radius: 0 0 16px 16px;
+}
+
+.cardDate {
+  font-weight: 500;
+  color: #374151;
 }
 
 .cardRate {
   font-weight: 700;
   color: #1f2937;
-  font-size: 11px;
+  font-size: 13px;
 }
 
-/* Desktop CTA Links from Screenshot */
+/* Desktop CTA Links */
 .exploreLinkWrapper {
   margin: 40px 0 15px;
-  /* Spacing between cards and explore link */
   cursor: pointer;
   z-index: 5;
   text-align: center;
@@ -325,17 +324,14 @@
 
 .registerCtaWrapper {
   margin-bottom: -30px;
-  /* Negative margin to overlap with the section below if needed */
   z-index: 10;
   position: relative;
 }
 
 .registerButton {
   background: #03c9b3;
-  /* Vibrand Teal from screenshot */
   color: white;
   border: 2px solid white;
-  /* White border from screenshot */
   padding: 12px 50px;
   border-radius: 50px;
   font-size: 18px;
@@ -351,9 +347,7 @@
   background: #02b39f;
 }
 
-
-
-/* Carousel Arrows */
+/* Carousel Arrows (kept for potential use) */
 .carouselArrow {
   position: absolute;
   top: 50%;
@@ -385,14 +379,21 @@
   right: -5px;
 }
 
-/* Responsive */
+/* ========================== */
+/* RESPONSIVE BREAKPOINTS     */
+/* ========================== */
+
 @media (max-width: 1024px) {
   .headline {
     font-size: 2.2rem;
   }
 
   .jobCard {
-    flex: 0 0 160px;
+    flex: 0 0 200px;
+  }
+
+  .cardImage {
+    height: 125px;
   }
 }
 
@@ -407,7 +408,6 @@
 
   .heroContainer {
     padding: 110px 15px 50px !important;
-    /* Increased to ensure clear separation from the 60px fixed header */
     min-height: auto;
   }
 
@@ -421,28 +421,33 @@
 
   .toggleWrapper {
     margin-bottom: 20px;
-    /* Reduced for tighter look */
   }
 
   .headline {
     font-size: 1.8rem;
     margin-bottom: 8px;
-    /* Reduced from 12px */
   }
 
   .jobCard {
-    flex: 0 0 150px;
+    flex: 0 0 185px;
+  }
+
+  .cardImage {
+    height: 115px;
+  }
+
+  .cardTitle {
+    font-size: 14px;
   }
 
   .jobCardsWrapper {
-    padding: 0 30px;
+    padding: 12px 0;
   }
 }
 
 @media (max-width: 480px) {
   .headline {
     font-size: 1.8rem;
-    /* Larger for better mobile presence */
   }
 
   .subtitle {
@@ -456,15 +461,18 @@
   }
 
   .jobCard {
-    flex: 0 0 140px;
-    padding: 12px;
+    flex: 0 0 170px;
+  }
+
+  .cardImage {
+    height: 105px;
   }
 
   .cardTitle {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .cardDescription {
-    font-size: 10px;
+    font-size: 11px;
   }
 }

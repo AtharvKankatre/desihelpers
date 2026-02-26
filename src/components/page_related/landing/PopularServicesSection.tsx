@@ -6,103 +6,95 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import { IJobs } from "@/models/Jobs";
 import { IUserProfileModel } from "@/models/UserProfileModel";
+import { getOptimizedIcon } from "@/utils/iconMapping";
+import { Routes } from "@/services/routes/Routes";
+import { useAuth } from "@/services/authorization/AuthContext";
+import CookieService from "@/services/authorization/CookieService";
+import Swal from "sweetalert2";
 
-// Sample data for popular services - fallback if API fails
+// Default skill icons shown on each card
+const DEFAULT_SKILL_KEYS = ["nanny", "catering", "cleaning", "movers"];
+
+// Fallback services (mixed jobs + helpers)
 const fallbackServices = [
     {
-        id: 1,
-        type: "job",
+        id: 1, type: "job",
         title: "Nanny",
         description: "Nanny for 3-month-old baby",
         location: "Bothell, Washington",
         date: "Mon 25, 2025",
         rate: "$25-$35 / hr",
-        image: "/assets/daycare-center.png",
+        image: "/assets/icons/categories/nanny.svg",
         urgent: true,
+        skillKeys: ["nanny", "catering", "cleaning", "movers"],
     },
     {
-        id: 2,
-        type: "helper",
-        name: "Sukhreet Kaur",
+        id: 2, type: "helper",
+        name: "Helper",
         location: "Bothell, Washington",
-        image: "/assets/helpers/sukhreet-kaur-1.png",
+        image: null,
         skills: ["babysitting", "cooking", "cleaning", "tutoring"],
     },
     {
-        id: 3,
-        type: "job",
-        title: "Tiffin",
-        description: "Looking for Maharashtrian food",
-        location: "Oakland, California",
-        date: "Oct 1, 2025",
-        rate: "$15-$20 / meal",
-        image: "/assets/tiffin-services.png",
-        urgent: true,
-    },
-    {
-        id: 4,
-        type: "job",
+        id: 3, type: "job",
         title: "Cake Bakers",
         description: "Cake Bakers Services",
         location: "Adair County, Kentucky",
         date: "Sep 19, 2025",
         rate: "$25-$35 / hr",
-        image: "/assets/cake-baker.png",
+        image: "/assets/icons/categories/baker.svg",
         urgent: true,
+        skillKeys: ["cake bakers", "catering", "servers", "movers"],
     },
     {
-        id: 5,
-        type: "helper",
-        name: "Sukhreet Kaur",
+        id: 4, type: "helper",
+        name: "Helper",
         location: "Bothell, Washington",
-        image: "/assets/helpers/sukhreet-kaur-2.jpg",
+        image: null,
         skills: ["babysitting", "cooking", "cleaning", "tutoring"],
     },
     {
-        id: 6,
-        type: "job",
+        id: 5, type: "job",
         title: "Servers",
-        description: "need servers to serve in party",
+        description: "Need servers to serve in party",
         location: "Morrisville, Pennsylvania",
         date: "Jul 1, 2025",
         rate: "$15-$25 / hr",
-        image: "/assets/server.png",
+        image: "/assets/icons/categories/server.svg",
         urgent: true,
+        skillKeys: ["servers", "catering", "nanny", "movers"],
     },
     {
-        id: 7,
-        type: "helper",
-        name: "Sukhreet Kaur",
+        id: 6, type: "helper",
+        name: "Helper",
         location: "Bothell, Washington",
-        image: "/assets/helpers/sukhreet-kaur-1.png",
+        image: null,
         skills: ["babysitting", "cooking", "cleaning", "tutoring"],
     },
 ];
-
-import { getOptimizedIcon } from "@/utils/iconMapping";
-
-import { Routes } from "@/services/routes/Routes";
-import { useAuth } from "@/services/authorization/AuthContext";
-import CookieService from "@/services/authorization/CookieService";
-
-// ... existing imports ...
 
 export const PopularServicesSection: React.FC = () => {
     const router = useRouter();
     const { isActive, setIsActive } = useAuth();
     const [popularServices, setPopularServices] = useState<any[]>(fallbackServices);
 
-    // Force check login status on mount to ensure button visibility is correct
+    // Drag-to-scroll refs
+    const carouselRef = useRef<HTMLDivElement>(null);
+    const isDragging = useRef(false);
+    const startX = useRef(0);
+    const scrollLeft = useRef(0);
+    const velocity = useRef(0);
+    const lastX = useRef(0);
+    const lastTime = useRef(0);
+    const animFrameId = useRef<number>(0);
+    const hasDragged = useRef(false);
+
     useEffect(() => {
         const checkLogin = () => {
             const token = CookieService.accessToken();
-            // If token exists but context says not active, update context
-            if (token && !isActive) {
-                setIsActive(true);
-            }
+            if (token && !isActive) setIsActive(true);
         };
         checkLogin();
-        // Also listen for event in case it changes while on this page
         window.addEventListener("isActiveChanged", checkLogin);
         return () => window.removeEventListener("isActiveChanged", checkLogin);
     }, [isActive, setIsActive]);
@@ -110,204 +102,253 @@ export const PopularServicesSection: React.FC = () => {
     useEffect(() => {
         const fetchPopularContent = async () => {
             try {
-                console.log("Using API Base URL:", process.env.NEXT_PUBLIC_API_URL);
-                // Fetch both jobs and seekers
                 const [jobsRes, seekersRes] = await Promise.all([
                     ApiService.crud(APIDetails.getJobs, ""),
                     ApiService.crud(APIDetails.getSeekers, "")
                 ]);
 
-                console.log("API Response Jobs:", jobsRes);
-                console.log("API Response Seekers:", seekersRes);
+                const apiJobs: any[] = [];
+                const apiSeekers: any[] = [];
 
-                let combinedRes: any[] = [];
-
-                if (jobsRes[0] && jobsRes[1]) {
-                    const apiJobs = jobsRes[1].slice(0, 4).map((job: IJobs) => ({
-                        id: `job-${job._id || job.id}`,
-                        type: "job",
-                        title: job.jobType?.name || job.subCategory || "Job Opportunity",
-                        description: job.aboutRequirement || "Looking for help",
-                        location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location specified",
-                        date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
-                        rate: job.payRange || "-",
-                        image: job.jobType?.image || "/assets/daycare-center.png",
-                        urgent: job.urgent || false,
-                    }));
-                    combinedRes = [...combinedRes, ...apiJobs];
+                if (jobsRes[0] && jobsRes[1] && jobsRes[1].length > 0) {
+                    jobsRes[1].slice(0, 5).forEach((job: IJobs) => {
+                        const jobTypeName = job.jobType?.name || job.subCategory || "";
+                        apiJobs.push({
+                            id: `job-${job._id || job.id}`,
+                            type: "job",
+                            title: jobTypeName || "Job Opportunity",
+                            description: job.aboutRequirement || "Looking for help",
+                            location: `${job.city || ""}, ${job.state || ""}`.trim() || "Location not specified",
+                            date: job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "Recently",
+                            rate: job.payRange || "-",
+                            image: getOptimizedIcon(jobTypeName),
+                            urgent: job.urgent || false,
+                            skillKeys: [jobTypeName?.toLowerCase() || "nanny", "catering", "cleaning", "movers"],
+                        });
+                    });
                 }
 
-                if (seekersRes[0] && seekersRes[1]) {
-                    const apiSeekers = seekersRes[1].slice(0, 3).map((seeker: IUserProfileModel) => ({
-                        id: `seeker-${seeker._id || seeker.id}`,
-                        type: "helper",
-                        name: seeker.displayName || `${seeker.firstName || ""} ${seeker.lastName || ""}`.trim() || "Helper",
-                        location: `${seeker.city || ""}, ${seeker.state || ""}`.trim() || "Location specified",
-                        image: seeker.profilePhoto || "/assets/daycare-center.png",
-                        skills: seeker.jobDetails?.map((jd: any) => jd.jobType).filter(Boolean).slice(0, 4) || ["babysitting", "cooking"]
-                    }));
-                    combinedRes = [...combinedRes, ...apiSeekers];
+                if (seekersRes[0] && seekersRes[1] && seekersRes[1].length > 0) {
+                    seekersRes[1].slice(0, 3).forEach((seeker: IUserProfileModel) => {
+                        apiSeekers.push({
+                            id: `seeker-${seeker._id || seeker.id}`,
+                            type: "helper",
+                            name: seeker.displayName || `${seeker.firstName || ""} ${seeker.lastName || ""}`.trim() || "Helper",
+                            location: `${seeker.city || ""}, ${seeker.state || ""}`.trim() || "Location not specified",
+                            image: seeker.profilePhoto || null,
+                            skills: seeker.jobDetails?.map((jd: any) => jd.jobType).filter(Boolean).slice(0, 4) || ["babysitting", "cooking"],
+                        });
+                    });
                 }
 
-                if (combinedRes.length > 0) {
-                    // Try to alternate if possible, or just shuffle/sort
-                    setPopularServices(combinedRes);
+                // Interleave jobs and helpers
+                if (apiJobs.length > 0 || apiSeekers.length > 0) {
+                    const combined: any[] = [];
+                    const maxLen = Math.max(apiJobs.length, apiSeekers.length);
+                    for (let i = 0; i < maxLen; i++) {
+                        if (apiJobs[i]) combined.push(apiJobs[i]);
+                        if (apiSeekers[i]) combined.push(apiSeekers[i]);
+                    }
+                    setPopularServices(combined);
                 }
             } catch (error) {
                 console.error("Error fetching popular services:", error);
             }
         };
-
         fetchPopularContent();
     }, []);
 
-    const handleRegister = () => {
-        router.push(Routes.register);
+    // Drag handlers
+    const handlePointerDown = (clientX: number) => {
+        if (!carouselRef.current) return;
+        isDragging.current = true;
+        hasDragged.current = false;
+        startX.current = clientX;
+        scrollLeft.current = carouselRef.current.scrollLeft;
+        lastX.current = clientX;
+        lastTime.current = Date.now();
+        velocity.current = 0;
+        cancelAnimationFrame(animFrameId.current);
+        carouselRef.current.style.cursor = "grabbing";
     };
 
-    const marqueeRef = useRef<HTMLDivElement>(null);
+    const handlePointerMove = (clientX: number) => {
+        if (!isDragging.current || !carouselRef.current) return;
+        const dx = clientX - startX.current;
+        if (Math.abs(dx) > 3) hasDragged.current = true;
+        carouselRef.current.scrollLeft = scrollLeft.current - dx;
+        const now = Date.now();
+        const dt = now - lastTime.current;
+        if (dt > 0) velocity.current = (clientX - lastX.current) / dt;
+        lastX.current = clientX;
+        lastTime.current = now;
+    };
 
-    const renderCard = (item: any, index: number) => (
-        <div key={`${item.id}-${index}`} className={styles.card}>
-            {/* Job Card */}
-            {item.type === "job" && (
-                <>
-                    {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
-                    <div className={styles.jobImageContainer}>
-                        <Image
-                            src={item.image}
-                            alt={item.title}
-                            className={styles.jobImage}
-                            width={280}
-                            height={180}
-                            style={{ objectFit: 'contain', padding: '10px' }}
-                            unoptimized={true}
-                        />
-                    </div>
-                    <h3 className={styles.cardTitle}>{item.title}</h3>
-                    <p className={styles.cardDescription}>{item.description}</p>
-                    <div className={styles.cardLocation}>
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                        {item.location}
-                    </div>
-                    <div className={styles.cardFooter}>
-                        <span className={styles.cardDate}>{item.date}</span>
-                        <span className={styles.cardRate}>{item.rate}</span>
-                    </div>
-                    <div className={styles.skillIcons}>
-                        {["babysitting", "cooking", "cleaning", "tutoring"].map((searchKey, idx) => (
-                            <span key={idx} className={styles.skillIcon} title={searchKey}>
-                                <Image
-                                    src={getOptimizedIcon(searchKey)}
-                                    alt={searchKey}
-                                    width={24}
-                                    height={24}
-                                    style={{ objectFit: 'contain' }}
-                                />
-                            </span>
-                        ))}
-                    </div>
-                </>
-            )}
+    const handlePointerUp = () => {
+        if (!isDragging.current || !carouselRef.current) return;
+        isDragging.current = false;
+        carouselRef.current.style.cursor = "grab";
+        const el = carouselRef.current;
+        let v = velocity.current * 15;
+        const glide = () => {
+            if (Math.abs(v) < 0.5) return;
+            el.scrollLeft -= v;
+            v *= 0.95;
+            animFrameId.current = requestAnimationFrame(glide);
+        };
+        glide();
+    };
 
-            {/* Helper Card */}
-            {item.type === "helper" && (
-                <>
-                    <div className={styles.helperImageContainer}>
-                        <Image
-                            src={item.image}
-                            alt={item.name}
-                            className={styles.helperImage}
-                            width={280}
-                            height={280}
-                            style={{ objectFit: 'cover' }}
-                        />
-                    </div>
-                    <h3 className={styles.cardTitle}>{item.name}</h3>
-                    <div className={styles.cardLocation}>
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                        {item.location}
-                    </div>
-                    <div className={styles.skillIcons}>
-                        {item.skills?.map((skill: string, idx: number) => (
-                            <span key={idx} className={styles.skillIcon} title={skill}>
-                                <Image
-                                    src={getOptimizedIcon(skill)}
-                                    alt={skill}
-                                    width={24}
-                                    height={24}
-                                    style={{ objectFit: 'contain' }}
-                                />
-                            </span>
-                        ))}
-                    </div>
-                </>
-            )}
+    const handleCardClick = () => {
+        if (hasDragged.current) return;
+        if (!isActive) {
+            Swal.fire({
+                title: "Alert",
+                text: "Please login to view details",
+                icon: "warning",
+                confirmButtonText: "OK",
+            }).then((result) => {
+                if (result.isConfirmed) router.push("/Login");
+            });
+        } else {
+            router.push(Routes.mapSearch);
+        }
+    };
 
-            {/* Advertisement Card */}
-            {item.type === "ad" && (
-                <>
-                    <span className={styles.advtBadge}>ADVT</span>
-                    <div className={styles.adContainer}>
-                        <div className={styles.adPlaceholder}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <circle cx="8.5" cy="8.5" r="1.5" />
-                                <polyline points="21,15 16,10 5,21" />
-                            </svg>
-                        </div>
-                    </div>
-                </>
-            )}
+    const renderSkillIcons = (skillKeys: string[]) => (
+        <div className={styles.skillIcons}>
+            {skillKeys.slice(0, 4).map((key, idx) => (
+                <span key={idx} className={styles.skillIcon} title={key}>
+                    <Image
+                        src={getOptimizedIcon(key)}
+                        alt={key}
+                        width={22}
+                        height={22}
+                        style={{ objectFit: "contain" }}
+                        unoptimized={true}
+                        draggable={false}
+                    />
+                </span>
+            ))}
+        </div>
+    );
+
+    const renderJobCard = (item: any, index: number) => (
+        <div key={`${item.id}-${index}`} className={styles.card} onClick={handleCardClick}>
+            {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
+            <div className={styles.cardImageArea}>
+                <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={90}
+                    height={90}
+                    style={{ objectFit: "contain" }}
+                    unoptimized={true}
+                    draggable={false}
+                />
+            </div>
+            <h3 className={styles.cardTitle}>{item.title}</h3>
+            <p className={styles.cardDescription}>{item.description}</p>
+            <div className={styles.cardLocation}>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                {item.location}
+            </div>
+            <div className={styles.cardFooter}>
+                <span className={styles.cardDate}>{item.date}</span>
+                <span className={styles.cardRate}>{item.rate}</span>
+            </div>
+            {renderSkillIcons(item.skillKeys || DEFAULT_SKILL_KEYS)}
+        </div>
+    );
+
+    const renderHelperCard = (item: any, index: number) => (
+        <div key={`${item.id}-${index}`} className={`${styles.card} ${styles.helperCard}`} onClick={handleCardClick}>
+            <div className={styles.helperImageArea}>
+                {item.image ? (
+                    <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={260}
+                        height={140}
+                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                        unoptimized={true}
+                        draggable={false}
+                    />
+                ) : (
+                    <Image
+                        src="/assets/helpers/sukhreet-kaur-1.png"
+                        alt={item.name}
+                        width={260}
+                        height={140}
+                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                        unoptimized={true}
+                        draggable={false}
+                    />
+                )}
+            </div>
+            <h3 className={`${styles.cardTitle} ${styles.helperName}`}>{item.name}</h3>
+            <div className={styles.cardLocation}>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                {item.location}
+            </div>
+            {renderSkillIcons(item.skills?.length > 0 ? item.skills : DEFAULT_SKILL_KEYS)}
         </div>
     );
 
     return (
         <section className={styles.popularSection}>
             <div className={styles.container}>
-                {/* Section Header */}
                 <div className={styles.header}>
                     <h2 className={styles.title}>Popular Services</h2>
                     <p className={styles.subtitle}>Trending Jobs and Top rated Helpers</p>
                 </div>
 
-                {/* Marquee Carousel */}
-                <div
-                    className={styles.marqueeWrapper}
-                    onMouseEnter={() => {
-                        if (marqueeRef.current) marqueeRef.current.style.animationPlayState = 'paused';
-                    }}
-                    onMouseLeave={() => {
-                        if (marqueeRef.current) marqueeRef.current.style.animationPlayState = 'running';
-                    }}
-                >
-                    <div className={styles.marqueeTrack} ref={marqueeRef}>
-                        {popularServices.map((item, index) => renderCard(item, index))}
-                        {popularServices.map((item, index) => renderCard(item, index + popularServices.length))}
+                <div className={styles.carouselWrapper}>
+                    <div
+                        ref={carouselRef}
+                        className={styles.carouselTrack}
+                        onMouseDown={(e) => { e.preventDefault(); handlePointerDown(e.clientX); }}
+                        onMouseMove={(e) => handlePointerMove(e.clientX)}
+                        onMouseUp={handlePointerUp}
+                        onMouseLeave={() => { if (isDragging.current) handlePointerUp(); }}
+                        onTouchStart={(e) => handlePointerDown(e.touches[0].clientX)}
+                        onTouchMove={(e) => handlePointerMove(e.touches[0].clientX)}
+                        onTouchEnd={handlePointerUp}
+                    >
+                        {popularServices.map((item, index) =>
+                            item.type === "helper"
+                                ? renderHelperCard(item, index)
+                                : renderJobCard(item, index)
+                        )}
                     </div>
                 </div>
 
-                {/* Register / Explore Section - Only for non-logged in users */}
-                {!isActive && (
-                    <div className={styles.ctaContainer}>
-                        <div className={styles.ctaContent}>
-                            <a href={Routes.viewAllJobs} className={styles.exploreLink}>
-                                Explore available jobs Now
-                            </a>
-                            <button className={styles.registerButton} onClick={handleRegister}>
-                                Register Now
+                <div className={styles.ctaContainer}>
+                    <div className={styles.ctaContent}>
+                        {!isActive ? (
+                            <button
+                                className={styles.registerButton}
+                                onClick={() => router.push(Routes.login)}
+                            >
+                                Sign In
                             </button>
-                        </div>
+                        ) : (
+                            <button
+                                className={styles.registerButton}
+                                onClick={() => router.push(Routes.viewAllJobs)}
+                            >
+                                Explore All Jobs
+                            </button>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </section>
     );
 };
 
 export default memo(PopularServicesSection);
-

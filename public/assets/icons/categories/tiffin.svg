@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Tiffin/Food Service icon -->
+  <!-- Tiffin carrier - stacked containers -->
+  <ellipse cx="64" cy="28" rx="26" ry="6" fill="#E65100"/>
+  <rect x="38" y="28" width="52" height="18" rx="4" fill="#FF8F00"/>
+  <ellipse cx="64" cy="46" rx="26" ry="6" fill="#E65100"/>
+  <rect x="38" y="46" width="52" height="18" rx="4" fill="#FFA726"/>
+  <ellipse cx="64" cy="64" rx="26" ry="6" fill="#E65100"/>
+  <rect x="38" y="64" width="52" height="18" rx="4" fill="#FFB74D"/>
+  <ellipse cx="64" cy="82" rx="26" ry="6" fill="#E65100"/>
+  <!-- Handle -->
+  <path d="M54 28 Q54 14 64 14 Q74 14 74 28" stroke="#5D4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Latch -->
+  <rect x="84" y="30" width="6" height="50" rx="2" fill="#5D4037"/>
+  <rect x="38" y="30" width="6" height="50" rx="2" fill="#5D4037"/>
+  <!-- Steam -->
+  <path d="M50 18 Q48 10 52 4" stroke="#CCC" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M64 16 Q62 8 66 2" stroke="#CCC" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M78 18 Q76 10 80 4" stroke="#CCC" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Base/plate -->
+  <ellipse cx="64" cy="96" rx="30" ry="8" fill="#EFEBE9"/>
+  <ellipse cx="64" cy="94" rx="28" ry="6" fill="#D7CCC8"/>
+</svg>

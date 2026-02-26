@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Mother's Helper icon -->
+  <!-- Head -->
+  <circle cx="64" cy="28" r="16" fill="#FFD6A0"/>
+  <!-- Hair -->
+  <path d="M48 24 Q48 8 64 8 Q80 8 80 24 L80 20 Q76 12 64 12 Q52 12 48 20 Z" fill="#5D4037"/>
+  <path d="M48 24 Q46 30 48 34" fill="#5D4037"/>
+  <path d="M80 24 Q82 30 80 34" fill="#5D4037"/>
+  <!-- Eyes -->
+  <ellipse cx="58" cy="26" rx="2" ry="2.5" fill="#333"/>
+  <ellipse cx="70" cy="26" rx="2" ry="2.5" fill="#333"/>
+  <path d="M60 32 Q64 36 68 32" stroke="#E8877C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Body -->
+  <path d="M44 46 L50 42 L78 42 L84 46 L84 90 Q84 96 78 96 L50 96 Q44 96 44 90 Z" fill="#7E57C2"/>
+  <!-- Apron -->
+  <path d="M52 52 L52 88 Q52 92 56 92 L72 92 Q76 92 76 88 L76 52" fill="white" stroke="#E0E0E0" stroke-width="1"/>
+  <!-- Apron pocket -->
+  <rect x="56" y="70" width="16" height="12" rx="3" fill="#EDE7F6" stroke="#D1C4E9" stroke-width="1"/>
+  <!-- Broom in hand -->
+  <line x1="22" y1="14" x2="22" y2="90" stroke="#8D6E63" stroke-width="3.5" stroke-linecap="round"/>
+  <rect x="14" y="86" width="16" height="14" rx="3" fill="#78909C"/>
+  <line x1="16" y1="88" x2="16" y2="98" stroke="#607D8B" stroke-width="1.5"/>
+  <line x1="20" y1="88" x2="20" y2="100" stroke="#607D8B" stroke-width="1.5"/>
+  <line x1="24" y1="88" x2="24" y2="100" stroke="#607D8B" stroke-width="1.5"/>
+  <line x1="28" y1="88" x2="28" y2="98" stroke="#607D8B" stroke-width="1.5"/>
+  <!-- Arm reaching to broom -->
+  <path d="M44 54 Q36 50 28 48 Q22 46 22 50" fill="#FFD6A0" stroke="none"/>
+  <!-- Sparkle -->
+  <path d="M100 30 L102 24 L104 30 L110 28 L104 30 L106 36 L102 32 L100 36 Z" fill="#FFEB3B"/>
+  <path d="M96 50 L97 47 L98 50 L101 49 L98 50 L99 53 L97 51 L96 53 Z" fill="#FFEB3B"/>
+</svg>

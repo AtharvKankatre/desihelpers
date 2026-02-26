@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Image from "next/image";
@@ -52,7 +52,10 @@ const Login = () => {
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
+  const [isLoginOtpSent, setIsLoginOtpSent] = useState(false);
+  const [loginOtp, setLoginOtp] = useState(["", "", "", "", "", ""]);
+  const [loginTimer, setLoginTimer] = useState(59);
+  const loginTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
@@ -258,6 +261,12 @@ const Login = () => {
     }
   };
 
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !formik.values.otp[index] && index > 0) {
+      document.getElementById(`otp-${index - 1}`)?.focus();
+    }
+  };
+
   // Final submit - create account and profile
   const handleFinalSubmit = async () => {
     setIsLoading(true);
@@ -276,51 +285,82 @@ const Login = () => {
         throw new Error(signupRes[1] || "Failed to create account");
       }
 
-      // Step 2: Create user profile with all collected data
-      const profilePayload = {
+      // Step 2: Auto-login to get JWT tokens (needed for profile creation)
+      const loginRes = await ApiService.crud(APIDetails.login, {
+        email: formik.values.email,
+        password: "TempPass123!",
+      });
+
+      if (!loginRes[0] || !loginRes[1]?.access_token) {
+        // Account created but auto-login failed
+        Swal.fire({
+          title: "Account Created!",
+          text: "Please login with OTP to complete your profile.",
+          icon: "success",
+        }).then(() => {
+          formik.resetForm();
+          setCurrentStep(1);
+          setViewMode("login");
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Save tokens so the profile API call is authenticated
+      CookieService.SetCookies(loginRes[1]);
+
+      // Step 3: Create user profile with corrected field names
+      const profilePayload: any = {
         firstName: formik.values.firstName,
         lastName: formik.values.lastName,
         displayName: formik.values.displayName || `${formik.values.firstName} ${formik.values.lastName}`,
         gender: formik.values.gender,
         email: formik.values.email,
-        phoneNumber: formik.values.mobileNumber,
-        whatsApp: formik.values.whatsappSameAsMobile ? formik.values.mobileNumber : formik.values.whatsappNumber,
+        mobile: formik.values.mobileNumber,
+        phone: formik.values.whatsappSameAsMobile ? formik.values.mobileNumber : formik.values.whatsappNumber,
         addressLine1: formik.values.addressLine1,
         addressLine2: formik.values.addressLine2,
         city: formik.values.city,
         state: formik.values.state,
         zipCode: formik.values.zipCode,
-        facebookLink: formik.values.facebookLink,
-        instagramLink: formik.values.instagramLink,
-        linkedinLink: formik.values.linkedinLink,
-        twitterLink: formik.values.twitterLink,
-        websiteLink: formik.values.websiteLink,
       };
+
+      // Only add social links if they are filled
+      if (formik.values.facebookLink) profilePayload.facebookLink = formik.values.facebookLink;
+      if (formik.values.instagramLink) profilePayload.instagram = formik.values.instagramLink;
+      if (formik.values.linkedinLink) profilePayload.linkedinLink = formik.values.linkedinLink;
+      if (formik.values.twitterLink) profilePayload.twitterLink = formik.values.twitterLink;
+      if (formik.values.websiteLink) profilePayload.websiteLink = formik.values.websiteLink;
 
       const profileRes = await ApiService.crud(APIDetails.postUserProfile, profilePayload);
 
       if (profileRes[0]) {
+        // Step 4: Re-login to get fresh tokens with isProfile=true
+        const refreshLoginRes = await ApiService.crud(APIDetails.login, {
+          email: formik.values.email,
+          password: "TempPass123!",
+        });
+        if (refreshLoginRes[0] && refreshLoginRes[1]?.access_token) {
+          CookieService.SetCookies(refreshLoginRes[1]);
+        }
+
         Swal.fire({
-          title: "Success! Welcome to DesiHelpers",
-          text: "Your account has been created successfully! Please login to continue.",
+          title: "Welcome to DesiHelpers!",
+          text: "Your account and profile have been created successfully!",
           icon: "success",
-          imageUrl: "/DesiHelpersLogo.svg",
-          imageWidth: 200,
-          confirmButtonText: "Login Now",
+          confirmButtonText: "View My Profile",
         }).then(() => {
-          // Reset form and switch to login view
-          formik.resetForm();
-          setCurrentStep(1);
-          setViewMode("login");
+          router.push("/profile");
         });
       } else {
-        // Account created but profile failed - still consider success
+        // Account created + logged in, but profile save failed
         Swal.fire({
           title: "Account Created!",
-          text: "Please login and complete your profile",
-          icon: "success",
+          text: "You are logged in. Please complete your profile from the profile page.",
+          icon: "info",
+          confirmButtonText: "Continue",
         }).then(() => {
-          setViewMode("login");
+          router.push("/profile");
         });
       }
     } catch (error: any) {
@@ -343,10 +383,76 @@ const Login = () => {
     window.location.href = `${apiUrl}auth/facebook?redirect_uri=${apiBaseUrl}api/auth/facebook/callback`;
   };
 
-  // Login handler
-  const handleLoginSubmit = async () => {
-    if (!loginEmail || !loginPassword) {
-      Swal.fire({ title: "Error", text: "Please enter both email and password", icon: "error" });
+  // Handle Login OTP Timer
+  useEffect(() => {
+    if (isLoginOtpSent && loginTimer > 0) {
+      loginTimerRef.current = setInterval(() => {
+        setLoginTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (loginTimer === 0 && loginTimerRef.current) {
+      clearInterval(loginTimerRef.current);
+    }
+
+    return () => {
+      if (loginTimerRef.current) clearInterval(loginTimerRef.current);
+    };
+  }, [isLoginOtpSent, loginTimer]);
+
+  // Handle Send Login OTP
+  const handleSendLoginOtp = async () => {
+    if (!loginEmail) {
+      Swal.fire({ title: "Error", text: "Please enter your email", icon: "error" });
+      return;
+    }
+
+    const sanitizedEmail = loginEmail.trim().toLowerCase();
+    setIsLoading(true);
+
+    const res = await ApiService.crud(
+      APIDetails.sendLoginOTP,
+      { email: sanitizedEmail }
+    );
+
+    setIsLoading(false);
+    if (res[0]) {
+      setIsLoginOtpSent(true);
+      setLoginTimer(59);
+      setLoginOtp(["", "", "", "", "", ""]);
+      Swal.fire({
+        title: "OTP Sent!",
+        text: "Check your email for the login code",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } else {
+      Swal.fire({ title: "Error", text: res[1] || "Failed to send OTP", icon: "error" });
+    }
+  };
+
+  // Handle Login OTP Input Change
+  const handleLoginOtpChange = (index: number, value: string) => {
+    if (value.length > 1) return;
+
+    const newOtp = [...loginOtp];
+    newOtp[index] = value;
+    setLoginOtp(newOtp);
+    if (value && index < 5) {
+      document.getElementById(`login-otp-${index + 1}`)?.focus();
+    }
+  };
+
+  const handleLoginOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !loginOtp[index] && index > 0) {
+      document.getElementById(`login-otp-${index - 1}`)?.focus();
+    }
+  };
+
+  // Handle Verify Login OTP
+  const handleVerifyLoginOtp = async () => {
+    const otpString = loginOtp.join("");
+    if (otpString.length !== 6) {
+      Swal.fire({ title: "Error", text: "Please enter complete OTP", icon: "error" });
       return;
     }
 
@@ -354,21 +460,15 @@ const Login = () => {
     setIsLoading(true);
 
     const loginRes = await ApiService.crud(
-      APIDetails.login,
-      JSON.stringify({ email: sanitizedEmail, password: loginPassword })
+      APIDetails.verifyLoginOTP,
+      { email: sanitizedEmail, otp: otpString }
     );
 
     setIsLoading(false);
     if (loginRes[0]) {
-      // Debugging Token Structure
-      console.log("Login Response Data:", loginRes[1]);
-
       if (loginRes[1] && loginRes[1].access_token) {
-        // Set cookies with the response data (tokens, user info)
         CookieService.SetCookies(loginRes[1]);
       } else {
-        console.error("Login successful but no access_token found in response:", loginRes[1]);
-        // Show error but don't redirect if critical auth data is missing
         Swal.fire({ title: "Login Error", text: "Invalid server response. Please try again.", icon: "error" });
         return;
       }
@@ -379,7 +479,7 @@ const Login = () => {
         timer: 1500,
         showConfirmButton: false
       }).then(() => {
-        router.push("/Landing");
+        router.push("/profile");
       });
     } else {
       Swal.fire({ title: "Login Failed", text: loginRes[1] || "Please try again", icon: "error" });
@@ -417,10 +517,11 @@ const Login = () => {
       </div>
 
       {/* Tagline */}
-      <h2 className={style.signupTagline}>
+      <h2 className={style.signupTagline} style={{ position: 'relative', zIndex: 10 }}>
         Connecting <span className={style.signupHighlightOrange}>Seekers</span> And{" "}
-        <span className={style.signupHighlightOrange}>Providers</span> In ONE Trusted DESI
-        Community Platform.
+        <span className={style.signupHighlightGreen}>Providers</span> In<br />
+        ONE Trusted DESI Community<br />
+        Platform.
       </h2>
 
       {/* Description */}
@@ -521,6 +622,7 @@ const Login = () => {
                 maxLength={1}
                 value={digit}
                 onChange={(e) => handleOtpChange(index, e.target.value)}
+                onKeyDown={(e) => handleOtpKeyDown(index, e)}
                 className={style.signupOtpInput}
               />
             ))}
@@ -912,52 +1014,111 @@ const Login = () => {
             ✕
           </button>
 
-          <h2 className={style.signupTitle}>Log In</h2>
-          <div className={style.signupTitleUnderline}></div>
+          <h2 className={style.signupTitle} style={{ textAlign: 'center' }}>
+            {isLoginOtpSent ? "OTP Verification" : "Log In"}
+          </h2>
 
           <div className={style.stepContent}>
-            <p className={style.stepSubtitle}>
-              Enter your email and password to log in.
-            </p>
+            {!isLoginOtpSent ? (
+              <p className={style.stepSubtitle} style={{ textAlign: "center", marginBottom: "30px" }}>
+                Enter below details to login your account.
+              </p>
+            ) : (
+              <p className={style.stepSubtitle} style={{ textAlign: "center", marginBottom: "30px", marginTop: "10px" }}>
+                We have sent OTP to your email{" "}
+                <strong>{loginEmail}</strong>
+              </p>
+            )}
 
-            <div className={style.formGroup}>
-              <label className={style.formLabel}>Email ID <span className={style.required}>*</span></label>
-              <input
-                type="email"
-                value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="Enter email ID"
-                className={style.formInput}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleLoginSubmit();
+            {!isLoginOtpSent && (
+              <div className={style.formGroup}>
+                <label className={style.formLabel}>Email ID <span className={style.required}>*</span></label>
+                <input
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder="Enter email ID"
+                  className={style.formInput}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSendLoginOtp();
+                  }}
+                />
+              </div>
+            )}
+
+            {isLoginOtpSent && (
+              <div style={{ textAlign: 'center' }}>
+                <div className={style.signupOtpInputs} style={{ justifyContent: 'center', marginBottom: '15px' }}>
+                  {loginOtp.map((digit, index) => (
+                    <input
+                      key={`login-otp-${index}`}
+                      id={`login-otp-${index}`}
+                      type="text"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleLoginOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleLoginOtpKeyDown(index, e)}
+                      className={style.signupOtpInput}
+                      style={{ margin: '0 4px', width: '45px', height: '45px', textAlign: 'center', fontSize: '18px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    />
+                  ))}
+                </div>
+
+                <div style={{ marginBottom: '24px', fontSize: '12px', color: '#666' }}>
+                  <p style={{ margin: '0 0 5px 0' }}>00:{loginTimer < 10 ? `0${loginTimer}` : loginTimer}</p>
+                  <p style={{ margin: 0 }}>
+                    Didn't receive OTP?{' '}
+                    <button
+                      type="button"
+                      onClick={handleSendLoginOtp}
+                      disabled={loginTimer > 0 || isLoading}
+                      style={{
+                        border: 'none',
+                        background: 'transparent',
+                        color: loginTimer > 0 ? '#aaa' : '#f07c00',
+                        cursor: loginTimer > 0 ? 'default' : 'pointer',
+                        fontWeight: '500',
+                        padding: 0
+                      }}
+                    >
+                      Resend Again
+                    </button>
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!isLoginOtpSent ? (
+              <button
+                onClick={handleSendLoginOtp}
+                className={style.signupButton}
+                disabled={isLoading || !loginEmail}
+                style={{ marginTop: '16px' }}
+              >
+                {isLoading ? "Sending..." : "Send OTP"}
+              </button>
+            ) : (
+              <button
+                onClick={handleVerifyLoginOtp}
+                className={style.signupButton}
+                disabled={isLoading || loginOtp.join('').length !== 6 || loginTimer === 0}
+                style={{
+                  marginTop: '0px',
+                  backgroundColor: (loginOtp.join('').length === 6 && loginTimer > 0) ? '#f07c00' : '#888',
+                  boxShadow: 'none',
+                  border: 'none',
+                  color: '#fff',
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '24px',
+                  fontWeight: '600'
                 }}
-              />
-            </div>
+              >
+                {isLoading ? "Verifying..." : "Verify OTP"}
+              </button>
+            )}
 
-            <div className={style.formGroup}>
-              <label className={style.formLabel}>Password <span className={style.required}>*</span></label>
-              <input
-                type="password"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="Enter password"
-                className={style.formInput}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleLoginSubmit();
-                }}
-              />
-            </div>
-
-            <button
-              onClick={handleLoginSubmit}
-              className={style.signupButton}
-              disabled={isLoading || !loginEmail || !loginPassword}
-              style={{ marginTop: '16px' }}
-            >
-              {isLoading ? "Logging in..." : "Log In"}
-            </button>
-
-            <div className={style.dividerWithText}>
+            <div className={style.dividerWithText} style={{ marginTop: '30px', marginBottom: '10px' }}>
               <span>OR</span>
             </div>
 
@@ -972,7 +1133,7 @@ const Login = () => {
               </button>
             </div>
 
-            <p className={style.switchModeText}>
+            <p className={style.switchModeText} style={{ marginTop: '20px' }}>
               Don't have an account?{" "}
               <button type="button" onClick={() => setViewMode("signup")} className={style.linkButton}>
                 Sign Up

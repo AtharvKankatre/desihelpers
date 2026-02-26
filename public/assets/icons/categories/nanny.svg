@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Mother with baby - Nanny/Baby Care icon -->
+  <circle cx="64" cy="30" r="18" fill="#5B8DEF"/>
+  <circle cx="64" cy="30" r="14" fill="#FFD6A0"/>
+  <ellipse cx="58" cy="28" rx="2" ry="2.5" fill="#333"/>
+  <ellipse cx="70" cy="28" rx="2" ry="2.5" fill="#333"/>
+  <path d="M60 34 Q64 38 68 34" stroke="#E8877C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M46 30 Q48 14 64 12 Q80 14 82 30" fill="#5B8DEF" stroke="none"/>
+  <!-- Body -->
+  <path d="M46 48 Q44 42 50 40 L78 40 Q84 42 82 48 L82 80 Q82 86 76 86 L52 86 Q46 86 46 80 Z" fill="#4ECDC4"/>
+  <!-- Baby -->
+  <circle cx="72" cy="68" r="12" fill="#FFE0B2"/>
+  <ellipse cx="69" cy="66" rx="1.5" ry="2" fill="#333"/>
+  <ellipse cx="75" cy="66" rx="1.5" ry="2" fill="#333"/>
+  <path d="M70 71 Q72 73 74 71" stroke="#E8877C" stroke-width="1" fill="none" stroke-linecap="round"/>
+  <rect x="60" y="58" width="24" height="20" rx="4" fill="#FFB74D" opacity="0.3"/>
+  <!-- Arms -->
+  <path d="M46 50 Q38 55 40 65 Q42 72 50 70" fill="#4ECDC4" stroke="none"/>
+  <path d="M82 50 Q90 55 88 65 Q86 72 78 70" fill="#4ECDC4" stroke="none"/>
+  <!-- Legs -->
+  <rect x="52" y="86" width="10" height="16" rx="5" fill="#5B8DEF"/>
+  <rect x="66" y="86" width="10" height="16" rx="5" fill="#5B8DEF"/>
+  <!-- Heart -->
+  <path d="M56 52 Q56 48 60 48 Q64 48 64 52 Q64 48 68 48 Q72 48 72 52 Q72 58 64 64 Q56 58 56 52" fill="#FF6B6B"/>
+</svg>
