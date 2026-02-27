@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import styles from "@/styles/CTASection.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -9,6 +10,12 @@ interface CTASectionProps {
 }
 
 export const CTASection: React.FC<CTASectionProps> = ({ sx, className, variant = 'default' }) => {
+    const router = useRouter();
+
+    const handleJoinCommunity = () => {
+        router.push("/Login?mode=signup");
+    };
+
     return (
         <section className={`${styles.section} ${variant === 'blue' ? styles.blueVariant : ''} ${className || ''}`} style={sx}>
             <div className={styles.container}>
@@ -19,7 +26,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ sx, className, variant =
                     </p>
                 </div>
                 <div className={styles.buttonColumn}>
-                    <button className={styles.ctaButton}>Join the community</button>
+                    <button className={styles.ctaButton} onClick={handleJoinCommunity}>Join the community</button>
                 </div>
             </div>
         </section>

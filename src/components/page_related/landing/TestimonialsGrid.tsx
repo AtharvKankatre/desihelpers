@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import styles from "@/styles/TestimonialsGrid.module.css";
 
 const testimonialsData = [
@@ -117,6 +118,7 @@ const testimonialsData = [
 ];
 
 export const TestimonialsGrid: React.FC = () => {
+    const router = useRouter();
     const sectionRef = useRef<HTMLElement>(null);
     const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -195,7 +197,7 @@ export const TestimonialsGrid: React.FC = () => {
                     <p className={styles.description}>
                         DesiHelpers.com has saved me so much time in searching for ethnic help. I have deleted all the community Whatsapp groups now.
                     </p>
-                    <button className={styles.connectBtn}>Connect Us</button>
+                    <button className={styles.connectBtn} onClick={() => router.push("/Login?mode=signup")}>Connect Us</button>
                 </div>
 
                 {/* Right Panel - 2 Column Testimonials Grid with Scroll Animation */}

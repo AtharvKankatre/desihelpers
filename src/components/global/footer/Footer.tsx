@@ -64,7 +64,7 @@ export const CFooter = () => {
           <p className={styles.ctaSubtitle}>
             Join our community today and experience the difference of working with verified, trusted professionals.
           </p>
-          <Link href="/auth/signup" className={styles.ctaButton}>
+          <Link href="/Login?mode=signup" className={styles.ctaButton}>
             Join the community
           </Link>
         </div>

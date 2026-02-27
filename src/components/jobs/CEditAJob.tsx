@@ -62,7 +62,7 @@ export const CEditAJob: FunctionComponent<Props> = ({
   };
   const previousValues = useRef<IPostJob>(initialValues);
 
-   //get CoordinateService class object for randomizing coordinates
+  //get CoordinateService class object for randomizing coordinates
   let coordinateService = new CoordinateService();
 
   useEffect(() => {
@@ -104,11 +104,10 @@ export const CEditAJob: FunctionComponent<Props> = ({
       formik.values.subCategoryId = subJobId;
 
       // randomize the coordinates if existing coordinates are changed
-      if((formik.values.location?.coordinates![0] !== previousValues.current.location?.coordinates![0]) &&
-      (formik.values.location?.coordinates![1] !== previousValues.current.location?.coordinates![1]))
-      {
+      if ((formik.values.location?.coordinates![0] !== previousValues.current.location?.coordinates![0]) &&
+        (formik.values.location?.coordinates![1] !== previousValues.current.location?.coordinates![1])) {
         let randomizedCoordinates = coordinateService.getRandomCoordinatesWithinRadius(
-          formik.values.location?.coordinates! ,0.25
+          formik.values.location?.coordinates!, 0.25
         )
         formik.values.location!.coordinates = randomizedCoordinates;
       }
@@ -170,7 +169,7 @@ export const CEditAJob: FunctionComponent<Props> = ({
     return;
   };
 
-  if (isLoading) return <CCommonLoader />;
+  if (isLoading) return null;
 
   return (
     <div className={`container-fluid`}>

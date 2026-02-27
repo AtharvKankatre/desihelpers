@@ -119,12 +119,12 @@
 }
 
 .progressFill {
-    width: 15%;
-    /* Visual placeholder */
+    width: 0%;
     height: 100%;
     background: #10b981;
     /* Green fill */
     border-radius: 4px;
+    transition: width 0.6s ease;
 }
 
 /* Form Inputs */

@@ -20,7 +20,7 @@ import { CEditPersonalDetails } from "@/components/page_related/user_profile/CEd
 import { CEditAboutMe } from "@/components/page_related/user_profile/CEditAboutMe";
 import { useAuth } from "@/services/authorization/AuthContext";
 import OtherDataServices from "@/services/other_data/OtherDataServices";
-import { CCommonLoader } from "@/components/static/CommonLoader";
+
 import { CEditUserWorkPhotos } from "@/components/page_related/user_profile/CEditUserWorkPhotos";
 import { IZipCodeDetails } from "@/models/ZipcodeDetails";
 import CButton from "@/components/reusable/CButton";
@@ -48,7 +48,7 @@ const EditUserProfile: FunctionComponent = () => {
   const { isSeeker, setIsProfileBuild } = useAuth();
   const otherServices = new OtherDataServices();
   const router = useRouter();
-  const { queryData, isJobseeker} = router.query;
+  const { queryData, isJobseeker } = router.query;
   const { jobCategories, email } = useAuth();
   const userStore = userProfileStore();
   const [action, setAction] = useState<string | null>(null);
@@ -99,7 +99,7 @@ const EditUserProfile: FunctionComponent = () => {
 
     getProfile();
 
-    return () => {};
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ const EditUserProfile: FunctionComponent = () => {
         );
 
         if (result[0]) {
-         // setIsProfileBuild(true);
+          // setIsProfileBuild(true);
           //Cookies.set(cookieParams.isProfileBuild, "true", params);
           //userStore.setUserProfile(formik.values);
           router.back();
@@ -211,9 +211,9 @@ const EditUserProfile: FunctionComponent = () => {
         // randomize the coordinates if existing coordinates are changed
         if (
           formik.values.location?.coordinates![0] !==
-            previousValues.current.location?.coordinates![0] &&
+          previousValues.current.location?.coordinates![0] &&
           formik.values.location?.coordinates![1] !==
-            previousValues.current.location?.coordinates![1]
+          previousValues.current.location?.coordinates![1]
         ) {
           let randomizedCoordinates =
             coordinateService.getRandomCoordinatesWithinRadius(
@@ -232,7 +232,7 @@ const EditUserProfile: FunctionComponent = () => {
           userStore.setUserProfile(formik.values);
           router.back();
           alert("Your changes have been saved successfully!");
-       
+
         } else {
           alert("Error while saving changes");
         }
@@ -366,47 +366,47 @@ const EditUserProfile: FunctionComponent = () => {
               email={formik.values.email!}
             />
 
-{isJobseeker == "true" ? <CEditAboutMe formik={formik} onLoad={onLoad} /> : null}
+            {isJobseeker == "true" ? <CEditAboutMe formik={formik} onLoad={onLoad} /> : null}
 
-{isJobseeker == "true"? (
-  <CExpandablePanel
-    title="Job Details"
-    id={"editJobDetails"}
-    isExpanded="show" // Keep the panel open by default
-  >
-    {(formik.values.jobDetails &&
-    formik.values.jobDetails.length > 0
-      ? formik.values.jobDetails
-      : [defaultJobDetail]
-    ) // Ensure at least one section shows initially
-      .map((e, index) => (
-        <CEditExpertiseSection
-          key={index}
-          formik={formik}
-          e={e}
-          index={index}
-          onLoad={onLoad}
-        />
-      ))}
-    <div
-      className="btn btn-warning ms-2"
-      onClick={() => {
-        // Ensure jobDetails is an array and add a new expertise item
-        formik.setFieldValue(
-          "jobDetails",
-          [...(formik.values.jobDetails || []), defaultJobDetail], // Handle undefined case safely
-          true
-        );
-      }}
-    >
-      <VscDiffAdded size={24} className="me-2" />
-      <span>Add Expertise</span>
-    </div>
-  </CExpandablePanel>
-) : null}
+            {isJobseeker == "true" ? (
+              <CExpandablePanel
+                title="Job Details"
+                id={"editJobDetails"}
+                isExpanded="show" // Keep the panel open by default
+              >
+                {(formik.values.jobDetails &&
+                  formik.values.jobDetails.length > 0
+                  ? formik.values.jobDetails
+                  : [defaultJobDetail]
+                ) // Ensure at least one section shows initially
+                  .map((e, index) => (
+                    <CEditExpertiseSection
+                      key={index}
+                      formik={formik}
+                      e={e}
+                      index={index}
+                      onLoad={onLoad}
+                    />
+                  ))}
+                <div
+                  className="btn btn-warning ms-2"
+                  onClick={() => {
+                    // Ensure jobDetails is an array and add a new expertise item
+                    formik.setFieldValue(
+                      "jobDetails",
+                      [...(formik.values.jobDetails || []), defaultJobDetail], // Handle undefined case safely
+                      true
+                    );
+                  }}
+                >
+                  <VscDiffAdded size={24} className="me-2" />
+                  <span>Add Expertise</span>
+                </div>
+              </CExpandablePanel>
+            ) : null}
 
             {isJobseeker == "true" && (
-             <CEditUserWorkPhotos
+              <CEditUserWorkPhotos
                 formik={formik}
                 workPhotos={formik.values.uploadPhotoOfWork ?? []}
                 setDeleteImages={setDeleteImages}
@@ -416,9 +416,9 @@ const EditUserProfile: FunctionComponent = () => {
                 setFiles={setFiles}
                 files={files}
               />
-              
+
             )}
-           
+
             {/* {isProfileBuild ? (
               <CButton
                 label="Save"

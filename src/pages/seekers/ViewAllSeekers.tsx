@@ -72,12 +72,7 @@ const ViewAllSeekers: FunctionComponent = () => {
     return matchesSearch && matchesLocation && matchesCategory;
   });
 
-  if (isLoading) return (
-    <div className="flex flex-col items-center justify-center p-20 text-gray-400">
-      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-desi-orange mb-4"></div>
-      Loading Service Providers...
-    </div>
-  );
+
 
   return (
     <div className={styles.pageWrapper}>

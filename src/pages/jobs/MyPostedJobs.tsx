@@ -32,7 +32,7 @@ const MyPostedJobs = () => {
     setJobs(t);
     setIsLoading(false);
   };
-  
+
   const fetchDatabyemail = async () => {
     let list: IJobs[] = [];
     var result = await ApiService.crud(APIDetails.AdminMyJobPost, router.query.email);
@@ -71,7 +71,7 @@ const MyPostedJobs = () => {
         <hr className="mb-4" />
 
         {isLoading ? (
-          <CCommonLoader />
+          null
         ) : jobs.length == 0 ? (
           <CH6Label label="You have yet to post any job openings" />
         ) : isJobEdit ? (

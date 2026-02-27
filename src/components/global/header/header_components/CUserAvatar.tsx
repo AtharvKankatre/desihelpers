@@ -10,8 +10,16 @@ import { jobStore } from "@/stores/JobStore";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { CProfilePopup } from "./CProfilePopup";
+import ApiService from "@/services/data/crud/crud";
+import { APIDetails } from "@/services/data/constants/ApiDetails";
 
-export const CUserAvatar: FunctionComponent = () => {
+interface CUserAvatarProps {
+  className?: string;
+  style?: React.CSSProperties;
+  onToggle?: (isOpen: boolean) => void;
+}
+
+export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, style, onToggle }) => {
   const { isActive, setIsActive, isProfileBuild } = useAuth();
   const { reset } = userProfileStore();
   const router = useRouter();
@@ -21,6 +29,13 @@ export const CUserAvatar: FunctionComponent = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const avatarRef = useRef<HTMLButtonElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const [userData, setUserData] = useState({
+    name: "",
+    location: "",
+    lastLogin: new Date().toLocaleString(),
+    profileCompletion: 0,
+  });
 
   const logOut = () => {
     reset();
@@ -36,31 +51,73 @@ export const CUserAvatar: FunctionComponent = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setPopupOpen(false);
+        if (onToggle) onToggle(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, [wrapperRef, onToggle]);
 
-  // Dummy user data for display - in real app, fetch from store/context
-  const userData = {
-    name: "Desi Helper",
-    location: "Bellevue, Washington",
-    lastLogin: "01/04/2024 05:08:50",
-    profileCompletion: 65,
-  };
+  // Fetch real profile data for the popup
+  useEffect(() => {
+    if (!isActive) return;
+    const fetchProfile = async () => {
+      try {
+        const result = await ApiService.crud(APIDetails.getUserProfile);
+        if (result[0] && result[1]) {
+          const p = result[1];
+          const fullName = `${p.firstName || ""} ${p.lastName || ""}`.trim() || "User";
+          const location = `${p.city || ""}, ${p.state || ""}`.replace(/^, |, $/g, "") || "";
+
+          // Calculate completion based on key profile fields
+          const fields = [
+            p.firstName,
+            p.lastName,
+            p.email,
+            p.mobile || p.phone,
+            p.addressLine1,
+            p.city,
+            p.state,
+            p.zipCode,
+            p.languagesSpoken && p.languagesSpoken.length > 0 ? "filled" : "",
+            p.aboutMe,
+            p.gender,
+            p.displayName,
+          ];
+          const filled = fields.filter(
+            (f) => f !== undefined && f !== null && f !== ""
+          ).length;
+          const percent = Math.round((filled / fields.length) * 100);
+
+          setUserData({
+            name: fullName,
+            location: location,
+            lastLogin: new Date().toLocaleString(),
+            profileCompletion: percent,
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching profile for popup:", err);
+      }
+    };
+    fetchProfile();
+  }, [isActive]);
 
   if (isActive) {
     return (
       <div ref={wrapperRef} style={{ position: "relative" }}>
         <button
           ref={avatarRef}
-          className={`${styles.avatar}`}
+          className={className || `${styles.avatar}`}
           type="button"
-          onClick={() => setPopupOpen(!popupOpen)}
-          style={{ width: '40px', height: '40px' }}
+          onClick={() => {
+            const newState = !popupOpen;
+            setPopupOpen(newState);
+            if (onToggle) onToggle(newState);
+          }}
+          style={{ width: '40px', height: '40px', ...style }}
         >
           <Image
             src="/newassets/account_circle.png"

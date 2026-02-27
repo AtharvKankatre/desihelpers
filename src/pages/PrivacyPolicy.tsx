@@ -156,7 +156,7 @@ const PrivacyPolicy = () => {
               Join our community today and experience the difference of working with verified, trusted professionals.
             </p>
           </div>
-          <Link href="/auth/signup" className={styles.readyButton}>Join the community</Link>
+          <Link href="/Login?mode=signup" className={styles.readyButton}>Join the community</Link>
         </div>
       </section>
     </>

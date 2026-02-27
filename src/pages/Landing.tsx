@@ -126,9 +126,7 @@ const Landing: React.FC = () => {
     getUserProfile();
   }, []);
 
-  if (globalLoader) {
-    return <CCommonLoader />;
-  }
+
 
   return (
     <div className={styles.displayDetailsWrapper} style={{ paddingTop: 0 }}>

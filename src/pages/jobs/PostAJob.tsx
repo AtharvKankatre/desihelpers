@@ -77,7 +77,7 @@ const PostAJob = () => {
 
       //randomize coordinates
       let randomizedCoordinates = coordinateService.getRandomCoordinatesWithinRadius(
-        formik.values.location?.coordinates!,0.25);
+        formik.values.location?.coordinates!, 0.25);
       formik.values.location!.coordinates = randomizedCoordinates;
 
       var result = await ApiService.crud(APIDetails.postJob, formik.values);
@@ -134,7 +134,7 @@ const PostAJob = () => {
   };
   const handleClose = () => router.push(Routes.landing);
 
-  if (isLoading) return <CCommonLoader />;
+  if (isLoading) return null;
 
   return (
     <div className={`container-fluid ${commonStyles.displayDetailsWrapper}`}>

@@ -32,13 +32,13 @@ const MyPostedJobs = () => {
     fetchData();
   }, []);
 
-  console.log('email',email)
+  console.log('email', email)
 
-//   const fetchData = async () => {
-//     let t: IJobs[] = await jobServices.fetchMyJobs();
-//     setJobs(t);
-//     setIsLoading(false);
-//   };
+  //   const fetchData = async () => {
+  //     let t: IJobs[] = await jobServices.fetchMyJobs();
+  //     setJobs(t);
+  //     setIsLoading(false);
+  //   };
 
   const fetchData = async () => {
     let list: IJobs[] = [];
@@ -46,12 +46,12 @@ const MyPostedJobs = () => {
     if (result[0]) {
       list = result[1];
     }
-    console.log('t',list)
+    console.log('t', list)
     setJobs(list);
     setIsLoading(false);
   };
 
- 
+
 
   const deleteAJob = async (jobToDelete: IJobs) => {
     setIsLoading(true);
@@ -81,7 +81,7 @@ const MyPostedJobs = () => {
         <hr className="mb-4" />
 
         {isLoading ? (
-          <CCommonLoader />
+          null
         ) : jobs.length == 0 ? (
           <CH6Label label="You have yet to post any job openings" />
         ) : isJobEdit ? (

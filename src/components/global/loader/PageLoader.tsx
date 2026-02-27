@@ -8,28 +8,15 @@ export const PageLoader: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        let timeoutId: NodeJS.Timeout;
-
         // Determine loading state changes via Router events
         const handleStart = (url: string) => {
             // Only show loader for /jobs routes
             if (url !== router.asPath && url.startsWith('/jobs')) {
-                // Wait 150ms before showing loader to avoid flash on instant loads
-                timeoutId = setTimeout(() => {
-                    setLoading(true);
-
-                    // FORCE HIDE after 2.5 seconds no matter what,
-                    // so the user isn't stuck waiting forever visually.
-                    setTimeout(() => {
-                        setLoading(false);
-                    }, 2500);
-
-                }, 150);
+                setLoading(true);
             }
         };
 
         const handleComplete = () => {
-            clearTimeout(timeoutId);
             setLoading(false);
         };
 

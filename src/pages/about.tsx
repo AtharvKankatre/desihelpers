@@ -2,12 +2,14 @@ import { useRef, useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FaPlay, FaCheckCircle, FaStar, FaQuoteLeft } from "react-icons/fa";
 import { Avatar, Box } from "@mui/material"; // Keeping Avatar as it's useful
 import styles from "@/styles/About.module.css";
 import { Routes } from "@/services/routes/Routes";
 
 const About: React.FC = () => {
+  const router = useRouter();
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -123,11 +125,9 @@ const About: React.FC = () => {
                 This means faster connections, less effort, and a better experience for everyone.
               </p>
 
-              <Link href={Routes.landing}>
-                <button className={styles.joinButton}>
-                  Join the community
-                </button>
-              </Link>
+              <button className={styles.joinButton} onClick={() => router.push("/Login?mode=signup")}>
+                Join the community
+              </button>
             </div>
 
             <div className={styles.imageWrapper}>
@@ -157,7 +157,7 @@ const About: React.FC = () => {
 
           <div className={styles.missionGrid}>
             <div className={styles.missionCard}>
-              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto mb-3' }}>
+              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto 15px' }}>
                 <Image
                   src="/assets/mission-connect-hq.png"
                   alt="Connect"
@@ -165,10 +165,11 @@ const About: React.FC = () => {
                   style={{ objectFit: 'contain' }}
                 />
               </div>
+              <h3>Connect</h3>
               <p>Connect and engage with potential social contacts on our platform</p>
             </div>
             <div className={styles.missionCard}>
-              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto mb-3' }}>
+              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto 15px' }}>
                 <Image
                   src="/assets/mission-care-hq.png"
                   alt="Care"
@@ -176,10 +177,11 @@ const About: React.FC = () => {
                   style={{ objectFit: 'contain' }}
                 />
               </div>
+              <h3>Care</h3>
               <p>Find the nanny or household Care and support your need to elevate your lifestyle</p>
             </div>
             <div className={styles.missionCard}>
-              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto mb-3' }}>
+              <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto 15px' }}>
                 <Image
                   src="/assets/mission-excel-hq.png"
                   alt="Excel"
@@ -187,6 +189,7 @@ const About: React.FC = () => {
                   style={{ objectFit: 'contain' }}
                 />
               </div>
+              <h3>Excel</h3>
               <p>Foster the community culture and Excel together</p>
             </div>
           </div>
@@ -207,7 +210,7 @@ const About: React.FC = () => {
             <p className={styles.testimonialBody}>
               DesiHelpers.com has saved me so much time in searching for ethnic help. I have deleted all the community Whatsapp groups now.
             </p>
-            <button className={styles.joinButton}>Connect Us</button>
+            <button className={styles.joinButton} onClick={() => router.push("/Login?mode=signup")}>Connect Us</button>
           </div>
 
           <div className={styles.testimonialGrid}>
@@ -366,7 +369,7 @@ const About: React.FC = () => {
               Join our community today and experience the difference of working with verified, trusted professionals.
             </p>
           </div>
-          <button className={styles.joinButton} style={{ padding: '15px 40px', fontSize: '1.1rem' }}>Join the community</button>
+          <button className={styles.joinButton} style={{ padding: '15px 40px', fontSize: '1.1rem' }} onClick={() => router.push("/Login?mode=signup")}>Join the community</button>
         </div>
       </section>
     </>

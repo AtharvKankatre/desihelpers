@@ -20,7 +20,7 @@ import { CEditPersonalDetails } from "@/components/page_related/user_profile/CEd
 import { CEditAboutMe } from "@/components/page_related/user_profile/CEditAboutMe";
 import { useAuth } from "@/services/authorization/AuthContext";
 import OtherDataServices from "@/services/other_data/OtherDataServices";
-import { CCommonLoader } from "@/components/static/CommonLoader";
+
 import { CEditUserWorkPhotos } from "@/components/page_related/user_profile/CEditUserWorkPhotos";
 import { IZipCodeDetails } from "@/models/ZipcodeDetails";
 import CButton from "@/components/reusable/CButton";
@@ -75,9 +75,9 @@ const EditUserProfile: FunctionComponent = () => {
   let data: string = queryData as string;
   let p: IUserProfileModel | undefined;
 
-   //get CoordinateService class object for randomizing coordinates
+  //get CoordinateService class object for randomizing coordinates
   let coordinateService = new CoordinateService();
-  
+
   if (data != undefined) {
     p = JSON.parse(data);
   }
@@ -99,7 +99,7 @@ const EditUserProfile: FunctionComponent = () => {
 
     getProfile();
 
-    return () => {};
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -157,7 +157,7 @@ const EditUserProfile: FunctionComponent = () => {
 
         // randomize the coordinates
         let randomizedCoordinates = coordinateService.getRandomCoordinatesWithinRadius(
-          formik.values.location?.coordinates! ,0.25);
+          formik.values.location?.coordinates!, 0.25);
         formik.values.location!.coordinates = randomizedCoordinates;
 
         var result = await ApiService.crud(
@@ -207,15 +207,14 @@ const EditUserProfile: FunctionComponent = () => {
           }
         }
 
-        
+
         // randomize the coordinates if existing coordinates are changed
-        if((formik.values.location?.coordinates![0] !== previousValues.current.location?.coordinates![0]) &&
-           (formik.values.location?.coordinates![1] !== previousValues.current.location?.coordinates![1]))
-          {
-            let randomizedCoordinates = coordinateService.getRandomCoordinatesWithinRadius(
-              formik.values.location?.coordinates! ,0.5);
-            formik.values.location!.coordinates = randomizedCoordinates;
-          }
+        if ((formik.values.location?.coordinates![0] !== previousValues.current.location?.coordinates![0]) &&
+          (formik.values.location?.coordinates![1] !== previousValues.current.location?.coordinates![1])) {
+          let randomizedCoordinates = coordinateService.getRandomCoordinatesWithinRadius(
+            formik.values.location?.coordinates!, 0.5);
+          formik.values.location!.coordinates = randomizedCoordinates;
+        }
         // The profile has already been build and only needs to be updated
         var result = await ApiService.crud(
           APIDetails.updateUserProfile,

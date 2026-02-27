@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import styles from "@/styles/FAQSection.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -32,6 +33,7 @@ const faqData = [
 ];
 
 export const FAQSection: React.FC = () => {
+    const router = useRouter();
     const [activeIndex, setActiveIndex] = useState<number | null>(0); // First item open by default
 
     const toggleFAQ = (index: number) => {
@@ -49,7 +51,7 @@ export const FAQSection: React.FC = () => {
                         offering your services, and navigating our DESI community platform
                         with ease and confidence.
                     </p>
-                    <button className={styles.connectButton}>Connect Us</button>
+                    <button className={styles.connectButton} onClick={() => router.push("/Login?mode=signup")}>Connect Us</button>
                 </div>
 
                 {/* Right Side - Accordion */}

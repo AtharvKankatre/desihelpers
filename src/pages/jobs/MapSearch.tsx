@@ -175,7 +175,7 @@ const MapSearch: FunctionComponent = () => {
     setLoading(false);
   };
 
-  if (initialLoad) return <CCommonLoader />;
+  if (initialLoad) return null;
 
   return (
     <div className={`${mapStyles.mapMasterBody}`}>

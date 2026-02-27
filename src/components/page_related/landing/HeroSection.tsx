@@ -257,11 +257,7 @@ const _HeroSection: React.FC = () => {
   };
 
   const handleRegister = () => {
-    if (!isActive) {
-      router.push("/Login");
-    } else {
-      router.push(Routes.mapSearch);
-    }
+    router.push(Routes.register);
   };
 
   const handleExploreJobs = () => {
@@ -393,11 +389,13 @@ const _HeroSection: React.FC = () => {
         <div className={styles.exploreLinkWrapper} onClick={handleExploreJobs}>
           <span className={styles.exploreAvailableLink}>Explore available jobs Now</span>
         </div>
-        <div className={styles.registerCtaWrapper}>
-          <button className={styles.registerButton} onClick={handleRegister}>
-            Register Now
-          </button>
-        </div>
+        {!isActive && (
+          <div className={styles.registerCtaWrapper}>
+            <button className={styles.registerButton} onClick={handleRegister}>
+              Register Now
+            </button>
+          </div>
+        )}
       </div>
 
     </div>

@@ -1,12 +1,18 @@
 import React from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/WhyUsSection.module.css";
+import { useAuth } from "@/services/authorization/AuthContext";
 
 export const WhyUsSection: React.FC = () => {
     const router = useRouter();
+    const { isActive } = useAuth();
 
     const handleGetStarted = () => {
-        router.push("/Login");
+        if (isActive) {
+            router.push("/profile");
+            return;
+        }
+        router.push("/Login?mode=signup");
     };
 
     return (
@@ -51,7 +57,7 @@ export const WhyUsSection: React.FC = () => {
                     </div>
 
                     <button className={styles.getStartedButton} onClick={handleGetStarted}>
-                        Get Started
+                        {isActive ? "Complete Your Profile" : "Get Started"}
                     </button>
                 </div>
 

@@ -52,6 +52,7 @@ const Login = () => {
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
+  const [loginEmailError, setLoginEmailError] = useState("");
   const [isLoginOtpSent, setIsLoginOtpSent] = useState(false);
   const [loginOtp, setLoginOtp] = useState(["", "", "", "", "", ""]);
   const [loginTimer, setLoginTimer] = useState(59);
@@ -118,26 +119,74 @@ const Login = () => {
     }
   };
 
+  // Helper: validate login email
+  const validateLoginEmail = (value: string): string => {
+    if (!value.trim()) return "Please enter your email address";
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(value.trim())) return "Please enter a valid email address (e.g., name@example.com)";
+    return "";
+  };
+
   // Validation schemas for each step
   const step1Schema = yup.object({
-    email: yup.string().email("Invalid email").required("Email is required"),
-    isOtpVerified: yup.boolean().oneOf([true], "Please verify OTP"),
+    email: yup.string()
+      .trim()
+      .required("Email address is required to create your account")
+      .email("Please enter a valid email address (e.g., name@example.com)")
+      .matches(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Please enter a valid email address (e.g., name@example.com)"
+      ),
+    isOtpVerified: yup.boolean().oneOf([true], "Please verify your email with the OTP sent to your inbox"),
   });
 
   const step2Schema = yup.object({
-    firstName: yup.string().required("First name is required"),
-    lastName: yup.string().required("Last name is required"),
-    isEighteenPlus: yup.boolean().oneOf([true], "You must be 18+"),
-    mobileNumber: yup.string().required("Mobile number is required"),
+    firstName: yup.string()
+      .trim()
+      .required("First name is required")
+      .min(2, "First name must be at least 2 characters")
+      .max(50, "First name cannot exceed 50 characters")
+      .matches(/^[a-zA-Z\s'-]+$/, "First name can only contain letters, spaces, hyphens, and apostrophes"),
+    lastName: yup.string()
+      .trim()
+      .required("Last name is required")
+      .min(2, "Last name must be at least 2 characters")
+      .max(50, "Last name cannot exceed 50 characters")
+      .matches(/^[a-zA-Z\s'-]+$/, "Last name can only contain letters, spaces, hyphens, and apostrophes"),
+    displayName: yup.string()
+      .max(50, "Display name cannot exceed 50 characters"),
+    isEighteenPlus: yup.boolean().oneOf([true], "You must confirm that you are 18 years or older to continue"),
+    mobileNumber: yup.string()
+      .required("Mobile number is required")
+      .matches(/^[0-9+\-()\s]+$/, "Mobile number can only contain digits, +, -, (, ) and spaces")
+      .min(10, "Mobile number must be at least 10 digits")
+      .max(15, "Mobile number cannot exceed 15 digits"),
   });
 
   const step3Schema = yup.object({
-    addressLine1: yup.string().required("Address is required"),
-    city: yup.string().required("City is required"),
-    state: yup.string().required("State is required"),
+    addressLine1: yup.string()
+      .trim()
+      .required("Address line 1 is required")
+      .min(5, "Please enter a complete street address")
+      .max(200, "Address is too long"),
+    city: yup.string()
+      .trim()
+      .required("City is required")
+      .min(2, "City name must be at least 2 characters"),
+    state: yup.string()
+      .required("Please select your state"),
+    zipCode: yup.string()
+      .matches(/^[0-9]{5}(-[0-9]{4})?$|^$/, "Please enter a valid US zip code (e.g., 98052 or 98052-1234)"),
   });
 
-  const step4Schema = yup.object({});
+  const urlValidation = yup.string().url("Please enter a valid URL (e.g., https://example.com)");
+  const step4Schema = yup.object({
+    facebookLink: urlValidation,
+    instagramLink: urlValidation,
+    linkedinLink: urlValidation,
+    twitterLink: urlValidation,
+    websiteLink: urlValidation,
+  });
 
   const getValidationSchema = () => {
     switch (currentStep) {
@@ -176,7 +225,8 @@ const Login = () => {
       websiteLink: "",
     },
     validationSchema: getValidationSchema(),
-    validateOnChange: false,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: async () => {
       if (currentStep < 4) {
         setCurrentStep(currentStep + 1);
@@ -188,8 +238,16 @@ const Login = () => {
 
   // Send OTP for signup
   const sendSignupOtp = async () => {
-    if (!formik.values.email) {
-      formik.setFieldError("email", "Email is required");
+    const emailVal = formik.values.email.trim();
+    if (!emailVal) {
+      formik.setFieldError("email", "Email address is required to create your account");
+      formik.setFieldTouched("email", true, false);
+      return;
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(emailVal)) {
+      formik.setFieldError("email", "Please enter a valid email address (e.g., name@example.com)");
+      formik.setFieldTouched("email", true, false);
       return;
     }
 
@@ -400,10 +458,12 @@ const Login = () => {
 
   // Handle Send Login OTP
   const handleSendLoginOtp = async () => {
-    if (!loginEmail) {
-      Swal.fire({ title: "Error", text: "Please enter your email", icon: "error" });
+    const err = validateLoginEmail(loginEmail);
+    if (err) {
+      setLoginEmailError(err);
       return;
     }
+    setLoginEmailError("");
 
     const sanitizedEmail = loginEmail.trim().toLowerCase();
     setIsLoading(true);
@@ -588,8 +648,9 @@ const Login = () => {
             name="email"
             value={formik.values.email}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             placeholder="Enter email ID"
-            className={style.formInput}
+            className={`${style.formInput} ${formik.touched.email && formik.errors.email ? style.formInputError : ''}`}
             disabled={formik.values.isOtpVerified}
           />
           {!formik.values.isOtpVerified && (
@@ -606,7 +667,7 @@ const Login = () => {
             <span className={style.verifiedBadge}>✓ Verified</span>
           )}
         </div>
-        {formik.errors.email && <span className={style.errorText}>{formik.errors.email}</span>}
+        {formik.touched.email && formik.errors.email && <span className={style.errorText}>{formik.errors.email}</span>}
       </div>
 
       {/* OTP Input */}
@@ -670,10 +731,11 @@ const Login = () => {
             name="firstName"
             value={formik.values.firstName}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             placeholder="Enter first name"
-            className={style.formInput}
+            className={`${style.formInput} ${formik.touched.firstName && formik.errors.firstName ? style.formInputError : ''}`}
           />
-          {formik.errors.firstName && <span className={style.errorText}>{formik.errors.firstName}</span>}
+          {formik.touched.firstName && formik.errors.firstName && <span className={style.errorText}>{formik.errors.firstName}</span>}
         </div>
         <div className={style.formGroup}>
           <label className={style.formLabel}>Last name <span className={style.required}>*</span></label>
@@ -682,10 +744,11 @@ const Login = () => {
             name="lastName"
             value={formik.values.lastName}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             placeholder="Enter last name"
-            className={style.formInput}
+            className={`${style.formInput} ${formik.touched.lastName && formik.errors.lastName ? style.formInputError : ''}`}
           />
-          {formik.errors.lastName && <span className={style.errorText}>{formik.errors.lastName}</span>}
+          {formik.touched.lastName && formik.errors.lastName && <span className={style.errorText}>{formik.errors.lastName}</span>}
         </div>
       </div>
 
@@ -697,9 +760,11 @@ const Login = () => {
             name="displayName"
             value={formik.values.displayName}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             placeholder="Enter display name"
-            className={style.formInput}
+            className={`${style.formInput} ${formik.touched.displayName && formik.errors.displayName ? style.formInputError : ''}`}
           />
+          {formik.touched.displayName && formik.errors.displayName && <span className={style.errorText}>{formik.errors.displayName}</span>}
         </div>
         <div className={style.formGroup}>
           <label className={style.formLabel}>Gender</label>
@@ -730,7 +795,7 @@ const Login = () => {
           I am 18 years or older
         </label>
       </div>
-      {formik.errors.isEighteenPlus && <span className={style.errorText}>{formik.errors.isEighteenPlus}</span>}
+      {formik.touched.isEighteenPlus && formik.errors.isEighteenPlus && <span className={style.errorText}>{formik.errors.isEighteenPlus}</span>}
 
       <div className={style.formRow}>
         <div className={style.formGroup}>
@@ -749,10 +814,11 @@ const Login = () => {
             name="mobileNumber"
             value={formik.values.mobileNumber}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             placeholder="Enter mobile number"
-            className={style.formInput}
+            className={`${style.formInput} ${formik.touched.mobileNumber && formik.errors.mobileNumber ? style.formInputError : ''}`}
           />
-          {formik.errors.mobileNumber && <span className={style.errorText}>{formik.errors.mobileNumber}</span>}
+          {formik.touched.mobileNumber && formik.errors.mobileNumber && <span className={style.errorText}>{formik.errors.mobileNumber}</span>}
         </div>
       </div>
 
@@ -812,10 +878,11 @@ const Login = () => {
           name="addressLine1"
           value={formik.values.addressLine1}
           onChange={formik.handleChange}
-          placeholder="Enter"
-          className={style.formInput}
+          onBlur={formik.handleBlur}
+          placeholder="Enter your street address"
+          className={`${style.formInput} ${formik.touched.addressLine1 && formik.errors.addressLine1 ? style.formInputError : ''}`}
         />
-        {formik.errors.addressLine1 && <span className={style.errorText}>{formik.errors.addressLine1}</span>}
+        {formik.touched.addressLine1 && formik.errors.addressLine1 && <span className={style.errorText}>{formik.errors.addressLine1}</span>}
       </div>
 
       <div className={style.formGroup}>
@@ -825,7 +892,7 @@ const Login = () => {
           name="addressLine2"
           value={formik.values.addressLine2}
           onChange={formik.handleChange}
-          placeholder="Enter"
+          placeholder="Apartment, suite, unit, etc. (optional)"
           className={style.formInput}
         />
       </div>
@@ -837,14 +904,15 @@ const Login = () => {
             name="state"
             value={formik.values.state}
             onChange={formik.handleChange}
-            className={style.formSelect}
+            onBlur={formik.handleBlur}
+            className={`${style.formSelect} ${formik.touched.state && formik.errors.state ? style.formInputError : ''}`}
           >
             <option value="">Select State</option>
             {states.map((state: any) => (
               <option key={state.id} value={state.id}>{state.name}</option>
             ))}
           </select>
-          {formik.errors.state && <span className={style.errorText}>{formik.errors.state}</span>}
+          {formik.touched.state && formik.errors.state && <span className={style.errorText}>{formik.errors.state}</span>}
         </div>
         <div className={style.formGroup}>
           <label className={style.formLabel}>City <span className={style.required}>*</span></label>
@@ -853,10 +921,11 @@ const Login = () => {
             name="city"
             value={formik.values.city}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             placeholder="Enter your city"
-            className={style.formInput}
+            className={`${style.formInput} ${formik.touched.city && formik.errors.city ? style.formInputError : ''}`}
           />
-          {formik.errors.city && <span className={style.errorText}>{formik.errors.city}</span>}
+          {formik.touched.city && formik.errors.city && <span className={style.errorText}>{formik.errors.city}</span>}
         </div>
       </div>
 
@@ -867,9 +936,11 @@ const Login = () => {
           name="zipCode"
           value={formik.values.zipCode}
           onChange={formik.handleChange}
-          placeholder="Enter"
-          className={style.formInput}
+          onBlur={formik.handleBlur}
+          placeholder="e.g., 98052"
+          className={`${style.formInput} ${formik.touched.zipCode && formik.errors.zipCode ? style.formInputError : ''}`}
         />
+        {formik.touched.zipCode && formik.errors.zipCode && <span className={style.errorText}>{formik.errors.zipCode}</span>}
       </div>
 
       <div className={style.stepButtons}>
@@ -924,9 +995,11 @@ const Login = () => {
             name="facebookLink"
             value={formik.values.facebookLink}
             onChange={formik.handleChange}
-            placeholder="Enter"
-            className={style.formInput}
+            onBlur={formik.handleBlur}
+            placeholder="https://facebook.com/yourprofile"
+            className={`${style.formInput} ${formik.touched.facebookLink && formik.errors.facebookLink ? style.formInputError : ''}`}
           />
+          {formik.touched.facebookLink && formik.errors.facebookLink && <span className={style.errorText}>{formik.errors.facebookLink}</span>}
         </div>
         <div className={style.formGroup}>
           <label className={style.formLabel}>
@@ -938,9 +1011,11 @@ const Login = () => {
             name="instagramLink"
             value={formik.values.instagramLink}
             onChange={formik.handleChange}
-            placeholder="Enter"
-            className={style.formInput}
+            onBlur={formik.handleBlur}
+            placeholder="https://instagram.com/yourprofile"
+            className={`${style.formInput} ${formik.touched.instagramLink && formik.errors.instagramLink ? style.formInputError : ''}`}
           />
+          {formik.touched.instagramLink && formik.errors.instagramLink && <span className={style.errorText}>{formik.errors.instagramLink}</span>}
         </div>
       </div>
 
@@ -955,9 +1030,11 @@ const Login = () => {
             name="linkedinLink"
             value={formik.values.linkedinLink}
             onChange={formik.handleChange}
-            placeholder="Enter"
-            className={style.formInput}
+            onBlur={formik.handleBlur}
+            placeholder="https://linkedin.com/in/yourprofile"
+            className={`${style.formInput} ${formik.touched.linkedinLink && formik.errors.linkedinLink ? style.formInputError : ''}`}
           />
+          {formik.touched.linkedinLink && formik.errors.linkedinLink && <span className={style.errorText}>{formik.errors.linkedinLink}</span>}
         </div>
         <div className={style.formGroup}>
           <label className={style.formLabel}>
@@ -969,9 +1046,11 @@ const Login = () => {
             name="twitterLink"
             value={formik.values.twitterLink}
             onChange={formik.handleChange}
-            placeholder="Enter"
-            className={style.formInput}
+            onBlur={formik.handleBlur}
+            placeholder="https://twitter.com/yourprofile"
+            className={`${style.formInput} ${formik.touched.twitterLink && formik.errors.twitterLink ? style.formInputError : ''}`}
           />
+          {formik.touched.twitterLink && formik.errors.twitterLink && <span className={style.errorText}>{formik.errors.twitterLink}</span>}
         </div>
       </div>
 
@@ -984,9 +1063,11 @@ const Login = () => {
           name="websiteLink"
           value={formik.values.websiteLink}
           onChange={formik.handleChange}
-          placeholder="Enter"
-          className={style.formInput}
+          onBlur={formik.handleBlur}
+          placeholder="https://yourwebsite.com"
+          className={`${style.formInput} ${formik.touched.websiteLink && formik.errors.websiteLink ? style.formInputError : ''}`}
         />
+        {formik.touched.websiteLink && formik.errors.websiteLink && <span className={style.errorText}>{formik.errors.websiteLink}</span>}
       </div>
 
       <div className={style.stepButtons}>
@@ -1036,13 +1117,18 @@ const Login = () => {
                 <input
                   type="email"
                   value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
+                  onChange={(e) => {
+                    setLoginEmail(e.target.value);
+                    if (loginEmailError) setLoginEmailError(validateLoginEmail(e.target.value));
+                  }}
+                  onBlur={() => setLoginEmailError(validateLoginEmail(loginEmail))}
                   placeholder="Enter email ID"
-                  className={style.formInput}
+                  className={`${style.formInput} ${loginEmailError ? style.formInputError : ''}`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSendLoginOtp();
                   }}
                 />
+                {loginEmailError && <span className={style.errorText}>{loginEmailError}</span>}
               </div>
             )}
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
 import withAuth from "@/services/authorization/ProfileService"; // Fixed import
 import { IJobs } from "@/models/Jobs";
@@ -16,6 +16,7 @@ import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import { FaMapMarkedAlt, FaList, FaSlidersH, FaSortAmountDown, FaBell, FaArrowLeft } from "react-icons/fa";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
+import Radar from "radar-sdk-js";
 
 // Dynamically import map component for SSR compatibility
 const DisplayMap = dynamic(() => import("@/components/maps/DisplayMaps"), {
@@ -43,11 +44,76 @@ const ViewAllJobs = () => {
                 { name: "Speciality Deserts", jobTypeId: "baking" }
             ]
         },
-        { name: "Event Help", id: "event-help", subCategories: [{ name: "All", jobTypeId: "event-help" }] },
-        { name: "Catering", id: "catering", subCategories: [{ name: "All", jobTypeId: "catering" }] },
-        { name: "Tutoring", id: "tutoring", subCategories: [{ name: "All", jobTypeId: "tutoring" }] },
-        { name: "Home & Baby Care", id: "home-baby-care", subCategories: [{ name: "All", jobTypeId: "home-baby-care" }] },
-        { name: "Professionals", id: "professionals", subCategories: [{ name: "All", jobTypeId: "professionals" }] }
+        {
+            name: "Event Help",
+            id: "event-help",
+            subCategories: [
+                { name: "All", jobTypeId: "event-help" },
+                { name: "Astrologers", jobTypeId: "event-help" },
+                { name: "Decorators", jobTypeId: "event-help" },
+                { name: "Entertainers", jobTypeId: "event-help" },
+                { name: "Henna Artists", jobTypeId: "event-help" },
+                { name: "Photographers", jobTypeId: "event-help" },
+                { name: "Priests", jobTypeId: "event-help" },
+                { name: "Servers", jobTypeId: "event-help" },
+                { name: "Event Planners", jobTypeId: "event-help" },
+                { name: "Music DJs", jobTypeId: "event-help" },
+                { name: "Beauticians", jobTypeId: "event-help" }
+            ]
+        },
+        {
+            name: "Catering",
+            id: "catering",
+            subCategories: [
+                { name: "All", jobTypeId: "catering" },
+                { name: "Personal Chef", jobTypeId: "catering" },
+                { name: "Tiffin", jobTypeId: "catering" },
+                { name: "Caterers", jobTypeId: "catering" },
+                { name: "Speciality Items", jobTypeId: "catering" },
+                { name: "Live Counters", jobTypeId: "catering" }
+            ]
+        },
+        {
+            name: "Tutoring",
+            id: "tutoring",
+            subCategories: [
+                { name: "All", jobTypeId: "tutoring" },
+                { name: "Maths/Science", jobTypeId: "tutoring" },
+                { name: "Certificate Exams", jobTypeId: "tutoring" },
+                { name: "Music", jobTypeId: "tutoring" },
+                { name: "Others", jobTypeId: "tutoring" },
+                { name: "Yoga", jobTypeId: "tutoring" },
+                { name: "Dance", jobTypeId: "tutoring" }
+            ]
+        },
+        {
+            name: "Home & Baby Care",
+            id: "home-baby-care",
+            subCategories: [
+                { name: "All", jobTypeId: "home-baby-care" },
+                { name: "Nanny", jobTypeId: "home-baby-care" },
+                { name: "Mother's Helper", jobTypeId: "home-baby-care" },
+                { name: "Carpet Cleaners", jobTypeId: "home-baby-care" },
+                { name: "House Cleaners", jobTypeId: "home-baby-care" },
+                { name: "Pack/Move Services", jobTypeId: "home-baby-care" },
+                { name: "Landscaping Services", jobTypeId: "home-baby-care" },
+                { name: "Day Care Center", jobTypeId: "home-baby-care" }
+            ]
+        },
+        {
+            name: "Professionals",
+            id: "professionals",
+            subCategories: [
+                { name: "All", jobTypeId: "professionals" },
+                { name: "Gas Station Jobs", jobTypeId: "professionals" },
+                { name: "Store Jobs", jobTypeId: "professionals" },
+                { name: "Other Jobs", jobTypeId: "professionals" },
+                { name: "Airport pick/drop", jobTypeId: "professionals" },
+                { name: "CPA/TAX", jobTypeId: "professionals" },
+                { name: "Legal", jobTypeId: "professionals" },
+                { name: "Notary", jobTypeId: "professionals" }
+            ]
+        }
     ], []);
 
     // Use *only* requested static categories (as per user feedback "keep this only")
@@ -68,14 +134,77 @@ const ViewAllJobs = () => {
     const [seekersList, setSeekersList] = useState<any[]>([]);
 
     // Filter state
-    const [locationSearch, setLocationSearch] = useState("Seattle, WA US");
+    const [locationSearch, setLocationSearch] = useState("");
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const [workTypeFilter, setWorkTypeFilter] = useState("Part Time");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("");
+
+    // Radar autocomplete state
+    const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const autocompleteTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const locationWrapperRef = useRef<HTMLDivElement>(null);
+    const radarInitRef = useRef(false);
     const [radiusFilter, setRadiusFilter] = useState(50);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterModalOpen, setFilterModalOpen] = useState(false);
+
+    // Initialize Radar SDK
+    useEffect(() => {
+        if (!radarInitRef.current) {
+            Radar.initialize(process.env.NEXT_PUBLIC_RADAR_API_KEY || "");
+            radarInitRef.current = true;
+        }
+    }, []);
+
+    // Close suggestions on click outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (locationWrapperRef.current && !locationWrapperRef.current.contains(e.target as Node)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Debounced Radar autocomplete
+    const handleLocationInput = useCallback((query: string) => {
+        setLocationSearch(query);
+        if (autocompleteTimerRef.current) clearTimeout(autocompleteTimerRef.current);
+        if (!query || query.length < 2) {
+            setLocationSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+        setIsSearching(true);
+        autocompleteTimerRef.current = setTimeout(() => {
+            Radar.autocomplete({
+                query,
+                limit: 8,
+            }).then((result: any) => {
+                setLocationSuggestions(result.addresses || []);
+                setShowSuggestions(true);
+                setIsSearching(false);
+            }).catch(() => {
+                setLocationSuggestions([]);
+                setIsSearching(false);
+            });
+        }, 300);
+    }, []);
+
+    // Handle selecting a location suggestion
+    const handleLocationSelect = (address: any) => {
+        const label = `${address.city || address.borough || ""}, ${address.stateCode || address.state || ""} ${address.countryCode || ""}`.trim();
+        setLocationSearch(label);
+        setShowSuggestions(false);
+        setLocationSuggestions([]);
+        if (address.latitude && address.longitude) {
+            setUserLocation([address.latitude, address.longitude]);
+        }
+    };
 
     // Fetch user geolocation on mount
     useEffect(() => {
@@ -334,7 +463,7 @@ const ViewAllJobs = () => {
                 {/* Row 1: Filters & Toggles */}
                 <div className={styles.filterTopRow}>
                     <div className={styles.filterGroup}>
-                        <div className={styles.locationWrapper}>
+                        <div className={styles.locationWrapper} ref={locationWrapperRef}>
                             <svg className={styles.locationIconInside} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
@@ -344,8 +473,28 @@ const ViewAllJobs = () => {
                                 className={styles.locationInput}
                                 placeholder="Search by location"
                                 value={locationSearch}
-                                onChange={(e) => setLocationSearch(e.target.value)}
+                                onChange={(e) => handleLocationInput(e.target.value)}
+                                onFocus={() => { if (locationSuggestions.length > 0) setShowSuggestions(true); }}
                             />
+                            {showSuggestions && locationSuggestions.length > 0 && (
+                                <div className={styles.locationDropdown}>
+                                    {locationSuggestions.map((addr: any, idx: number) => (
+                                        <div
+                                            key={idx}
+                                            className={styles.locationDropdownItem}
+                                            onClick={() => handleLocationSelect(addr)}
+                                        >
+                                            <svg className={styles.locationDropdownIcon} width="16" height="16" viewBox="0 0 24 24" fill="#f07c00" stroke="none">
+                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                                            </svg>
+                                            <div className={styles.locationDropdownText}>
+                                                <span className={styles.locationDropdownCity}>{addr.city || addr.borough || addr.addressLabel || ""}</span>
+                                                <span className={styles.locationDropdownRegion}>{addr.stateCode || addr.state || ""} {addr.countryCode || ""}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <select
@@ -460,7 +609,7 @@ const ViewAllJobs = () => {
                         <div className={styles.mobileFilterContainer}>
                             {/* Mobile Row 1: Search + Filter Button */}
                             <div className={styles.mobileSearchRow}>
-                                <div className={styles.searchContainerMobile}>
+                                <div className={styles.searchContainerMobile} ref={!locationWrapperRef.current ? locationWrapperRef : undefined} style={{ position: 'relative' }}>
                                     <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <circle cx="11" cy="11" r="8" />
                                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -470,8 +619,28 @@ const ViewAllJobs = () => {
                                         className={styles.newSearchInput}
                                         placeholder="Search by location"
                                         value={locationSearch}
-                                        onChange={(e) => setLocationSearch(e.target.value)}
+                                        onChange={(e) => handleLocationInput(e.target.value)}
+                                        onFocus={() => { if (locationSuggestions.length > 0) setShowSuggestions(true); }}
                                     />
+                                    {showSuggestions && locationSuggestions.length > 0 && (
+                                        <div className={styles.locationDropdown}>
+                                            {locationSuggestions.map((addr: any, idx: number) => (
+                                                <div
+                                                    key={idx}
+                                                    className={styles.locationDropdownItem}
+                                                    onClick={() => handleLocationSelect(addr)}
+                                                >
+                                                    <svg className={styles.locationDropdownIcon} width="16" height="16" viewBox="0 0 24 24" fill="#f07c00" stroke="none">
+                                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                                                    </svg>
+                                                    <div className={styles.locationDropdownText}>
+                                                        <span className={styles.locationDropdownCity}>{addr.city || addr.borough || addr.addressLabel || ""}</span>
+                                                        <span className={styles.locationDropdownRegion}>{addr.stateCode || addr.state || ""} {addr.countryCode || ""}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                                 <button
                                     className={styles.mobileFilterBtn}

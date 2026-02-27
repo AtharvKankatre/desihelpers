@@ -19,7 +19,7 @@ import { CEditPersonalDetails } from "@/components/page_related/user_profile/CEd
 import { CEditAboutMe } from "@/components/page_related/user_profile/CEditAboutMe";
 import { useAuth } from "@/services/authorization/AuthContext";
 import OtherDataServices from "@/services/other_data/OtherDataServices";
-import { CCommonLoader } from "@/components/static/CommonLoader";
+
 import { CEditUserWorkPhotos } from "@/components/page_related/user_profile/CEditUserWorkPhotos";
 import { IZipCodeDetails } from "@/models/ZipcodeDetails";
 import CButton from "@/components/reusable/CButton";
@@ -102,7 +102,7 @@ const EditUserProfile: FunctionComponent = () => {
 
     getProfile();
 
-    return () => {};
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -202,9 +202,8 @@ const EditUserProfile: FunctionComponent = () => {
             let extension = image.substring(image.lastIndexOf("."));
 
             // Construct the new image path using userId and an adjusted index based on existing images count
-            return `SeekerPhotos/${userId}/${userId}_${
-              existingImagesCount + index
-            }${extension}`;
+            return `SeekerPhotos/${userId}/${userId}_${existingImagesCount + index
+              }${extension}`;
           });
 
           // Save the images using the new paths
@@ -348,7 +347,7 @@ const EditUserProfile: FunctionComponent = () => {
                 isExpanded="show" // Keep the panel open by default
               >
                 {(formik.values.jobDetails &&
-                formik.values.jobDetails.length > 0
+                  formik.values.jobDetails.length > 0
                   ? formik.values.jobDetails
                   : [defaultJobDetail]
                 ) // Ensure at least one section shows initially
