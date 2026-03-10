@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Image from "next/image";
@@ -8,6 +8,8 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import Swal from "sweetalert2";
 import CookieService from "@/services/authorization/CookieService";
+import Radar from "radar-sdk-js";
+import { toast } from "react-toastify";
 
 // Define the form data interface for all steps
 interface SignupFormData {
@@ -61,14 +63,37 @@ const Login = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
 
-  // Fetch states on component mount and check query params
+  // Address autocomplete state (Radar SDK)
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
+  const addressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const addressWrapperRef = useRef<HTMLDivElement>(null);
+  const radarInitRef = useRef(false);
+
+  // Fetch states on component mount, init Radar, and check query params
   useEffect(() => {
     fetchStates();
+    // Initialize Radar SDK for address autocomplete
+    if (!radarInitRef.current) {
+      Radar.initialize(process.env.NEXT_PUBLIC_RADAR_API_KEY || "");
+      radarInitRef.current = true;
+    }
     if (router.query.mode === "signup") {
       setViewMode("signup");
       setCurrentStep(1);
     }
   }, [router.query.mode]);
+
+  // Close address suggestions on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (addressWrapperRef.current && !addressWrapperRef.current.contains(e.target as Node)) {
+        setShowAddressSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Hardcoded US states as fallback when API requires auth
   const US_STATES_FALLBACK = [
@@ -260,18 +285,9 @@ const Login = () => {
 
     if (response[0]) {
       formik.setFieldValue("isOtpSent", true);
-      Swal.fire({
-        title: "OTP Sent!",
-        text: "Check your email for the verification code",
-        icon: "success",
-        timer: 2000,
-      });
+      toast.success("OTP sent! Check your email");
     } else {
-      Swal.fire({
-        title: "Error",
-        text: response[1] || "Failed to send OTP",
-        icon: "error",
-      });
+      toast.error(response[1] || "Failed to send OTP");
     }
   };
 
@@ -279,7 +295,7 @@ const Login = () => {
   const verifyOtp = async () => {
     const otpString = formik.values.otp.join("");
     if (otpString.length !== 6) {
-      Swal.fire({ title: "Error", text: "Please enter complete OTP", icon: "error" });
+      toast.error("Please enter complete OTP");
       return;
     }
 
@@ -292,18 +308,9 @@ const Login = () => {
 
     if (response[0]) {
       formik.setFieldValue("isOtpVerified", true);
-      Swal.fire({
-        title: "Verified!",
-        text: "Email verified successfully",
-        icon: "success",
-        timer: 1500,
-      });
+      toast.success("Email verified successfully!");
     } else {
-      Swal.fire({
-        title: "Error",
-        text: response[1] || "Invalid OTP",
-        icon: "error",
-      });
+      toast.error(response[1] || "Invalid OTP");
     }
   };
 
@@ -314,6 +321,7 @@ const Login = () => {
     const newOtp = [...formik.values.otp];
     newOtp[index] = value;
     formik.setFieldValue("otp", newOtp);
+
     if (value && index < 5) {
       document.getElementById(`otp-${index + 1}`)?.focus();
     }
@@ -422,11 +430,7 @@ const Login = () => {
         });
       }
     } catch (error: any) {
-      Swal.fire({
-        title: "Error",
-        text: error.message || "Something went wrong",
-        icon: "error",
-      });
+      toast.error(error.message || "Something went wrong");
     }
 
     setIsLoading(false);
@@ -478,15 +482,9 @@ const Login = () => {
       setIsLoginOtpSent(true);
       setLoginTimer(59);
       setLoginOtp(["", "", "", "", "", ""]);
-      Swal.fire({
-        title: "OTP Sent!",
-        text: "Check your email for the login code",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      toast.success("OTP sent! Check your email");
     } else {
-      Swal.fire({ title: "Error", text: res[1] || "Failed to send OTP", icon: "error" });
+      toast.error(res[1] || "Failed to send OTP");
     }
   };
 
@@ -497,52 +495,67 @@ const Login = () => {
     const newOtp = [...loginOtp];
     newOtp[index] = value;
     setLoginOtp(newOtp);
+
     if (value && index < 5) {
       document.getElementById(`login-otp-${index + 1}`)?.focus();
+    }
+
+    // Auto-verify when 6th digit is entered
+    if (value && index === 5) {
+      handleVerifyLoginOtp(newOtp.join(""));
     }
   };
 
   const handleLoginOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && !loginOtp[index] && index > 0) {
       document.getElementById(`login-otp-${index - 1}`)?.focus();
+    } else if (e.key === 'Enter') {
+      handleVerifyLoginOtp();
     }
   };
 
   // Handle Verify Login OTP
-  const handleVerifyLoginOtp = async () => {
-    const otpString = loginOtp.join("");
+  const handleVerifyLoginOtp = async (providedOtp?: string) => {
+    if (isLoading) return;
+
+    const otpString = providedOtp || loginOtp.join("");
     if (otpString.length !== 6) {
-      Swal.fire({ title: "Error", text: "Please enter complete OTP", icon: "error" });
+      // Only show error toast if the user explicitly clicked the button (no providedOtp)
+      if (!providedOtp) toast.error("Please enter complete OTP");
+      return;
+    }
+
+    if (loginTimer === 0 && !providedOtp) {
+      toast.error("OTP expired. Please resend.");
       return;
     }
 
     const sanitizedEmail = loginEmail.trim().toLowerCase();
     setIsLoading(true);
 
-    const loginRes = await ApiService.crud(
-      APIDetails.verifyLoginOTP,
-      { email: sanitizedEmail, otp: otpString }
-    );
+    try {
+      const loginRes = await ApiService.crud(
+        APIDetails.verifyLoginOTP,
+        { email: sanitizedEmail, otp: otpString }
+      );
 
-    setIsLoading(false);
-    if (loginRes[0]) {
-      if (loginRes[1] && loginRes[1].access_token) {
-        CookieService.SetCookies(loginRes[1]);
+      setIsLoading(false);
+      if (loginRes[0]) {
+        if (loginRes[1] && loginRes[1].access_token) {
+          CookieService.SetCookies(loginRes[1]);
+        } else {
+          toast.error("Invalid server response. Please try again.");
+          return;
+        }
+
+        toast.success("Login successful!");
+        setTimeout(() => router.push("/profile"), 500);
       } else {
-        Swal.fire({ title: "Login Error", text: "Invalid server response. Please try again.", icon: "error" });
-        return;
+        toast.error(loginRes[1] || "Please try again");
       }
-
-      Swal.fire({
-        title: "Login Successful",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false
-      }).then(() => {
-        router.push("/profile");
-      });
-    } else {
-      Swal.fire({ title: "Login Failed", text: loginRes[1] || "Please try again", icon: "error" });
+    } catch (err) {
+      setIsLoading(false);
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -660,7 +673,7 @@ const Login = () => {
               className={style.verifyButton}
               disabled={isLoading || !formik.values.email}
             >
-              {formik.values.isOtpSent ? "RESEND" : "VERIFY"}
+              {formik.values.isOtpSent ? "Resend OTP" : "Send OTP"}
             </button>
           )}
           {formik.values.isOtpVerified && (
@@ -866,97 +879,190 @@ const Login = () => {
   );
 
   // Render Step 3 - Address Details
-  const renderStep3 = () => (
-    <div className={style.stepContent}>
-      <h3 className={style.stepTitle}>Address details</h3>
-      <p className={style.stepSubtitle}>Enter below details for verification and contact.</p>
+  const renderStep3 = () => {
+    // Debounced Radar autocomplete for address
+    const handleAddressInput = (query: string) => {
+      formik.setFieldValue('addressLine1', query);
+      if (addressTimerRef.current) clearTimeout(addressTimerRef.current);
+      if (!query || query.length < 3) {
+        setAddressSuggestions([]);
+        setShowAddressSuggestions(false);
+        return;
+      }
+      addressTimerRef.current = setTimeout(() => {
+        Radar.autocomplete({
+          query,
+          limit: 6,
+          layers: ['address'],
+        }).then((result: any) => {
+          setAddressSuggestions(result.addresses || []);
+          setShowAddressSuggestions(true);
+        }).catch(() => {
+          setAddressSuggestions([]);
+        });
+      }, 300);
+    };
 
-      <div className={style.formGroup}>
-        <label className={style.formLabel}>Address Line 1 <span className={style.required}>*</span></label>
-        <input
-          type="text"
-          name="addressLine1"
-          value={formik.values.addressLine1}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          placeholder="Enter your street address"
-          className={`${style.formInput} ${formik.touched.addressLine1 && formik.errors.addressLine1 ? style.formInputError : ''}`}
-        />
-        {formik.touched.addressLine1 && formik.errors.addressLine1 && <span className={style.errorText}>{formik.errors.addressLine1}</span>}
-      </div>
+    // Handle selecting an address suggestion — auto-fill city, state, zip
+    const handleAddressSelect = (address: any) => {
+      // Set address line 1 to the full formatted address or street
+      const streetAddress = address.formattedAddress || address.addressLabel || address.street || '';
+      formik.setFieldValue('addressLine1', streetAddress);
 
-      <div className={style.formGroup}>
-        <label className={style.formLabel}>Address Line 2</label>
-        <input
-          type="text"
-          name="addressLine2"
-          value={formik.values.addressLine2}
-          onChange={formik.handleChange}
-          placeholder="Apartment, suite, unit, etc. (optional)"
-          className={style.formInput}
-        />
-      </div>
+      // Auto-fill city
+      const city = address.city || address.borough || '';
+      if (city) formik.setFieldValue('city', city);
 
-      <div className={style.formRow}>
-        <div className={style.formGroup}>
-          <label className={style.formLabel}>State <span className={style.required}>*</span></label>
-          <select
-            name="state"
-            value={formik.values.state}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className={`${style.formSelect} ${formik.touched.state && formik.errors.state ? style.formInputError : ''}`}
-          >
-            <option value="">Select State</option>
-            {states.map((state: any) => (
-              <option key={state.id} value={state.id}>{state.name}</option>
-            ))}
-          </select>
-          {formik.touched.state && formik.errors.state && <span className={style.errorText}>{formik.errors.state}</span>}
-        </div>
-        <div className={style.formGroup}>
-          <label className={style.formLabel}>City <span className={style.required}>*</span></label>
+      // Auto-fill state — match against our states list
+      const stateCode = address.stateCode || address.state || '';
+      if (stateCode) {
+        // Try to find matching state in our list
+        const matchedState = states.find((s: any) =>
+          s.id === stateCode ||
+          s.name?.toLowerCase() === stateCode.toLowerCase() ||
+          s.id?.toLowerCase() === stateCode.toLowerCase()
+        );
+        if (matchedState) {
+          formik.setFieldValue('state', matchedState.id);
+        } else {
+          formik.setFieldValue('state', stateCode);
+        }
+      }
+
+      // Auto-fill zip code
+      const zip = address.postalCode || '';
+      if (zip) formik.setFieldValue('zipCode', zip);
+
+      setShowAddressSuggestions(false);
+      setAddressSuggestions([]);
+    };
+
+    return (
+      <div className={style.stepContent}>
+        <h3 className={style.stepTitle}>Address details</h3>
+        <p className={style.stepSubtitle}>Enter below details for verification and contact.</p>
+
+        <div className={style.formGroup} ref={addressWrapperRef} style={{ position: 'relative' }}>
+          <label className={style.formLabel}>Address Line 1 <span className={style.required}>*</span></label>
           <input
             type="text"
-            name="city"
-            value={formik.values.city}
+            name="addressLine1"
+            value={formik.values.addressLine1}
+            onChange={(e) => handleAddressInput(e.target.value)}
+            onBlur={formik.handleBlur}
+            onFocus={() => { if (addressSuggestions.length > 0) setShowAddressSuggestions(true); }}
+            placeholder="Start typing your street address..."
+            className={`${style.formInput} ${formik.touched.addressLine1 && formik.errors.addressLine1 ? style.formInputError : ''}`}
+            autoComplete="off"
+          />
+          {/* Address autocomplete dropdown */}
+          {showAddressSuggestions && addressSuggestions.length > 0 && (
+            <div style={{
+              position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 1000,
+              background: '#fff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+              border: '1px solid #e0e0e0', maxHeight: '220px', overflowY: 'auto',
+            }}>
+              {addressSuggestions.map((addr: any, idx: number) => (
+                <div
+                  key={idx}
+                  onClick={() => handleAddressSelect(addr)}
+                  style={{
+                    padding: '10px 14px', cursor: 'pointer', fontSize: '14px',
+                    borderBottom: idx < addressSuggestions.length - 1 ? '1px solid #f0f0f0' : 'none',
+                    display: 'flex', alignItems: 'center', gap: '8px',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f5f5')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#f07c00" stroke="none">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
+                  </svg>
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{addr.formattedAddress || addr.addressLabel || ''}</div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>
+                      {addr.city || addr.borough || ''}{addr.stateCode ? `, ${addr.stateCode}` : ''} {addr.postalCode || ''}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {formik.touched.addressLine1 && formik.errors.addressLine1 && <span className={style.errorText}>{formik.errors.addressLine1}</span>}
+        </div>
+
+        <div className={style.formGroup}>
+          <label className={style.formLabel}>Address Line 2</label>
+          <input
+            type="text"
+            name="addressLine2"
+            value={formik.values.addressLine2}
+            onChange={formik.handleChange}
+            placeholder="Apartment, suite, unit, etc. (optional)"
+            className={style.formInput}
+          />
+        </div>
+
+        <div className={style.formRow}>
+          <div className={style.formGroup}>
+            <label className={style.formLabel}>State <span className={style.required}>*</span></label>
+            <select
+              name="state"
+              value={formik.values.state}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={`${style.formSelect} ${formik.touched.state && formik.errors.state ? style.formInputError : ''}`}
+            >
+              <option value="">Select State</option>
+              {states.map((state: any) => (
+                <option key={state.id} value={state.id}>{state.name}</option>
+              ))}
+            </select>
+            {formik.touched.state && formik.errors.state && <span className={style.errorText}>{formik.errors.state}</span>}
+          </div>
+          <div className={style.formGroup}>
+            <label className={style.formLabel}>City <span className={style.required}>*</span></label>
+            <input
+              type="text"
+              name="city"
+              value={formik.values.city}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter your city"
+              className={`${style.formInput} ${formik.touched.city && formik.errors.city ? style.formInputError : ''}`}
+            />
+            {formik.touched.city && formik.errors.city && <span className={style.errorText}>{formik.errors.city}</span>}
+          </div>
+        </div>
+
+        <div className={style.formGroup}>
+          <label className={style.formLabel}>Zip Code</label>
+          <input
+            type="text"
+            name="zipCode"
+            value={formik.values.zipCode}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            placeholder="Enter your city"
-            className={`${style.formInput} ${formik.touched.city && formik.errors.city ? style.formInputError : ''}`}
+            placeholder="e.g., 98052"
+            className={`${style.formInput} ${formik.touched.zipCode && formik.errors.zipCode ? style.formInputError : ''}`}
           />
-          {formik.touched.city && formik.errors.city && <span className={style.errorText}>{formik.errors.city}</span>}
+          {formik.touched.zipCode && formik.errors.zipCode && <span className={style.errorText}>{formik.errors.zipCode}</span>}
+        </div>
+
+        <div className={style.stepButtons}>
+          <button type="submit" className={style.signupButton} disabled={isLoading}>
+            Next
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentStep(2)}
+            className={style.backButton}
+          >
+            Back
+          </button>
         </div>
       </div>
-
-      <div className={style.formGroup}>
-        <label className={style.formLabel}>Zip Code</label>
-        <input
-          type="text"
-          name="zipCode"
-          value={formik.values.zipCode}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          placeholder="e.g., 98052"
-          className={`${style.formInput} ${formik.touched.zipCode && formik.errors.zipCode ? style.formInputError : ''}`}
-        />
-        {formik.touched.zipCode && formik.errors.zipCode && <span className={style.errorText}>{formik.errors.zipCode}</span>}
-      </div>
-
-      <div className={style.stepButtons}>
-        <button type="submit" className={style.signupButton} disabled={isLoading}>
-          Next
-        </button>
-        <button
-          type="button"
-          onClick={() => setCurrentStep(2)}
-          className={style.backButton}
-        >
-          Back
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   // Render Step 4 - Social Details
   const renderStep4 = () => (
@@ -1145,7 +1251,6 @@ const Login = () => {
                       onChange={(e) => handleLoginOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleLoginOtpKeyDown(index, e)}
                       className={style.signupOtpInput}
-                      style={{ margin: '0 4px', width: '45px', height: '45px', textAlign: 'center', fontSize: '18px', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
                   ))}
                 </div>
@@ -1185,9 +1290,9 @@ const Login = () => {
               </button>
             ) : (
               <button
-                onClick={handleVerifyLoginOtp}
+                onClick={() => handleVerifyLoginOtp()}
                 className={style.signupButton}
-                disabled={isLoading || loginOtp.join('').length !== 6 || loginTimer === 0}
+                disabled={isLoading}
                 style={{
                   marginTop: '0px',
                   backgroundColor: (loginOtp.join('').length === 6 && loginTimer > 0) ? '#f07c00' : '#888',
@@ -1197,7 +1302,9 @@ const Login = () => {
                   width: '100%',
                   padding: '12px',
                   borderRadius: '24px',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  opacity: isLoading ? 0.7 : 1,
+                  cursor: isLoading ? 'not-allowed' : 'pointer'
                 }}
               >
                 {isLoading ? "Verifying..." : "Verify OTP"}

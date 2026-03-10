@@ -21,15 +21,19 @@ interface CProfilePopupProps {
 
 const PopupContainer = styled(Paper)(({ theme }) => ({
     position: "absolute",
-    top: "100%", // Below the avatar
-    right: 0,
+    top: "calc(100% + 10px)", // Below the avatar with small gap
+    right: "-10px", // Slight adjustment to match navbar padding
     width: "320px",
+    maxWidth: "calc(100vw - 32px)", // Ensure it doesn't overflow mobile width
     borderRadius: "16px",
     backgroundColor: "#ffffff",
-    boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
+    boxShadow: "0px 8px 30px rgba(0,0,0,0.15)",
     overflow: "hidden",
     zIndex: 1500,
-    marginTop: "20px",
+    "@media (max-width: 768px)": {
+        right: "-5px",
+        width: "300px",
+    }
 }));
 
 const HeaderSection = styled(Box)(({ theme }) => ({

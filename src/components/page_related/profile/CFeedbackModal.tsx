@@ -78,22 +78,25 @@ const CFeedbackModal: React.FC<CFeedbackModalProps> = ({
                                 <div className="d-flex align-items-center justify-content-between mb-2">
                                     <label className="fw-bold fs-6 m-0" style={{ color: '#001838' }}>Rate Experience</label>
                                     <div className="d-flex gap-2">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <span
-                                                key={star}
-                                                className="cursor-pointer"
-                                                role="button"
-                                                onClick={() => setRating(star)}
-                                                style={{
-                                                    color: star <= rating ? "#f07c00" : "#e0e0e0",
-                                                    fontSize: '24px',
-                                                    transition: 'color 0.2s',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                ★
-                                            </span>
-                                        ))}
+                                        {[1, 2, 3, 4, 5].map((star) => {
+                                            const color = rating >= 4 ? "#22c55e" : rating >= 2 ? "#eab308" : rating === 1 ? "#ef4444" : "#e0e0e0";
+                                            return (
+                                                <span
+                                                    key={star}
+                                                    className="cursor-pointer"
+                                                    role="button"
+                                                    onClick={() => setRating(star)}
+                                                    style={{
+                                                        color: star <= rating ? color : "#e0e0e0",
+                                                        fontSize: '24px',
+                                                        transition: 'color 0.2s',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    ★
+                                                </span>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>

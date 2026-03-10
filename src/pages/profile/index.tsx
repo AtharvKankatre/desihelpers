@@ -18,6 +18,8 @@ import { userProfileStore } from "@/stores/UserProfileStore";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { getWorkPhotoUrls } from "@/utils/s3Helper";
 
 // Icons as components
 const LocationIcon = () => (
@@ -82,6 +84,7 @@ const ChevronUpIcon = ({ style }: { style?: React.CSSProperties }) => (
 );
 
 const defaultProfile = {
+    userId: "",
     firstName: "",
     lastName: "",
     displayName: "",
@@ -122,6 +125,7 @@ const defaultProfile = {
 
 interface ProfileUpdateData {
     aboutMe: string;
+    languages: string[];
     commutePreference: string;
     dietaryPreference: string;
     okWithPets: string;
@@ -161,6 +165,7 @@ interface PersonalSocialUpdateData {
 }
 
 interface ProfileData {
+    userId: string;
     firstName: string;
     lastName: string;
     displayName: string;
@@ -201,7 +206,7 @@ interface ProfileData {
 
 
 const Profile: React.FC = () => {
-    const { userProfile } = userProfileStore();
+    const { userProfile } = userProfileStore((state) => state);
     const [activeTab, setActiveTab] = useState("services"); // Keeping for possible desktop fallback not requested
     const [expandedSections, setExpandedSections] = useState({
         services: true,
@@ -230,14 +235,22 @@ const Profile: React.FC = () => {
     const [langDropdownOpen, setLangDropdownOpen] = useState(false);
     const [selectedLang, setSelectedLang] = useState("Eng");
     const [avatarOpen, setAvatarOpen] = useState(false);
+    const [profilePhotoError, setProfilePhotoError] = useState(false);
+    const [isPhotoUploading, setIsPhotoUploading] = useState(false);
 
     useEffect(() => {
         const fetchProfileData = async () => {
             const result = await ApiService.crud(APIDetails.getUserProfile);
             if (result[0]) {
                 const apiProfile = result[1];
+                const photoToSign = apiProfile.profilePhoto;
+                const signedInitPhotoUrl = (photoToSign && photoToSign !== "/newassets/account_circle.png")
+                    ? (await getWorkPhotoUrls("", [photoToSign]))[0]
+                    : "/newassets/account_circle.png";
+
                 setProfile((prev: any) => ({
                     ...prev,
+                    userId: apiProfile.userId || "",
                     firstName: apiProfile.firstName || "",
                     lastName: apiProfile.lastName || "",
                     displayName: apiProfile.displayName || "",
@@ -247,7 +260,7 @@ const Profile: React.FC = () => {
                     whatsappNumber: apiProfile.phone || "",
                     whatsappSameAsMobile: apiProfile.mobile === apiProfile.phone,
                     location: `${apiProfile.city || ""}, ${apiProfile.state || ""}`.replace(/^, | , $/g, ''),
-                    photo: apiProfile.profilePhoto || "/newassets/account_circle.png",
+                    photo: signedInitPhotoUrl,
                     aboutMe: apiProfile.aboutMe || "",
                     languages: apiProfile.languagesSpoken?.join(", ") || "",
                     commutePreference: apiProfile.commutePreference || "Not specified",
@@ -279,24 +292,41 @@ const Profile: React.FC = () => {
                         linkedin: apiProfile.linkedinLink || ""
                     }
                 }));
+
+                // Also update the global store with latest profile data
+                const storeActions = userProfileStore.getState();
+                storeActions.setUserProfile(apiProfile);
+
                 // Try fetching testimonials if user ID is present
-                if (apiProfile._id || apiProfile.id) {
-                    const userId = apiProfile._id || apiProfile.id;
+                const userId = apiProfile._id || apiProfile.id;
+                if (userId && typeof userId === 'string' && userId.trim() !== "" && userId !== "undefined") {
                     const feedbackRes = await ApiService.crud(APIDetails.getFeedback, userId);
-                    if (Array.isArray(feedbackRes)) {
+                    if (feedbackRes[0] && Array.isArray(feedbackRes[1])) {
                         setProfile((prev: any) => ({
                             ...prev,
-                            testimonialsReceived: feedbackRes.map((f: any) => ({
-                                id: f._id,
+                            testimonialsReceived: feedbackRes[1].map((f: any) => ({
+                                id: f._id || Math.random().toString(),
                                 rating: f.rating,
                                 text: f.feedback,
-                                highlightName: "", // dynamic highlightName is tricky, leave blank to not cause splitting issues
+                                highlightName: "",
                                 reviewerName: f.reviewerName || "Anonymous",
-                                reviewerLocation: "", // Backend might not have this
+                                reviewerLocation: "",
                                 reviewerPhoto: f.reviewerPhoto || "/assets/icons/icon_user.svg"
                             }))
                         }));
                     }
+                }
+
+                // Map work photos to gallery
+                if (apiProfile.uploadPhotoOfWork && Array.isArray(apiProfile.uploadPhotoOfWork)) {
+                    setProfile((prev: any) => ({
+                        ...prev,
+                        photoGallery: apiProfile.uploadPhotoOfWork.map((url: string, index: number) => ({
+                            id: index,
+                            url: url,
+                            alt: `Work photo ${index + 1}`
+                        }))
+                    }));
                 }
             }
         };
@@ -338,9 +368,21 @@ const Profile: React.FC = () => {
         { id: "gallery", label: "Photo Gallery" }
     ];
 
-    const renderStars = (rating: number) => {
+    // Color-coded star rating: 1-2 = red, 3 = yellow/orange, 4-5 = green
+    const getStarColor = (rating: number) => {
+        if (rating >= 4) return '#22c55e'; // Green for 4-5 stars
+        if (rating >= 3) return '#eab308'; // Yellow for 3 stars
+        return '#ef4444'; // Red for 1-2 stars
+    };
+
+    const renderStars = (rating: number, prefix: string = "star") => {
+        const color = getStarColor(rating);
         return Array(5).fill(0).map((_, i) => (
-            <span key={i} className={styles.star}>★</span>
+            <span
+                key={`${prefix}-${i}`}
+                className={styles.star}
+                style={{ color: i < Math.round(rating) ? color : '#ddd' }}
+            >★</span>
         ));
     };
 
@@ -359,10 +401,16 @@ const Profile: React.FC = () => {
     };
 
     const handleProfileUpdate = async (updatedData: ProfileUpdateData) => {
+        // Map frontend values to backend expected enums
+        const mappedCommute = updatedData.commutePreference === "Have a Ride" ? "Have a ride" :
+            updatedData.commutePreference === "Require a Ride" ? "Will need a ride" : "";
+        const mappedDietary = updatedData.dietaryPreference === "Not specified" ? "" : updatedData.dietaryPreference;
+
         const payload = {
             aboutMe: updatedData.aboutMe,
-            commutePreference: updatedData.commutePreference,
-            dietaryRestrictions: updatedData.dietaryPreference,
+            languagesSpoken: updatedData.languages,
+            commutePreference: mappedCommute,
+            dietaryRestrictions: mappedDietary,
             okWithPets: updatedData.okWithPets === "Yes"
         };
         const isProfileBuild = Cookies.get(cookieParams.isProfileBuild) === "true";
@@ -383,10 +431,8 @@ const Profile: React.FC = () => {
                 city: profile.address?.city || "Not specified",
                 state: profile.address?.state || "Not specified",
                 zipCode: profile.address?.zipCode || "12345",
-                languagesSpoken: profile.languages ? profile.languages.split(",").map(l => l.trim()) : ["English"],
                 location: { type: "Point", coordinates: [0, 0] },
-                ...payload,
-                commutePreference: payload.commutePreference,
+                ...payload
             };
             result = await ApiService.crud(APIDetails.postUserProfile, fullPayload);
         }
@@ -399,15 +445,16 @@ const Profile: React.FC = () => {
             setProfile({
                 ...profile,
                 aboutMe: updatedData.aboutMe,
+                languages: updatedData.languages.join(", "),
                 commutePreference: updatedData.commutePreference,
                 dietaryPreference: updatedData.dietaryPreference,
                 okWithPets: updatedData.okWithPets,
             });
             setEditModalOpen(false);
-            Swal.fire({ title: "Success", text: "Profile updated successfully!", icon: "success", timer: 1500 });
+            toast.success("Profile updated successfully!");
         } else {
             console.error("Profile update failed:", result[1]);
-            Swal.fire({ title: "Error", text: result[1] || "Failed to update profile", icon: "error" });
+            toast.error(result[1] || "Failed to update profile");
         }
     };
 
@@ -469,10 +516,10 @@ const Profile: React.FC = () => {
                 location: `${updatedAddress.city || ""}, ${updatedAddress.state || ""}`.replace(/^, | , $/g, '')
             });
             setAddressModalOpen(false);
-            Swal.fire({ title: "Success", text: "Address updated successfully!", icon: "success", timer: 1500 });
+            toast.success("Address updated successfully!");
         } else {
             console.error("Address update failed:", result[1]);
-            Swal.fire({ title: "Error", text: result[1] || "Failed to update address", icon: "error" });
+            toast.error(result[1] || "Failed to update address");
         }
     };
 
@@ -544,17 +591,88 @@ const Profile: React.FC = () => {
                 }
             });
             setPersonalSocialModalOpen(false);
-            Swal.fire({ title: "Success", text: "Details updated successfully!", icon: "success", timer: 1500 });
+            toast.success("Details updated successfully!");
         } else {
             console.error("Personal details update failed:", result[1]);
-            Swal.fire({ title: "Error", text: result[1] || "Failed to update details", icon: "error" });
+            toast.error(result[1] || "Failed to update details");
         }
     };
 
-    const handlePhotoSave = (photos: File[]) => {
-        // Logic to handle photo upload would go here
-        console.log("Saving photos:", photos);
-        setPhotoModalOpen(false);
+    const handlePhotoSave = async (photos: File[]) => {
+        if (photos.length === 0) return;
+
+        const file = photos[0];
+        setIsPhotoUploading(true);
+
+        // Show loading state
+        const toastId = toast.loading("Saving your profile picture. Please wait...");
+
+        try {
+            // Get userId from the locally-stored profile or zustand store
+            const userId = profile.userId || userProfileStore.getState().userProfile?.userId;
+
+            if (!userId) {
+                throw new Error("User ID not found. Please log in again.");
+            }
+
+            // Upload through backend endpoint which has S3 credentials
+            // Backend endpoint: POST /user-profile/upload/:userId/:folderName
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+            const accessToken = Cookies.get(cookieParams.accessToken);
+
+            const response = await fetch(`${BASE_URL}user-profile/upload/${userId}/profilePhotos`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.message === 'true' || result.urls) {
+                // The backend uploadFiles method actually returns the updated UserProfile object inside result.urls
+                const photoUrl = Array.isArray(result.urls)
+                    ? result.urls[0]
+                    : (result.urls?.profilePhoto || result.profilePhoto);
+
+                if (!photoUrl) {
+                    throw new Error("Could not extract uploaded photo URL from backend response.");
+                }
+
+                // Reset error flag so the <img> renders the new photo instead of default avatar
+                setProfilePhotoError(false);
+
+                // Sign the URL before updating the UI
+                const signedUrls = await getWorkPhotoUrls("", [photoUrl]);
+                const signedPhotoUrl = signedUrls.length > 0 ? signedUrls[0] : photoUrl;
+
+                // Update local state with valid signed URL for immediate display
+                setProfile(prev => ({ ...prev, photo: signedPhotoUrl }));
+
+                // Update global store
+                const { setUserProfile, userProfile: currentStoreProfile } = userProfileStore.getState();
+                setUserProfile({ ...currentStoreProfile, profilePhoto: photoUrl }); // Store raw URL globally to be consistent, but display signed
+
+                setPhotoModalOpen(false);
+                toast.update(toastId, { render: "Your profile picture has been updated.", type: "success", isLoading: false, autoClose: 3000 });
+            } else {
+                throw new Error(result.message || "Upload failed");
+            }
+        } catch (error: any) {
+            console.error("Photo upload error:", error);
+            toast.update(toastId, { render: error.message || 'Something went wrong. Please try again.', type: "error", isLoading: false, autoClose: 3000 });
+        } finally {
+            setIsPhotoUploading(false);
+        }
     };
 
     const handleJobsUpdate = (updatedJobs: any[]) => {
@@ -600,7 +718,7 @@ const Profile: React.FC = () => {
             const reviewerLocation = userProfile?.city && userProfile?.state ? `${userProfile.city}, ${userProfile.state}` : "";
 
             const newFeedback = {
-                id: Date.now(),
+                id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 rating: data.rating,
                 text: data.text,
                 highlightName: profile.firstName + " " + profile.lastName,
@@ -626,13 +744,6 @@ const Profile: React.FC = () => {
 
                 {/* Navbar row */}
                 <div className={styles.profileNavbar}>
-                    <button className={styles.mobileMenuBtn}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
                     <Link href="/Landing" className={styles.navbarBrand}>
                         <DesiHelpersIcon />
                     </Link>
@@ -671,6 +782,13 @@ const Profile: React.FC = () => {
                             />
                         </div>
                     </div>
+                    <button className={styles.mobileMenuBtn}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
 
                 {/* Header Actions - Positioned absolutely via CSS */}
@@ -707,16 +825,29 @@ const Profile: React.FC = () => {
                 )}
 
                 {/* Profile Info Section */}
-                <div className={styles.profileInfoSection}>
+                <div className={`${styles.profileInfoSection} ${avatarOpen ? styles.profileInfoSectionHidden : ""}`}>
                     <div className={styles.profilePhotoContainer}>
-                        <img
-                            src={profile.photo}
-                            alt={`${profile.firstName} ${profile.lastName}`}
-                            className={styles.profilePhoto}
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = "/assets/icons/icon_user.svg";
-                            }}
-                        />
+                        {console.log("[ProfileDebug] Rendering photo container. profile.photo:", profile.photo, "profilePhotoError:", profilePhotoError)}
+                        {profile.photo && profile.photo !== "/newassets/account_circle.png" && !profilePhotoError ? (
+                            <img
+                                src={profile.photo}
+                                alt={`${profile.firstName} ${profile.lastName}`}
+                                className={styles.profilePhoto}
+                                onLoad={() => console.log("[ProfileDebug] Image loaded successfully:", profile.photo)}
+                                onError={(e) => {
+                                    console.error("[ProfileDebug] Image failed to load:", profile.photo, e);
+                                    setProfilePhotoError(true);
+                                }}
+                            />
+                        ) : (
+                            <div className={styles.defaultAvatar}>
+                                <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="60" cy="60" r="60" fill="#E8ECF1" />
+                                    <circle cx="60" cy="44" r="16" fill="#003B73" />
+                                    <path d="M28 100c0-17.673 14.327-32 32-32s32 14.327 32 32" fill="#003B73" />
+                                </svg>
+                            </div>
+                        )}
                         <div
                             className={styles.cameraIcon}
                             onClick={() => setPhotoModalOpen(true)}
@@ -731,7 +862,7 @@ const Profile: React.FC = () => {
                             {(profile.firstName || profile.lastName) ? `${profile.firstName} ${profile.lastName}` : "Enter Name"}
                         </h1>
                         <div className={styles.starRating}>
-                            {renderStars(profile.rating)}
+                            {renderStars(profile.rating, "main-rating")}
                         </div>
                         <div className={styles.profileLocation}>
                             <LocationIcon />
@@ -858,11 +989,7 @@ const Profile: React.FC = () => {
                                 <EditIcon color="#666" />
                             </div>
                         )}
-                        {activeTab === 'testimonials' && (
-                            <div className={styles.addServicesBtn} onClick={() => { setEditingTestimonial(null); setFeedbackModalOpen(true); }}>
-                                <span style={{ color: '#f07c00' }}>+ Add Feedback</span>
-                            </div>
-                        )}
+                        {/* Add Feedback button removed — users cannot give feedback on their own profile */}
                     </div>
 
                     {/* Services Section */}
@@ -879,46 +1006,52 @@ const Profile: React.FC = () => {
                             </div>
                             {(expandedSections.services || activeTab === 'services') && (
                                 <div className={styles.cardContent} style={{ padding: '0' }}>
-                                    {profile.services.map((service) => (
-                                        <div key={service.id} className={styles.serviceCard}>
-                                            <div className={styles.serviceHeader}>
-                                                <div className={`${styles.serviceIcon} ${getServiceIconClass(service.iconType)}`}>
-                                                    {service.icon}
+                                    {profile.services && profile.services.length > 0 ? (
+                                        profile.services.map((service) => (
+                                            <div key={service.id} className={styles.serviceCard}>
+                                                <div className={styles.serviceHeader}>
+                                                    <div className={`${styles.serviceIcon} ${getServiceIconClass(service.iconType)}`}>
+                                                        {service.icon}
+                                                    </div>
+                                                    <h4 className={styles.serviceTitle} style={{ color: '#003385' }}>{service.title}</h4>
                                                 </div>
-                                                <h4 className={styles.serviceTitle} style={{ color: '#003385' }}>{service.title}</h4>
+
+                                                <div className={styles.serviceDetails}>
+                                                    <div className={styles.serviceDetail}>
+                                                        <span className={styles.detailLabel}>Category</span>
+                                                        <span className={styles.detailValue}>{service.category}</span>
+                                                    </div>
+                                                    <div className={styles.serviceDetail}>
+                                                        <span className={styles.detailLabel}>Experience</span>
+                                                        <span className={styles.detailValue}>{service.experience}</span>
+                                                    </div>
+                                                    <div className={styles.serviceDetail}>
+                                                        <span className={styles.detailLabel}>Available</span>
+                                                        <span className={styles.detailValue}>{service.available}</span>
+                                                    </div>
+                                                </div>
+
+                                                {service.description && expandedService === service.id && (
+                                                    <p className={styles.serviceDescription}>{service.description}</p>
+                                                )}
+
+                                                {service.description && (
+                                                    <button
+                                                        className={styles.showMoreBtn}
+                                                        onClick={() => setExpandedService(
+                                                            expandedService === service.id ? null : service.id
+                                                        )}
+                                                    >
+                                                        {expandedService === service.id ? "Show Less..." : "Show More..."}
+                                                    </button>
+                                                )}
                                             </div>
-
-                                            <div className={styles.serviceDetails}>
-                                                <div className={styles.serviceDetail}>
-                                                    <span className={styles.detailLabel}>Category</span>
-                                                    <span className={styles.detailValue}>{service.category}</span>
-                                                </div>
-                                                <div className={styles.serviceDetail}>
-                                                    <span className={styles.detailLabel}>Experience</span>
-                                                    <span className={styles.detailValue}>{service.experience}</span>
-                                                </div>
-                                                <div className={styles.serviceDetail}>
-                                                    <span className={styles.detailLabel}>Available</span>
-                                                    <span className={styles.detailValue}>{service.available}</span>
-                                                </div>
-                                            </div>
-
-                                            {service.description && expandedService === service.id && (
-                                                <p className={styles.serviceDescription}>{service.description}</p>
-                                            )}
-
-                                            {service.description && (
-                                                <button
-                                                    className={styles.showMoreBtn}
-                                                    onClick={() => setExpandedService(
-                                                        expandedService === service.id ? null : service.id
-                                                    )}
-                                                >
-                                                    {expandedService === service.id ? "Show Less..." : "Show More..."}
-                                                </button>
-                                            )}
+                                        ))
+                                    ) : (
+                                        <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
+                                            No services provided yet
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -930,7 +1063,7 @@ const Profile: React.FC = () => {
                             <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('jobs')} style={{ cursor: 'pointer' }}>
                                 <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Jobs Offered by Me</h3>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                                    <span className={styles.editIcon} style={{ color: '#ff6b35' }} onClick={(e) => { e.stopPropagation(); setJobsModalOpen(true); }}><PlusIcon /></span>
+                                    <span className={styles.editIcon} onClick={(e) => { e.stopPropagation(); setJobsModalOpen(true); }}><EditIcon /></span>
                                     <span style={{ transform: expandedSections.jobs ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
                                         <ChevronUpIcon />
                                     </span>
@@ -1017,9 +1150,7 @@ const Profile: React.FC = () => {
                             <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('testimonials')} style={{ cursor: 'pointer' }}>
                                 <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Testimonials</h3>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                                    <span className={styles.editIcon} style={{ color: '#ff6b35' }} onClick={(e) => { e.stopPropagation(); setEditingTestimonial(null); setFeedbackModalOpen(true); }}>
-                                        <PlusIcon />
-                                    </span>
+                                    {/* Add Feedback button removed — users cannot give feedback on their own profile */}
                                     <span style={{ transform: expandedSections.testimonials ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
                                         <ChevronUpIcon />
                                     </span>
@@ -1027,19 +1158,13 @@ const Profile: React.FC = () => {
                             </div>
                             {(expandedSections.testimonials || activeTab === 'testimonials') && (
                                 <div className={styles.cardContent} style={{ padding: '0' }}>
-                                    {/* Received/Given Toggle */}
+                                    {/* Only showing received testimonials — users view feedback from others */}
                                     <div className={styles.testimonialToggle}>
                                         <button
-                                            className={`${styles.toggleBtn} ${testimonialFilter === "received" ? styles.toggleBtnActive : ""}`}
-                                            onClick={() => setTestimonialFilter("received")}
+                                            className={`${styles.toggleBtn} ${styles.toggleBtnActive}`}
+                                            style={{ width: '100%', borderRadius: '8px' }}
                                         >
-                                            Received
-                                        </button>
-                                        <button
-                                            className={`${styles.toggleBtn} ${testimonialFilter === "given" ? styles.toggleBtnActive : ""}`}
-                                            onClick={() => setTestimonialFilter("given")}
-                                        >
-                                            Given
+                                            Feedback Received
                                         </button>
                                     </div>
 
@@ -1048,12 +1173,13 @@ const Profile: React.FC = () => {
                                         {testimonialFilter === "received" && profile.testimonialsReceived && profile.testimonialsReceived.length > 0 ? (
                                             profile.testimonialsReceived.map((testimonial) => (
                                                 <div key={testimonial.id} className={styles.testimonialCard}>
-                                                    {/* Star Rating */}
+                                                    {/* Star Rating — color-coded */}
                                                     <div className={styles.testimonialStars}>
                                                         {Array(5).fill(0).map((_, i) => (
                                                             <span
-                                                                key={i}
-                                                                className={`${styles.testimonialStar} ${i < testimonial.rating ? styles.starFilled : styles.starEmpty}`}
+                                                                key={`${testimonial.id}-star-${i}`}
+                                                                className={styles.testimonialStar}
+                                                                style={{ color: i < testimonial.rating ? getStarColor(testimonial.rating) : '#ddd' }}
                                                             >
                                                                 ★
                                                             </span>
@@ -1063,7 +1189,7 @@ const Profile: React.FC = () => {
                                                     {/* Testimonial Text */}
                                                     <p className={styles.testimonialText}>
                                                         "{testimonial.highlightName ? testimonial.text.split(testimonial.highlightName).map((part: string, index: number, array: string[]) => (
-                                                            <React.Fragment key={index}>
+                                                            <React.Fragment key={`${testimonial.id}-part-${index}`}>
                                                                 {part}
                                                                 {index < array.length - 1 && (
                                                                     <strong className={styles.highlightName}>{testimonial.highlightName}</strong>
@@ -1095,13 +1221,9 @@ const Profile: React.FC = () => {
                                                     </div>
                                                 </div>
                                             ))
-                                        ) : testimonialFilter === "given" && profile.testimonialsGiven && profile.testimonialsGiven.length > 0 ? (
-                                            <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                                Testimonials given will appear here
-                                            </div>
                                         ) : (
                                             <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                                {testimonialFilter === "received" ? "No testimonials received yet" : "No testimonials given yet"}
+                                                No testimonials received yet
                                             </div>
                                         )}
                                     </div>
@@ -1200,7 +1322,7 @@ const Profile: React.FC = () => {
                 onUpdate={handleProfileUpdate}
                 initialData={{
                     aboutMe: profile.aboutMe,
-                    languages: ["Hindi", "Punjabi", "English"], // Dynamic if possible
+                    languages: profile.languages ? profile.languages.split(", ").filter(Boolean) : [],
                     commutePreference: profile.commutePreference,
                     dietaryPreference: profile.dietaryPreference,
                     okWithPets: profile.okWithPets
@@ -1252,6 +1374,7 @@ const Profile: React.FC = () => {
                 open={photoModalOpen}
                 onClose={() => setPhotoModalOpen(false)}
                 onSave={handlePhotoSave}
+                isLoading={isPhotoUploading}
             />
             <CJobsOfferingModal
                 open={jobsModalOpen}

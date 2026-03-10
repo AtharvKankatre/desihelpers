@@ -8,10 +8,9 @@ export const PageLoader: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Determine loading state changes via Router events
+        // Show loader only for Find Job (/jobs) and Hire Help (/seekers) pages
         const handleStart = (url: string) => {
-            // Only show loader for /jobs routes
-            if (url !== router.asPath && url.startsWith('/jobs')) {
+            if (url !== router.asPath && (url.startsWith('/jobs') || url.startsWith('/seekers'))) {
                 setLoading(true);
             }
         };

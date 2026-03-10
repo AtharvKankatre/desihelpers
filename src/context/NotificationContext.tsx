@@ -1,108 +1,110 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+// =====================================================================
+// CHANGE: Replaced ALL hardcoded mock notification data with real API calls
+// This context now fetches notifications from the backend, marks them as
+// read via API, and provides real-time unread count to the entire app
+// =====================================================================
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import ApiService from '@/services/data/crud/crud'; // CHANGE: Import API service for backend calls
+import { APIDetails } from '@/services/data/constants/ApiDetails'; // CHANGE: Import API endpoint definitions
+import Cookies from 'js-cookie'; // CHANGE: Import to check if user is logged in
+import { cookieParams } from '@/constants/ECookieParams'; // CHANGE: Import cookie param names
 
+// CHANGE: Updated interface to match backend schema (added _id, type, createdAt)
 export interface NotificationItem {
-    id: number;
+    _id: string; // CHANGE: MongoDB document ID (was previously 'id: number')
+    userId: string; // CHANGE: Added userId field from backend
     message: string;
     name: string;
-    time: string;
-    date: string;
+    type: string; // CHANGE: Added notification type field
     isRead: boolean;
+    createdAt: string; // CHANGE: Added createdAt timestamp from backend
+    updatedAt: string; // CHANGE: Added updatedAt timestamp from backend
 }
 
 interface NotificationContextProps {
     notifications: NotificationItem[];
     unreadCount: number;
-    markAsRead: (id: number) => void;
+    markAsRead: (id: string) => void; // CHANGE: Changed id type from number to string (MongoDB ObjectId)
     markAllAsRead: () => void;
+    fetchNotifications: () => void; // CHANGE: Added fetchNotifications to allow manual refresh
+    loading: boolean; // CHANGE: Added loading state for UI feedback
 }
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(undefined);
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // Initial mocked notification state migrated from Notifications.tsx
-    const [notifications, setNotifications] = useState<NotificationItem[]>([
-        {
-            id: 1,
-            message: "Good news! Mr. Jasbinder just viewed your profile. Keep your details updated to get hired faster.",
-            name: "Mr. Jasbinder",
-            time: "30 mins ago",
-            date: "Today",
-            isRead: false,
-        },
-        {
-            id: 2,
-            message: "You recently visited Tania's profile. Did you provide services to them? Share your feedback to build trust.",
-            name: "Tania",
-            time: "2 hrs ago",
-            date: "Today",
-            isRead: false,
-        },
-        {
-            id: 3,
-            message: "Did you and Mr. Raman connect for work? If yes, let us know your experience by leaving a quick rating.",
-            name: "Mr. Raman",
-            time: "Yesterday",
-            date: "Yesterday",
-            isRead: false,
-        },
-        {
-            id: 4,
-            message: "Help the community grow! Rate your recent engagement with Sara and add a short testimonial.",
-            name: "Sara",
-            time: "Yesterday",
-            date: "Yesterday",
-            isRead: false,
-        },
-        {
-            id: 5,
-            message: "Your opinion matters! Leave a quick review for Mrs. Meea and strengthen their chances of getting hired.",
-            name: "Mrs. Meea",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-        {
-            id: 6,
-            message: "Did you recently connect with miss. Nagma? Share your experience to help others hire with confidence.",
-            name: "miss. Nagma",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-        {
-            id: 7,
-            message: "Trust grows with feedback — rate your recent interaction with [Name] to build credibility in the community.",
-            name: "[Name]",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-        {
-            id: 8,
-            message: "Help the community grow! Rate your recent engagement with Sara and add a short testimonial.",
-            name: "Sara",
-            time: "Yesterday",
-            date: "2 Oct, 25",
-            isRead: false,
-        },
-    ]);
+    // CHANGE: Removed all hardcoded mock notification data
+    // CHANGE: Start with empty array — will be populated from API
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+    const [loading, setLoading] = useState<boolean>(false); // CHANGE: Added loading state
+
+    // CHANGE: Fetch notifications from backend API
+    const fetchNotifications = useCallback(async () => {
+        const accessToken = Cookies.get(cookieParams.accessToken);
+        if (!accessToken) return; // CHANGE: Only fetch if user is logged in
+
+        setLoading(true);
+        try {
+            const result = await ApiService.crud(APIDetails.getNotifications);
+            if (result[0]) {
+                setNotifications(result[1]); // CHANGE: Set notifications from API response
+            }
+        } catch (error) {
+            console.error('Failed to fetch notifications:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // CHANGE: Fetch notifications on mount when user is logged in
+    useEffect(() => {
+        fetchNotifications();
+    }, [fetchNotifications]);
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
-    const markAsRead = (id: number) => {
+    // CHANGE: Updated markAsRead to call backend API instead of just local state
+    const markAsRead = async (id: string) => {
+        // Optimistically update UI first
         setNotifications((prev) =>
-            prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif))
+            prev.map((notif) => (notif._id === id ? { ...notif, isRead: true } : notif))
         );
+
+        // CHANGE: Call backend API to persist the read status
+        try {
+            await ApiService.crud(APIDetails.markNotificationRead, `${id}/read`);
+        } catch (error) {
+            console.error('Failed to mark notification as read:', error);
+            // Revert on failure
+            fetchNotifications();
+        }
     };
 
-    const markAllAsRead = () => {
+    // CHANGE: Updated markAllAsRead to call backend API instead of just local state
+    const markAllAsRead = async () => {
+        // Optimistically update UI first
         setNotifications((prev) =>
             prev.map((notif) => ({ ...notif, isRead: true }))
         );
+
+        // CHANGE: Call backend API to persist all-read status
+        try {
+            await ApiService.crud(APIDetails.markAllNotificationsRead, {});
+        } catch (error) {
+            console.error('Failed to mark all notifications as read:', error);
+            // Revert on failure
+            fetchNotifications();
+        }
     };
 
+    // PERF: Memoize context value to prevent unnecessary re-renders of all consumers
+    const contextValue = React.useMemo(() => ({
+        notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications, loading
+    }), [notifications, unreadCount, loading]);
+
     return (
-        <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
+        // CHANGE: Added fetchNotifications and loading to context value
+        <NotificationContext.Provider value={contextValue}>
             {children}
         </NotificationContext.Provider>
     );

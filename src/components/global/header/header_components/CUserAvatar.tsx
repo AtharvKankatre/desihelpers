@@ -35,6 +35,7 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
     location: "",
     lastLogin: new Date().toLocaleString(),
     profileCompletion: 0,
+    profilePhoto: "/newassets/account_circle.png"
   });
 
   const logOut = () => {
@@ -91,11 +92,28 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
           ).length;
           const percent = Math.round((filled / fields.length) * 100);
 
+          let signedPhoto = "/newassets/account_circle.png";
+          if (p.profilePhoto && p.profilePhoto !== "/newassets/account_circle.png") {
+            try {
+              const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
+              const signedUrls = await getWorkPhotoUrls("", [p.profilePhoto]);
+              if (signedUrls && signedUrls.length > 0) {
+                signedPhoto = signedUrls[0];
+              } else {
+                signedPhoto = p.profilePhoto;
+              }
+            } catch (s3Error) {
+              console.error("Error signing profile photo for avatar:", s3Error);
+              signedPhoto = p.profilePhoto;
+            }
+          }
+
           setUserData({
             name: fullName,
             location: location,
             lastLogin: new Date().toLocaleString(),
             profileCompletion: percent,
+            profilePhoto: signedPhoto
           });
         }
       } catch (err) {
@@ -117,7 +135,6 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
             setPopupOpen(newState);
             if (onToggle) onToggle(newState);
           }}
-          style={{ width: '40px', height: '40px', ...style }}
         >
           <Image
             src="/newassets/account_circle.png"

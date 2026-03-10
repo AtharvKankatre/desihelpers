@@ -19,6 +19,7 @@ import { Routes } from "@/services/routes/Routes";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
+import { toast } from "react-toastify";
 import { useRef } from "react";
 
 import { HeroSection } from "@/components/page_related/landing/HeroSection";
@@ -90,7 +91,7 @@ const Landing: React.FC = () => {
               setOnLoad(false);// Set loading to false
             }, 1000);
           } else {
-            alert(res[1]);
+            toast.error(res[1] || "Social login failed");
           }
         } else {
         }

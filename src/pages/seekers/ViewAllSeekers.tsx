@@ -5,6 +5,10 @@ import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import { FaList, FaSlidersH } from "react-icons/fa";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
+import Swal from "sweetalert2";
+import Cookies from "js-cookie";
+import { cookieParams } from "@/constants/ECookieParams";
+import { toast } from "react-toastify";
 
 const ViewAllSeekers: FunctionComponent = () => {
   const router = useRouter();
@@ -19,6 +23,17 @@ const ViewAllSeekers: FunctionComponent = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [allSeekers, setAllSeekers] = useState<any[]>([]);
+
+  // Block page for non-logged-in users — show alert and redirect
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+  useEffect(() => {
+    const activeStatus = Cookies.get(cookieParams.isActive);
+    if (activeStatus !== "true") {
+      setIsLoggedIn(false);
+      toast.warn("Please login to view provider details", { toastId: 'login-provider' });
+      router.push('/Login');
+    }
+  }, []);
 
   useEffect(() => {
     const fetchSeekers = async () => {
@@ -72,7 +87,29 @@ const ViewAllSeekers: FunctionComponent = () => {
     return matchesSearch && matchesLocation && matchesCategory;
   });
 
+  // Check if user is logged in before allowing detail navigation
+  const requireLogin = () => {
+    const isLoggedIn = Cookies.get(cookieParams.isActive) === "true";
+    if (!isLoggedIn) {
+      toast.warn("Please login to view provider details", { toastId: 'login-provider' });
+      router.push('/Login');
+      return false;
+    }
+    return true;
+  };
 
+  const navigateToProfile = (seekerId: string) => {
+    if (!requireLogin()) return;
+    router.push(`/seekers/${seekerId}`);
+  };
+
+  const handleContactClick = () => {
+    requireLogin();
+  };
+
+  if (!isLoggedIn) {
+    return null; // Block rendering of the page entirely
+  }
 
   return (
     <div className={styles.pageWrapper}>
@@ -196,9 +233,9 @@ const ViewAllSeekers: FunctionComponent = () => {
       {/* Content Area */}
       <div className={styles.contentArea}>
         {filteredSeekers.length === 0 ? (
-          <div className="text-center p-20 w-100">
-            <h3 className="text-xl font-bold text-desi-dark mb-2">No service providers found</h3>
-            <p className="text-gray-500">Try adjusting your filters or search query.</p>
+          <div className={styles.emptyState}>
+            <h3 className={styles.emptyStateTitle}>No service providers found</h3>
+            <p className={styles.emptyStateText}>Try adjusting your filters or search query.</p>
           </div>
         ) : viewMode === "table" ? (
           <div className={styles.tableContainer}>
@@ -222,7 +259,7 @@ const ViewAllSeekers: FunctionComponent = () => {
                     <td>{seeker.rating} ⭐</td>
                     <td>{`${seeker.city}, ${seeker.country}`}</td>
                     <td>
-                      <span className={styles.viewDetailsLink} onClick={() => router.push(`/seekers/${seeker.id}`)}>View Profile</span>
+                      <span className={styles.viewDetailsLink} onClick={() => navigateToProfile(seeker.id)}>View Profile</span>
                     </td>
                   </tr>
                 ))}
@@ -278,13 +315,13 @@ const ViewAllSeekers: FunctionComponent = () => {
                   </div>
                 </div>
                 <div className={styles.seekerFooter}>
-                  <span className={styles.seekerContactBtn}>
+                  <span className={styles.seekerContactBtn} onClick={handleContactClick}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                     Contact Now
                   </span>
-                  <span className={styles.seekerViewProfile} onClick={() => router.push(`/seekers/${seeker.id}`)}>
+                  <span className={styles.seekerViewProfile} onClick={() => navigateToProfile(seeker.id)}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />

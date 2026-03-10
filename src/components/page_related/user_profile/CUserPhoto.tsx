@@ -58,18 +58,28 @@ export const CUserPhoto: React.FC<Props> = ({ ...Props }) => {
 
   useEffect(() => {
     const fetchPhotoUrls = async () => {
-      const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
-      if (!bucketName) {
+      const photo = Props.profile?.profilePhoto;
+      console.log("[CUserPhoto] Init fetchPhotoUrls, profile photo is:", photo);
+      if (!photo || photo === "/newassets/account_circle.png") {
+        console.log("[CUserPhoto] Using default dummy photo");
+        setPhotoUrls(photo);
         return;
       }
-      const photo = Props.profile?.profilePhoto;
-      const photosArray = photo ? [photo] : [];
-      const urls = await getWorkPhotoUrls(bucketName, photosArray);
-      setPhotoUrls(urls.length > 0 ? urls[0] : undefined);  // Expecting only one URL
+      try {
+        console.log("[CUserPhoto] Calling getWorkPhotoUrls for:", photo);
+        const urls = await getWorkPhotoUrls("", [photo]);
+        console.log("[CUserPhoto] getWorkPhotoUrls returned:", urls);
+        setPhotoUrls(urls.length > 0 ? urls[0] : photo);
+      } catch (e) {
+        console.error("[CUserPhoto] Failed to sign URL:", e);
+        setPhotoUrls(photo);
+      }
     };
 
     fetchPhotoUrls();
   }, [Props.profile?.profilePhoto]);
+
+  console.log("[CUserPhoto] Render PhotoUrls is currently:", PhotoUrls);
 
 
   return (

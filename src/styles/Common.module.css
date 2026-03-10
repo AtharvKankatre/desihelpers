@@ -502,7 +502,7 @@
 
 .signupContainer {
   display: flex;
-  min-height: calc(100vh - 74px);
+  height: calc(100vh - 74px);
   width: 100%;
   margin-top: 71px;
 
@@ -907,6 +907,8 @@
     flex-direction: column;
     margin-top: 40px;
     padding-top: 74px;
+    height: auto;
+    min-height: calc(100vh - 74px);
     /* Ensure padding is kept */
 
   }
@@ -974,12 +976,15 @@
   }
 
   .signupOtpInputs {
-    gap: 8px;
+    gap: 6px;
+    justify-content: center;
   }
 
   .signupOtpInput {
-    width: 45px;
-    height: 45px;
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1rem;
+    margin: 0 !important;
   }
 }
 
@@ -1126,19 +1131,19 @@
 
   .navbarContainer {
     display: flex;
-    margin-bottom: 40px;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
   }
 
   .navbarBrandMobile {
     position: relative;
-    /* Changed from absolute to prevent overlap */
     left: auto;
     transform: none;
     flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-left: 12px;
   }
 
   .navbarLinks {
@@ -1146,16 +1151,19 @@
   }
 
   .navbarActions {
-    gap: 8px;
+    gap: 12px;
   }
 
   .langButton {
-    padding: 6px 8px;
-    font-size: 13px;
+    padding: 6px 14px;
+    font-size: 14px;
+    border-radius: 20px;
   }
 
   .navIconButton {
-    padding: 6px;
+    padding: 0;
+    width: 38px;
+    height: 38px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
   }
@@ -1301,20 +1309,22 @@
 }
 
 .inputWithButton .formInput {
-  padding-right: 80px;
+  padding-right: 100px;
+  /* Increased to ensure enough space for "Resend OTP" */
 }
 
 .verifyButton {
   position: absolute;
-  right: 12px;
-  padding: 6px 12px;
+  right: 6px;
+  padding: 6px 8px;
   background: transparent;
   border: none;
   color: #00bfaf;
-  /* Teal color from screenshots */
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
+  white-space: nowrap;
+  /* Prevents text from breaking and overlapping */
 }
 
 .verifiedBadge {

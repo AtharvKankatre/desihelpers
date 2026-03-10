@@ -27,6 +27,7 @@
   list-style-type: none;
   padding-left: 0px;
 }
+
 .editIcon {
   cursor: pointer;
   color: black !important;
@@ -35,17 +36,22 @@
   position: absolute !important;
   bottom: 0;
   right: 20px;
-  z-index: 2; /* Ensure this is high enough */
+  z-index: 2;
+  /* Ensure this is high enough */
 }
+
 .imageDiv {
   width: 125px;
   height: auto;
   position: relative;
   text-align: right;
-  z-index: 0; /* Ensure this is high enough */
+  z-index: 0;
+  /* Ensure this is high enough */
 }
+
 .customTooltip {
-  z-index: 9999; /* Ensure the tooltip is above other elements */
+  z-index: 9999;
+  /* Ensure the tooltip is above other elements */
 }
 
 .addWorkPhotoButton {
@@ -58,24 +64,29 @@
   border: 1px solid #ffc107 !important;
   background-color: white !important;
 }
+
 .scrollableDescription {
-  max-height: 150px; /* Set the max height as needed */
+  max-height: 150px;
+  /* Set the max height as needed */
   overflow-y: auto;
-  word-wrap: break-word; /* Ensures long words break into a new line */
+  word-wrap: break-word;
+  /* Ensures long words break into a new line */
   min-width: 350px;
   text-align: left;
 }
 
-.infoIcons{
+.infoIcons {
   width: 50px;
   height: 50px;
   margin-bottom: 5px;
 }
-.infoIconsArrow{
+
+.infoIconsArrow {
   width: 40px;
   height: 40px;
 }
-.infoIconsButton{
+
+.infoIconsButton {
   width: 100px;
   height: 50px;
 }
@@ -84,9 +95,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  flex-wrap: wrap;
+  /* Allows wrapping on smaller screens */
   text-align: center;
-  gap: 10px; /* Adds space between steps */
+  gap: 10px;
+  /* Adds space between steps */
 }
 
 .step {
@@ -94,6 +107,7 @@
   flex-direction: column;
   align-items: center;
 }
+
 .accordionHeader {
   display: flex;
   /* justify-content: space-between; */
@@ -101,10 +115,12 @@
 }
 
 .infoIcon {
-  font-size: 1.8rem; /* Adjust size as needed */
-  margin-left: auto; /* Align icon to the right */
-  color: rgb(59, 196, 159); 
-  margin-right: 0.5rem; 
+  font-size: 1.8rem;
+  /* Adjust size as needed */
+  margin-left: auto;
+  /* Align icon to the right */
+  color: rgb(59, 196, 159);
+  margin-right: 0.5rem;
   margin-top: 0.3rem;
   /* margin : 0.2rem */
 }
@@ -117,9 +133,11 @@
   }
 
   .infoIconsArrow {
-    display: none; /* Hide arrows on mobile */
+    display: none;
+    /* Hide arrows on mobile */
   }
 }
+
 @media screen {
   .viewProfileMain {
     width: 100% !important;

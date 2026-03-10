@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import styles from "@/styles/HeroSection.module.css";
 import { Routes } from "@/services/routes/Routes";
 import { useAuth } from "@/services/authorization/AuthContext";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import { IJobs } from "@/models/Jobs";
@@ -233,24 +233,10 @@ const _HeroSection: React.FC = () => {
     if (hasDragged.current) return;
 
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to view job details",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.warn("Please login to view job details", { toastId: 'login-warning' });
+      router.push("/Login");
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      });
+      toast.warn("Please build your profile first.", { toastId: 'profile-incomplete' });
     } else {
       router.push(Routes.mapSearch);
     }
@@ -387,12 +373,30 @@ const _HeroSection: React.FC = () => {
       {/* Desktop Version - Additional CTA Links */}
       <div className={styles.desktopOnly}>
         <div className={styles.exploreLinkWrapper} onClick={handleExploreJobs}>
-          <span className={styles.exploreAvailableLink}>Explore available jobs Now</span>
+          <span className={styles.exploreAvailableLink}>Explore available jobs now</span>
         </div>
         {!isActive && (
           <div className={styles.registerCtaWrapper}>
             <button className={styles.registerButton} onClick={handleRegister}>
               Register Now
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Version - Locate Helper & Post A Job */}
+      <div className={styles.mobileOnly} style={{ width: '100%' }}>
+        <div className={styles.locateHelperWrapper} onClick={() => router.push(Routes.viewAllSeekers)}>
+          <svg viewBox="0 0 24 24" className={styles.locateIcon}>
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5 0-1.38 1.12-2.5 2.5-2.5 1.38 0 2.5 1.12 2.5 2.5 0 1.38-1.12 2.5-2.5 2.5z" />
+          </svg>
+          <span className={styles.locateHelperLink}>Locate a helper near you?</span>
+        </div>
+
+        {!isActive && (
+          <div className={styles.postJobCtaWrapper}>
+            <button className={styles.postJobButton} onClick={() => router.push('/Login?mode=signup')}>
+              Post A Job
             </button>
           </div>
         )}

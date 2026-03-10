@@ -41,6 +41,7 @@ import { IUserProfileModel } from "@/models/UserProfileModel";
 import Swal from "sweetalert2";
 import { useAuth } from "@/services/authorization/AuthContext";
 import AdminSignUpModal from "@/components/admin/AdminSignUpModal";
+import { toast } from "react-toastify";
 import { FaUser } from "react-icons/fa";
 import Roles from "@/constants/ERoles";
 import { CH4Label } from "@/components/reusable/labels/CH4Label";
@@ -273,7 +274,7 @@ const Dashboard: React.FC<Props> = ({ data }) => {
         return dateA - dateB;
       },
     },
-    
+
     {
       name: "Actions",
       cell: (row: any) => (
@@ -439,34 +440,28 @@ const Dashboard: React.FC<Props> = ({ data }) => {
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
     });
-  
+
     if (result.isConfirmed) {
       try {
         const response = await ApiService.crud(APIDetails.AdminDeleteUser, email);
         if (response[0]) {
           setDetails(SeekerDetails.filter((item) => item.email !== email));
-          Swal.fire("Deleted!", response[1].message, "success");
+          toast.success(response[1].message || "User deleted successfully");
         } else {
-          Swal.fire("Error", `Error occurred: ${response[1].message}`, "error");
+          toast.error(`Error occurred: ${response[1].message}`);
         }
       } catch (error) {
-        Swal.fire("Error", "An unexpected error occurred.", "error");
+        toast.error("An unexpected error occurred.");
       }
     }
   };
 
   const handleMapViewClick = () => {
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to find helpers in your area",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please login to find helpers in your area");
+      setTimeout(() => {
+        router.push("/Login");
+      }, 2000);
     } else {
       //router.push(Routes.mapSearch);
       router.push(Routes.AdminDashboard);
@@ -499,25 +494,25 @@ const Dashboard: React.FC<Props> = ({ data }) => {
   const handleExport = () => {
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-  
+
     // Extract specific fields and format the data
     const formattedData = filteredItems.map(item => ({
       UserID: item.id,
       Email: item.email,
       JobSeekerStatus: item.isJobSeeker,
-      BuildProfileStatus : item.isProfile,
+      BuildProfileStatus: item.isProfile,
       Roles: item.roles.join(", "),
       socialLogin: item.socialLogin,
       IsDeleted: item.isDeleted,
-      createdByAdmin : item.createdByAdmin,
+      createdByAdmin: item.createdByAdmin,
       RegisteredOn: new Date(item.createdAt).toLocaleDateString(),
       UpdatedOn: new Date(item.updatedAt).toLocaleDateString(),
     }));
-  
+
     exportToExcel(formattedData, `DesihelpersUsers_${formattedDate}.xlsx`);
   };
-  
-  
+
+
 
   return (
     <>
@@ -664,7 +659,7 @@ const Dashboard: React.FC<Props> = ({ data }) => {
                         onClick={handleExport}
                         className="btn bgSecondary text-white"
                       >
-                        Export Data <FaFileExport/>
+                        Export Data <FaFileExport />
                       </button>
                     </OverlayTrigger>
                   </div>
@@ -694,11 +689,11 @@ const Dashboard: React.FC<Props> = ({ data }) => {
                         },
                       },
                     }}
-                  paginationPerPage={100} // Set default rows per page
-              paginationComponentOptions={{
-                rowsPerPageText: 'Rows per page:',
-              }}
-              paginationRowsPerPageOptions={[100, 150, 200,250]} // Options for rows per page
+                    paginationPerPage={100} // Set default rows per page
+                    paginationComponentOptions={{
+                      rowsPerPageText: 'Rows per page:',
+                    }}
+                    paginationRowsPerPageOptions={[100, 150, 200, 250]} // Options for rows per page
                   />
                 </div>
               )}

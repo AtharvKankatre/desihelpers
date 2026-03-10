@@ -9,7 +9,7 @@ import { useAuth } from "@/services/authorization/AuthContext";
 import { CDisplaySeekerDetailsModal } from "./CDisplaySeekerDetailsModal";
 import CButton from "../reusable/CButton";
 import { getWorkPhotoUrls } from "@/utils/s3Helper";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CCopyLinkButton from "../reusable/CShareLink";
 import { getOptimizedIcon } from "@/utils/iconMapping";
@@ -45,28 +45,15 @@ export const CJobSeekerJob: FunctionComponent<Props> = ({
 
   const viewJobDetailsFn = () => {
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to view seeker details",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please login to view seeker details");
+      setTimeout(() => {
+        router.push("/Login");
+      }, 1500);
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before viewing seeker details.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warn("Please build your profile first before viewing seeker details.");
+      setTimeout(() => {
+        router.push("/Landing");
+      }, 1500);
     }
   };
 

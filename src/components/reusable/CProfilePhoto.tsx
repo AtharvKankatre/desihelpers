@@ -11,30 +11,29 @@ const ProfilePhotoComponent = ({ profilePhoto, onPhotoUrlReady }: ProfilePhotoCo
 
   useEffect(() => {
     const fetchPhotoUrl = async () => {
+      console.log("[CProfilePhoto] Init fetchPhotoUrl, profilePhoto prop is:", profilePhoto);
       if (!profilePhoto) {
         onPhotoUrlReady?.(undefined);
         return;
       }
 
-      const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
-      if (!bucketName) {
-        console.error("S3 bucket name is not set in the environment variables.");
-        return;
-      }
-
       try {
-        const urls = await getWorkPhotoUrls(bucketName, [profilePhoto]); // Assuming getWorkPhotoUrls takes an array
+        console.log("[CProfilePhoto] Calling getWorkPhotoUrls for:", profilePhoto);
+        const urls = await getWorkPhotoUrls("", [profilePhoto]);
+        console.log("[CProfilePhoto] getWorkPhotoUrls returned:", urls);
         const url = urls.length > 0 ? urls[0] : undefined;
         setPhotoUrl(url);
-        onPhotoUrlReady?.(url); // Notify parent of the resolved URL
+        onPhotoUrlReady?.(url);
       } catch (error) {
-        console.error("Error fetching photo URL:", error);
+        console.error("[CProfilePhoto] Error fetching signed photo URL in CProfilePhoto:", error);
         onPhotoUrlReady?.(undefined);
       }
     };
 
     fetchPhotoUrl();
   }, [profilePhoto, onPhotoUrlReady]);
+
+  console.log("[CProfilePhoto] Render photoUrl is currently:", photoUrl);
 
   return (
     <div>

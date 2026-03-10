@@ -48,6 +48,9 @@ const SeekerProfilePage = ({ seeker }: PageProps) => {
     const [feedback, setFeedback] = useState("");
     const [editingFeedbackId, setEditingFeedbackId] = useState<string | null>(null);
 
+    // Determine current user role. isSeeker === "true" means they are a Service Provider
+    const isServiceProvider = Cookies.get(cookieParams.isSeeker) === "true";
+
     // State for Testimonials
     const [jobs, setJobs] = useState<any[]>([]); // State for Jobs
     const [testimonials, setTestimonials] = useState([
@@ -316,35 +319,37 @@ const SeekerProfilePage = ({ seeker }: PageProps) => {
                                         </div>
 
                                         {/* Dynamic Action Button based on Active Tab */}
-                                        <button
-                                            type="button"
-                                            className="btn btn-link fw-bold pb-3 text-decoration-none border-0 bg-transparent p-0 d-flex align-items-center gap-2"
-                                            style={{ color: '#f07c00', fontSize: '14px', boxShadow: 'none' }}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                if (activeTab === 'testimonials') {
-                                                    console.log("Add Feedback clicked");
-                                                    setEditingFeedbackId(null);
-                                                    setFeedback("");
-                                                    setModalRating(0);
-                                                    setShowFeedbackModal(true);
-                                                } else if (activeTab === 'services') {
-                                                    alert("Add Services Clicked (Placeholder)");
-                                                } else if (activeTab === 'jobs') {
-                                                    alert("Add Jobs Clicked (Placeholder)");
-                                                } else if (activeTab === 'gallery') {
-                                                    alert("Add Photos Clicked (Placeholder)");
-                                                }
-                                            }}
-                                        >
-                                            <span>+ Add {activeTab === 'services' ? 'Services' : activeTab === 'jobs' ? 'Jobs' : activeTab === 'testimonials' ? 'Feedback' : 'Photos'}</span>
-                                            {/* Edit Icon */}
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                            </svg>
-                                        </button>
+                                        {((activeTab !== 'testimonials') || !isServiceProvider) && (
+                                            <button
+                                                type="button"
+                                                className="btn btn-link fw-bold pb-3 text-decoration-none border-0 bg-transparent p-0 d-flex align-items-center gap-2"
+                                                style={{ color: '#f07c00', fontSize: '14px', boxShadow: 'none' }}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    if (activeTab === 'testimonials') {
+                                                        console.log("Add Feedback clicked");
+                                                        setEditingFeedbackId(null);
+                                                        setFeedback("");
+                                                        setModalRating(0);
+                                                        setShowFeedbackModal(true);
+                                                    } else if (activeTab === 'services') {
+                                                        alert("Add Services Clicked (Placeholder)");
+                                                    } else if (activeTab === 'jobs') {
+                                                        alert("Add Jobs Clicked (Placeholder)");
+                                                    } else if (activeTab === 'gallery') {
+                                                        alert("Add Photos Clicked (Placeholder)");
+                                                    }
+                                                }}
+                                            >
+                                                <span>+ Add {activeTab === 'services' ? 'Services' : activeTab === 'jobs' ? 'Jobs' : activeTab === 'testimonials' ? 'Feedback' : 'Photos'}</span>
+                                                {/* Edit Icon */}
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                </svg>
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
 
@@ -451,9 +456,12 @@ const SeekerProfilePage = ({ seeker }: PageProps) => {
                                                     <div className="d-flex align-items-center justify-content-between">
                                                         <span className="fw-bold text-dark small">- {t.author}</span>
                                                         <div className="text-warning small">
-                                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                                <span key={star} style={{ color: star <= t.rating ? "#f07c00" : "#ddd" }}>★</span>
-                                                            ))}
+                                                            {[1, 2, 3, 4, 5].map((star) => {
+                                                                const color = t.rating >= 4 ? "#22c55e" : t.rating >= 2 ? "#eab308" : "#ef4444";
+                                                                return (
+                                                                    <span key={star} style={{ color: star <= t.rating ? color : "#ddd" }}>★</span>
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
                                                     {/* Actions */}
@@ -527,22 +535,25 @@ const SeekerProfilePage = ({ seeker }: PageProps) => {
                                             <div className="d-flex align-items-center justify-content-between mb-2">
                                                 <Form.Label className="fw-bold fs-6 m-0" style={{ color: '#001838' }}>Rate Experience</Form.Label>
                                                 <div className="d-flex gap-2">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <span
-                                                            key={star}
-                                                            className="cursor-pointer"
-                                                            role="button"
-                                                            onClick={() => setModalRating(star)}
-                                                            style={{
-                                                                color: star <= modalRating ? "#f07c00" : "#e0e0e0",
-                                                                fontSize: '24px',
-                                                                transition: 'color 0.2s',
-                                                                cursor: 'pointer'
-                                                            }}
-                                                        >
-                                                            ★
-                                                        </span>
-                                                    ))}
+                                                    {[1, 2, 3, 4, 5].map((star) => {
+                                                        const color = modalRating >= 4 ? "#22c55e" : modalRating >= 2 ? "#eab308" : modalRating === 1 ? "#ef4444" : "#e0e0e0";
+                                                        return (
+                                                            <span
+                                                                key={star}
+                                                                className="cursor-pointer"
+                                                                role="button"
+                                                                onClick={() => setModalRating(star)}
+                                                                style={{
+                                                                    color: star <= modalRating ? color : "#e0e0e0",
+                                                                    fontSize: '24px',
+                                                                    transition: 'color 0.2s',
+                                                                    cursor: 'pointer'
+                                                                }}
+                                                            >
+                                                                ★
+                                                            </span>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         </Form.Group>

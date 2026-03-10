@@ -379,6 +379,56 @@
   right: -5px;
 }
 
+/* Mobile CTA Links */
+.locateHelperWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.locateIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.locateIcon path,
+.locateIcon circle {
+  fill: transparent;
+  stroke: white;
+  stroke-width: 2;
+}
+
+.locateHelperLink {
+  color: white;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.postJobCtaWrapper {
+  margin-bottom: -30px;
+  z-index: 10;
+  position: relative;
+  text-align: center;
+}
+
+.postJobButton {
+  background: #00d2ad;
+  color: white;
+  border: 4px solid white;
+  padding: 12px 40px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 210, 173, 0.4);
+}
+
 /* ========================== */
 /* RESPONSIVE BREAKPOINTS     */
 /* ========================== */
@@ -474,5 +524,10 @@
 
   .cardDescription {
     font-size: 11px;
+  }
+
+  .postJobCtaWrapper {
+    margin-bottom: -40px;
+    /* pull down to overlap next section like design */
   }
 }

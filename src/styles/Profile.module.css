@@ -1,5 +1,12 @@
 /* Profile Page Styles - Exactly matching reference screenshot */
 
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
 /* Main container - no padding needed, has integrated header */
 .profilePage {
     min-height: 100vh;
@@ -31,7 +38,9 @@
     justify-content: space-between;
     padding: 16px 50px;
     position: relative;
-    z-index: 10;
+    z-index: 1000;
+    /* Higher z-index for dropdowns */
+    gap: 20px;
 }
 
 .navbarBrand {
@@ -181,10 +190,27 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    border: 5px solid white;
+    border: 4px solid #10B981;
     object-fit: cover;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     background-color: #f0f0f0;
+}
+
+.defaultAvatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 4px solid #10B981;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.defaultAvatar svg {
+    width: 100%;
+    height: 100%;
 }
 
 /* White camera icon overlay with orange icon */
@@ -965,25 +991,22 @@
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    background: #f8f8f8;
-    aspect-ratio: 1;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
 }
 
 .photoImage {
     width: 100%;
-    height: 100%;
+    aspect-ratio: 1;
     object-fit: cover;
 }
 
 .photoActions {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     display: flex;
     justify-content: space-between;
     padding: 10px 12px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+    background: #fff;
 }
 
 .photoActionBtn {
@@ -1109,18 +1132,25 @@
 @media (max-width: 768px) {
     .profileHeader {
         min-height: 200px;
-        margin-bottom: 200px;
-        /* Space for stacked absolute section */
+        margin-bottom: 220px;
+        /* Increased to avoid overlap with sidebar content */
     }
 
     .profileInfoSection {
         position: absolute;
-        bottom: -180px;
-        /* Stacked layout needs more space */
+        bottom: -200px;
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 20px;
+        padding: 0 20px;
+        z-index: 20;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .profileInfoSectionHidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
     }
 
     .profilePage {
@@ -1174,15 +1204,57 @@
     }
 
     .serviceDetails {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .serviceDetail:first-child {
+        grid-column: 1 / -1;
     }
 
     .jobDetailsGrid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .jobDetail:nth-child(1),
+    .jobDetail:nth-child(2) {
+        grid-column: 1 / -1;
+    }
+
+    .galleryGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
     }
 
     .profileContent {
-        padding: 15px;
+        padding: 15px 10px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .mainContent,
+    .sidebar {
+        width: 100%;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .tabSection {
+        background: white !important;
+        border: 1px solid #e0e6ed !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+        padding: 20px !important;
+        border-radius: 12px !important;
+        margin-bottom: 20px;
+        width: 100% !important;
+    }
+
+    .sidebarCard {
+        width: 100% !important;
+        margin-bottom: 15px;
     }
 }
 
@@ -1908,10 +1980,48 @@
     border: 2px dashed #f9a67a;
     background-color: #fff9f6;
     border-radius: 12px;
-    padding: 40px 20px;
+    padding: 30px 20px;
     text-align: center;
     margin: 20px 0;
     transition: all 0.2s ease;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.previewContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.previewImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #f9a67a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.changePhotoBtn {
+    color: #003385;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.changePhotoBtn:hover {
+    color: #ff6b35;
+}
+
+.uploadEmptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .uploadIcon {
@@ -2303,8 +2413,24 @@
         padding: 12px 16px;
     }
 
+    .navbarBrand {
+        margin-right: auto;
+    }
+
+    .navbarActions {
+        gap: 8px;
+    }
+
     .mobileMenuBtn {
         display: flex;
+        margin-left: 5px;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background 0.2s;
+    }
+
+    .mobileMenuBtn:active {
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .navbarLinks {
@@ -2414,13 +2540,20 @@
     .profilePhoto {
         width: 90px;
         height: 90px;
-        border: 4px solid white;
+        border: 4px solid #10B981;
         margin-top: 0;
         border-radius: 50%;
         object-fit: cover;
         background: white;
         box-shadow: none !important;
         /* Forces the huge white shadow glow to disappear! */
+    }
+
+    .defaultAvatar {
+        width: 90px;
+        height: 90px;
+        border: 4px solid #10B981;
+        box-shadow: none !important;
     }
 
     .cameraIcon {

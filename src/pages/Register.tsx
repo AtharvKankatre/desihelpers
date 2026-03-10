@@ -10,6 +10,7 @@ import { APIDetails } from "@/services/data/constants/ApiDetails";
 import OtpModal from "@/components/page_related/register/OTPVerificationModal";
 import style from "@/styles/Common.module.css";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 type Props = {
   callback: () => void;
@@ -30,14 +31,7 @@ const Register: React.FC<Props> = ({ callback }) => {
     if (response[0]) {
       setOtpModalOpen(true);
     } else {
-      Swal.fire({
-        title: "Alert",
-        text: response[1],
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then(() => {
-        window.location.reload();
-      });
+      toast.error(response[1] || "Failed to send OTP");
     }
   };
 
@@ -59,7 +53,7 @@ const Register: React.FC<Props> = ({ callback }) => {
       setOnLoad(true);
 
       if (!values.isEighteenPlus) {
-        alert("You must be 18 years or older to sign up.");
+        toast.error("You must be 18 years or older to sign up.");
         setOnLoad(false);
         return;
       }
@@ -114,7 +108,7 @@ const Register: React.FC<Props> = ({ callback }) => {
         callback();
       });
     } else {
-      alert(res[1]);
+      toast.error(res[1] || "Signup failed. Please try again.");
     }
     setOnLoad(false);
   };

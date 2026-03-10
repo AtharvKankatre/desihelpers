@@ -120,19 +120,19 @@ const CCopyLinkButton: FC<CCopyLinkButtonProps> = ({ id }) => {
   };
   return (
     <>
-    <div
-    //className="d-flex flex-row w-100 justify-content-start p-2 bg-warning"
-    onClick={handleCopyLink}
-    style={{ cursor: 'pointer' }}
-  >
-    <img
-      src="/icon_share_white.svg"
-      alt="Copy Link"
-      style={{ height: '24px', width: '24px',marginLeft:'20px',marginTop:'15px' }} // Adjust size as needed
-    />
-  </div>
+      <div
+        //className="d-flex flex-row w-100 justify-content-start p-2 bg-warning"
+        onClick={handleCopyLink}
+        style={{ cursor: 'pointer' }}
+      >
+        <img
+          src="/icon_share_white.svg"
+          alt="Copy Link"
+          style={{ height: '24px', width: '24px', marginLeft: '20px', marginTop: '15px' }} // Adjust size as needed
+        />
+      </div>
 
-  
+
       {/* Modal for mobile view */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
@@ -157,7 +157,7 @@ const CCopyLinkButton: FC<CCopyLinkButtonProps> = ({ id }) => {
         </Modal.Body>
       </Modal>
     </>
-  
+
   );
 };
 

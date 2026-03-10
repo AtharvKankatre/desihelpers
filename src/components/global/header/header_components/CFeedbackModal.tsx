@@ -60,11 +60,14 @@ export const CFeedbackModal: React.FC<CFeedbackModalProps> = ({ open, onClose })
                 <Box sx={{ display: "flex", gap: 1, mb: 3 }}>
                     {[...Array(5)].map((_, index) => {
                         const ratingValue = index + 1;
+                        const activeRating = hover || rating;
+                        const activeColor = activeRating >= 4 ? "#22c55e" : activeRating >= 2 ? "#eab308" : activeRating === 1 ? "#ef4444" : "#e4e5e9";
+
                         return (
                             <FaStar
                                 key={index}
                                 size={32}
-                                color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+                                color={ratingValue <= activeRating ? activeColor : "#e4e5e9"}
                                 onMouseEnter={() => setHover(ratingValue)}
                                 onMouseLeave={() => setHover(0)}
                                 onClick={() => setRating(ratingValue)}

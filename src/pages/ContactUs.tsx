@@ -10,6 +10,7 @@ import contactStyles from "@/styles/Contact.module.css"; // Imported new styles
 import { Button, Form, FormCheck } from "react-bootstrap";
 import commonStyles from "@/styles/Common.module.css";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useRouter } from "next/navigation";
 import { CInputArea } from "@/components/form/CInputArea";
@@ -62,12 +63,7 @@ const ContactUs: React.FC = () => {
 
       // Check if reCAPTCHA token is present
       if (!recaptchaToken) {
-        Swal.fire({
-          title: "reCAPTCHA Required",
-          text: "Please complete the reCAPTCHA.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
+        toast.error("Please complete the reCAPTCHA.");
         return;
       }
 
@@ -77,23 +73,15 @@ const ContactUs: React.FC = () => {
       setOnLoad(false);
 
       if (res[0]) {
-        Swal.fire({
-          title: "Success",
-          text: res[1].message,
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(() => {
+        toast.success(res[1].message || "Message sent successfully!");
+        setTimeout(() => {
           router.push("/Landing");
-        });
+        }, 1500);
       } else {
-        Swal.fire({
-          title: "Error",
-          text: res[1],
-          icon: "error",
-          confirmButtonText: "OK",
-        }).then(() => {
+        toast.error(res[1] || "Failed to send message.");
+        setTimeout(() => {
           router.push("/Landing");
-        });
+        }, 2000);
       }
     },
   });

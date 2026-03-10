@@ -15,8 +15,8 @@ interface AuthContextType {
   jobCategories: IJobCategories[];
   isProfileBuild: boolean;
   setIsProfileBuild: (status: boolean) => void;
-  email:string;
-  role:string;
+  email: string;
+  role: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,10 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     window.addEventListener("isProfileBuildChanged", handleAuthChange);
     window.dispatchEvent(new Event("emailChanged"));
 
-    // Check if job types have been downloaded for a session or not.
-    // If not then download them and store them over here
+    // PERF: Check sessionStorage cache before fetching jobCategories from API
     if (jobCategories.length == 0) {
-      fetchJobTypesFn();
+      const cached = sessionStorage.getItem('dh_jobCategories');
+      if (cached) {
+        try {
+          setJobCategories(JSON.parse(cached));
+        } catch {
+          fetchJobTypesFn();
+        }
+      } else {
+        fetchJobTypesFn();
+      }
     }
 
     return () => {
@@ -83,24 +91,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     var result = await ApiService.crud(APIDetails.fetchJobTypes);
     if (result[0]) {
       setJobCategories(result[1]);
+      // PERF: Cache in sessionStorage to avoid re-fetching on every page navigation
+      try { sessionStorage.setItem('dh_jobCategories', JSON.stringify(result[1])); } catch { }
     }
     return;
   };
 
+  // PERF: Memoize context value to prevent unnecessary re-renders of all consumers
+  const contextValue = React.useMemo(() => ({
+    isActive,
+    setIsActive,
+    isSeeker,
+    setIsSeeker,
+    jobCategories,
+    isProfileBuild,
+    setIsProfileBuild,
+    email,
+    role
+  }), [isActive, isSeeker, jobCategories, isProfileBuild, email, role]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        isActive,
-        setIsActive,
-        isSeeker,
-        setIsSeeker,
-        jobCategories,
-        isProfileBuild,
-        setIsProfileBuild,
-        email,
-        role
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

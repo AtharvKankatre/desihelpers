@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useRouter } from "next/router";
-import withAuth from "@/services/authorization/ProfileService"; // Fixed import
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { cookieParams } from "@/constants/ECookieParams";
 import { IJobs } from "@/models/Jobs";
 import JobServices from "@/services/jobs/JobService";
 import { useAuth } from "@/services/authorization/AuthContext";
@@ -31,7 +34,27 @@ type SortKey = "jobType" | "workType" | "startDate" | "urgent" | "cityState" | "
 const ViewAllJobs = () => {
     const router = useRouter();
     const { mobile } = useAppMediaQuery();
+
+    // Block page for non-logged-in users — show alert and redirect
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
     const { jobCategories } = useAuth();
+
+    useEffect(() => {
+        const activeStatus = Cookies.get(cookieParams.isActive);
+        if (activeStatus !== "true") {
+            setIsLoggedIn(false);
+            toast.warn('Please login to view job details', {
+                toastId: 'login-warning',
+                onClose: () => router.push('/Login'),
+                autoClose: 2000
+            });
+            setTimeout(() => {
+                router.push('/Login');
+            }, 2500);
+        } else {
+            setIsLoggedIn(true);
+        }
+    }, []);
 
     // Requested static categories
     const requestedCategories = useMemo(() => [
@@ -136,7 +159,7 @@ const ViewAllJobs = () => {
     // Filter state
     const [locationSearch, setLocationSearch] = useState("");
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-    const [workTypeFilter, setWorkTypeFilter] = useState("Part Time");
+    const [workTypeFilter, setWorkTypeFilter] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("");
 
@@ -450,11 +473,27 @@ const ViewAllJobs = () => {
         );
     };
 
+    // Check if user is logged in before allowing detail navigation
+    const requireLogin = () => {
+        const isLoggedInStatus = Cookies.get(cookieParams.isActive) === "true";
+        if (!isLoggedInStatus) {
+            toast.warn('Please login to view job details', { toastId: 'login-warning' });
+            router.push('/Login');
+            return false;
+        }
+        return true;
+    };
+
     const navigateToDetails = (jobId?: string) => {
         if (jobId) {
+            if (!requireLogin()) return;
             router.push(`/jobs/${jobId}`);
         }
     };
+
+    if (isLoggedIn === false || isLoggedIn === null) {
+        return <div style={{ minHeight: '100vh', backgroundColor: '#efefef' }} />; // Professional light fallback while redirecting or checking
+    }
 
     return (
         <div className={styles.pageWrapper}>
@@ -513,8 +552,10 @@ const ViewAllJobs = () => {
                             value={workTypeFilter}
                             onChange={(e) => setWorkTypeFilter(e.target.value)}
                         >
+                            <option value="">Work Type</option>
                             <option value="Part Time">Part Time</option>
                             <option value="Full Time">Full Time</option>
+                            <option value="Remote">Remote</option>
                         </select>
 
                         <select
@@ -722,7 +763,10 @@ const ViewAllJobs = () => {
                             jobs={displayJobs}
                             seekers={[]}
                             onJobClick={(job) => navigateToDetails(job._id ?? job.id)}
-                            onProfileClick={(profile) => router.push(`/seekers/${profile.id}`)}
+                            onProfileClick={(profile) => {
+                                if (!requireLogin()) return;
+                                router.push(`/seekers/${profile.id}`);
+                            }}
                             onLocationSelect={(lat, lng, address) => {
                                 setLocationSearch(address);
                                 console.log(`Selected Location: ${lat}, ${lng}, ${address}`);
@@ -789,13 +833,13 @@ const ViewAllJobs = () => {
                                     </div>
                                 </div>
                                 <div className={styles.seekerFooter}>
-                                    <span className={styles.seekerContactBtn}>
+                                    <span className={styles.seekerContactBtn} onClick={() => requireLogin()}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                                         </svg>
                                         Contact Now
                                     </span>
-                                    <span className={styles.seekerViewProfile} onClick={() => router.push(`/seekers/${seeker.id}`)}>
+                                    <span className={styles.seekerViewProfile} onClick={() => { if (requireLogin()) router.push(`/seekers/${seeker.id}`); }}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                             <circle cx="12" cy="12" r="3" />
@@ -813,9 +857,9 @@ const ViewAllJobs = () => {
                                 <PageLoader />
                             </div>
                         ) : displayJobs.length === 0 ? (
-                            <div className="text-center p-20">
-                                <h3 className="text-xl font-bold text-desi-dark mb-2">No jobs found</h3>
-                                <p className="text-gray-500">Try adjusting your filters or search query.</p>
+                            <div className={styles.emptyState}>
+                                <h3 className={styles.emptyStateTitle}>No jobs found</h3>
+                                <p className={styles.emptyStateText}>Try adjusting your filters or search query.</p>
                             </div>
                         ) : viewMode === "table" ? (
                             <div className={styles.tableContainer}>
@@ -957,9 +1001,10 @@ const ViewAllJobs = () => {
                                 value={workTypeFilter}
                                 onChange={(e) => setWorkTypeFilter(e.target.value)}
                             >
-                                <option value="Part Time">Part/Full Time</option>
+                                <option value="">Work Type</option>
                                 <option value="Part Time">Part Time</option>
                                 <option value="Full Time">Full Time</option>
+                                <option value="Remote">Remote</option>
                             </select>
                             <select
                                 className={styles.filterModalSelect}
@@ -1008,4 +1053,4 @@ const ViewAllJobs = () => {
     );
 };
 
-export default withAuth(ViewAllJobs);
+export default ViewAllJobs;

@@ -67,4 +67,11 @@ export const APIDetails = {
   getJobsByUser: ["jobs/user/", ApiType.get, false],
   updateFeedback: ["feedback/", ApiType.put, true],
   deleteFeedback: ["feedback/", ApiType.delete, true],
+
+  // CHANGE: Added notification API endpoints for dynamic notifications feature
+  getNotifications: ["notifications", ApiType.get, true],
+  markNotificationRead: ["notifications/", ApiType.put, true], // append :id/read
+  markAllNotificationsRead: ["notifications/mark-all-read", ApiType.put, true],
+  getUnreadNotificationCount: ["notifications/unread-count", ApiType.get, true],
+  createNotification: ["notifications", ApiType.post, true],
 };

@@ -180,7 +180,7 @@
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
-        gap: 40px;
+        gap: 30px;
     }
 
     .leftPanel {
@@ -195,10 +195,28 @@
 
     .rightPanel {
         flex-direction: column;
+        height: auto !important;
+        overflow: visible;
+        gap: 20px;
+    }
+
+    .rightPanel::before,
+    .rightPanel::after {
+        display: none;
     }
 
     .column {
         width: 100%;
+        transform: none !important;
+        margin-top: 0 !important;
+        gap: 20px;
+    }
+
+    .testimonialCard {
+        width: 100%;
+        min-height: auto;
+        padding: 24px;
+        border-radius: 24px 0 24px 0;
     }
 }
 

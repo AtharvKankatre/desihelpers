@@ -1,0 +1,38 @@
+﻿desihelpers/src/components/admin/ViewUserDetailsModal.tsx(49,27): error TS2339: Property 'length' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/admin/ViewUserDetailsModal.tsx(49,40): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/jobs/ViewJobDetailsModal.tsx(47,25): error TS2339: Property 'length' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/jobs/ViewJobDetailsModal.tsx(47,38): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/maps/CJobSeekerMapCard.tsx(36,25): error TS2339: Property 'length' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/maps/CJobSeekerMapCard.tsx(36,38): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/page_related/user_profile/CEditUserWorkPhotos.tsx(48,24): error TS2345: Argument of type 'Promise<string[]>' is not assignable to parameter of type 'SetStateAction<string[]>'.
+desihelpers/src/components/page_related/user_profile/CEditUserWorkPhotos.tsx(134,28): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/reusable/CProfilePhoto.tsx(27,26): error TS2339: Property 'length' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/reusable/CProfilePhoto.tsx(27,39): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/seekers/CDisplaySeekerDetailsModal.tsx(74,25): error TS2339: Property 'length' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/seekers/CDisplaySeekerDetailsModal.tsx(74,38): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/seekers/CJobSeekerCard.tsx(80,25): error TS2339: Property 'length' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/seekers/CJobSeekerCard.tsx(80,38): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/components/static/OutstandingLoader.tsx(3,32): error TS2307: Cannot find module '@/stores/LoaderStore' or its corresponding type declarations.
+desihelpers/src/components/static/OutstandingLoader.tsx(6,39): error TS7006: Parameter 'state' implicitly has an 'any' type.
+desihelpers/src/pages/_app.tsx(12,35): error TS2307: Cannot find module '@/components/static/OutstandingLoader' or its corresponding type declarations.
+desihelpers/src/pages/_app.tsx(13,32): error TS2307: Cannot find module '@/stores/LoaderStore' or its corresponding type declarations.
+desihelpers/src/pages/_app.tsx(14,50): error TS2307: Cannot find module '@tanstack/react-query' or its corresponding type declarations.
+desihelpers/src/pages/jobs/ViewAllJobs.tsx(14,21): error TS2307: Cannot find module '@/components/jobs/JobCard' or its corresponding type declarations.
+desihelpers/src/pages/jobs/ViewAllJobs.tsx(15,25): error TS2307: Cannot find module '@/components/jobs/JobTableRow' or its corresponding type declarations.
+desihelpers/src/pages/Login.tsx(11,29): error TS2307: Cannot find module '@/components/auth/SignupLeftPanel' or its corresponding type declarations.
+desihelpers/src/pages/profile/index.tsx(972,17): error TS2739: Type '{ firstName: string; lastName: string; displayName: string; gender: string; email: string; mobileNumber: string; whatsappNumber: string; whatsappSameAsMobile: boolean; facebookLink: string; instagramLink: string; }' is missing the following properties from type 'PersonalSocialData': linkedInLink, twitterLink, websiteLink
+desihelpers/src/pages/seekers/ViewAllSeekers.tsx(156,17): error TS7053: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<string[]>'.
+  Property '0' does not exist on type 'Promise<string[]>'.
+desihelpers/src/services/authorization/AuthContext.tsx(83,78): error TS2554: Expected 1-3 arguments, but got 4.
+desihelpers/src/services/data/crud/crud.tsx(14,32): error TS2307: Cannot find module '@/stores/LoaderStore' or its corresponding type declarations.
+src/components/global/header/header_components/CNotificationPopup.tsx(79,58): error TS2339: Property 'id' does not exist on type 'NotificationItem'.
+src/components/global/header/header_components/CNotificationPopup.tsx(79,94): error TS2339: Property 'id' does not exist on type 'NotificationItem'.
+src/components/global/header/header_components/CNotificationPopup.tsx(86,234): error TS2339: Property 'id' does not exist on type 'NotificationItem'.
+src/components/global/header/header_components/CNotificationPopup.tsx(89,108): error TS2339: Property 'time' does not exist on type 'NotificationItem'.

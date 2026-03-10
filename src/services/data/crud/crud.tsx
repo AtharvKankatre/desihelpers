@@ -144,11 +144,13 @@ class ApiService {
       }
     }
     try {
-      let err: AxiosError = res as AxiosError;
-      let d: any = err.response?.data;
-      return [isSuccess, d["message"]];
-    } catch (error) {
-      return [isSuccess, "Something went wrong"];
+      const err: AxiosError = res as AxiosError;
+      const responseData: any = err.response?.data;
+      const message = responseData?.message || responseData?.error || err.message || "Something went wrong";
+      return [isSuccess, message];
+    } catch (e) {
+      const errorObj = res as any;
+      return [isSuccess, errorObj?.message || "Something went wrong"];
     }
   }
 
@@ -237,6 +239,7 @@ class ApiService {
       case APIDetails.getJobsByUser:
       case APIDetails.updateFeedback:
       case APIDetails.deleteFeedback:
+      case APIDetails.markNotificationRead: // CHANGE: Added for notification mark-as-read (appends :id/read)
         return `${api[0]}${data}`;
 
       default:

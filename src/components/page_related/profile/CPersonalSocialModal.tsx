@@ -193,14 +193,17 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
 
                     <div className={styles.formRow}>
                         <div className={styles.formSection}>
-                            <label className={styles.fieldLabel}>Email ID</label>
+                            <label className={styles.fieldLabel}>Email ID <span style={{ fontSize: '11px', color: '#888', fontWeight: 400 }}>🔒 Set during signup</span></label>
                             <input
                                 type="email"
                                 name="email"
                                 placeholder="Email ID"
                                 className={styles.formInput}
                                 value={formData.email}
-                                onChange={handleChange}
+                                readOnly
+                                disabled
+                                style={{ backgroundColor: '#f0f0f0', color: '#888', cursor: 'not-allowed' }}
+                                title="Email cannot be changed after signup"
                             />
                         </div>
                         <div className={styles.formSection}>

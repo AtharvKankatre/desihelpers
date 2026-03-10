@@ -1,14 +1,52 @@
-import React, { useState } from "react";
+// =====================================================================
+// CHANGE: Updated Notifications page to work with real API data
+// - Changed from hardcoded 'id' (number) to '_id' (string) from MongoDB
+// - Added loading spinner and empty state
+// - Dates now computed from 'createdAt' timestamp instead of hardcoded strings
+// =====================================================================
+import React from "react";
 import Head from "next/head";
-import { Box, GlobalStyles, Button, Container } from "@mui/material";
+import { Box, GlobalStyles, Button, Container, CircularProgress } from "@mui/material"; // CHANGE: Added CircularProgress for loading state
 import { CHeader } from "@/components/global/header/CHeader";
 import { FaBell } from "react-icons/fa";
 import { useNotification, NotificationItem } from "@/context/NotificationContext";
-const Notifications: React.FC = () => {
-    const { notifications, markAllAsRead, markAsRead } = useNotification();
 
+// CHANGE: Helper function to format createdAt timestamp into relative time string
+function formatTimeAgo(dateStr: string): string {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins} mins ago`;
+    if (diffHours < 24) return `${diffHours} hrs ago`;
+    if (diffDays === 1) return "Yesterday";
+    return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "2-digit" });
+}
+
+// CHANGE: Helper function to group notifications by date label
+function getDateLabel(dateStr: string): string {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today.getTime() - 86400000);
+    const notifDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    if (notifDate.getTime() === today.getTime()) return "Today";
+    if (notifDate.getTime() === yesterday.getTime()) return "Yesterday";
+    return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "2-digit" });
+}
+
+const Notifications: React.FC = () => {
+    // CHANGE: Added loading and fetchNotifications from updated context
+    const { notifications, markAllAsRead, markAsRead, loading } = useNotification();
+
+    // CHANGE: Group notifications by date label computed from createdAt
     const groupedNotifications = notifications.reduce((groups, notification) => {
-        const date = notification.date;
+        const date = getDateLabel(notification.createdAt); // CHANGE: Use createdAt instead of hardcoded 'date'
         if (!groups[date]) {
             groups[date] = [];
         }
@@ -137,126 +175,148 @@ const Notifications: React.FC = () => {
                         </Button>
                     </Box>
 
-                    {/* Notifications List */}
-                    <Box
-                        sx={{
-                            backgroundColor: "#f9f9f9",
-                            borderRadius: "12px",
-                            padding: "2rem",
-                        }}
-                    >
-                        {Object.entries(groupedNotifications).map(([date, notifs]) => (
-                            <Box key={date} sx={{ mb: 3 }}>
-                                {/* Date Header */}
-                                <h5
-                                    style={{
-                                        color: "#666",
-                                        fontWeight: 600,
-                                        fontSize: "1rem",
-                                        marginBottom: "1rem",
-                                    }}
-                                >
-                                    {date}
-                                </h5>
-
-                                {/* Notification Items */}
-                                {notifs.map((notification) => (
-                                    <Box
-                                        key={notification.id}
-                                        onClick={() => markAsRead(notification.id)}
-                                        sx={{
-                                            backgroundColor: notification.isRead ? "#f9f9f9" : "#ffffff",
-                                            borderRadius: "8px",
-                                            padding: "1.25rem",
-                                            mb: 2,
-                                            display: "flex",
-                                            gap: 2,
-                                            boxShadow: notification.isRead ? "none" : "0 1px 3px rgba(0,0,0,0.1)",
-                                            border: notification.isRead ? "1px solid #eee" : "none",
-                                            position: "relative",
-                                            cursor: "pointer",
+                    {/* CHANGE: Added loading spinner while fetching notifications */}
+                    {loading ? (
+                        <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+                            <CircularProgress sx={{ color: "#fd7e14" }} />
+                        </Box>
+                    ) : notifications.length === 0 ? (
+                        /* CHANGE: Added empty state when no notifications exist */
+                        <Box
+                            sx={{
+                                backgroundColor: "#f9f9f9",
+                                borderRadius: "12px",
+                                padding: "4rem 2rem",
+                                textAlign: "center",
+                            }}
+                        >
+                            <FaBell color="#ccc" size={48} />
+                            <p style={{ color: "#999", fontSize: "1.1rem", marginTop: "1rem" }}>
+                                No notifications yet. You&apos;re all caught up!
+                            </p>
+                        </Box>
+                    ) : (
+                        /* Notifications List */
+                        <Box
+                            sx={{
+                                backgroundColor: "#f9f9f9",
+                                borderRadius: "12px",
+                                padding: "2rem",
+                            }}
+                        >
+                            {Object.entries(groupedNotifications).map(([date, notifs]) => (
+                                <Box key={date} sx={{ mb: 3 }}>
+                                    {/* Date Header */}
+                                    <h5
+                                        style={{
+                                            color: "#666",
+                                            fontWeight: 600,
+                                            fontSize: "1rem",
+                                            marginBottom: "1rem",
                                         }}
                                     >
-                                        {/* Bell Icon */}
+                                        {date}
+                                    </h5>
+
+                                    {/* Notification Items */}
+                                    {notifs.map((notification) => (
                                         <Box
+                                            key={notification._id} // CHANGE: Use _id instead of id
+                                            onClick={() => markAsRead(notification._id)} // CHANGE: Use _id instead of id
                                             sx={{
-                                                backgroundColor: notification.isRead ? "#eee" : "#FFE8D6",
-                                                borderRadius: "50%",
-                                                width: "40px",
-                                                height: "40px",
+                                                backgroundColor: notification.isRead ? "#f9f9f9" : "#ffffff",
+                                                borderRadius: "8px",
+                                                padding: "1.25rem",
+                                                mb: 2,
                                                 display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                flexShrink: 0,
+                                                gap: 2,
+                                                boxShadow: notification.isRead ? "none" : "0 1px 3px rgba(0,0,0,0.1)",
+                                                border: notification.isRead ? "1px solid #eee" : "none",
+                                                position: "relative",
+                                                cursor: "pointer",
                                             }}
                                         >
-                                            <FaBell color={notification.isRead ? "#999" : "#fd7e14"} size={18} />
-                                        </Box>
-
-                                        {/* Content */}
-                                        <Box sx={{ flex: 1 }}>
-                                            <p
-                                                style={{
-                                                    color: "#333",
-                                                    margin: "0 0 0.75rem 0",
-                                                    lineHeight: 1.6,
-                                                }}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: notification.message.replace(
-                                                        notification.name,
-                                                        `<strong>${notification.name}</strong>`
-                                                    ),
-                                                }}
-                                            />
-
-                                            {/* Action Buttons */}
-                                            <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
-                                                <Button
-                                                    variant="text"
-                                                    sx={{
-                                                        color: "#333",
-                                                        fontWeight: 600,
-                                                        minWidth: "auto",
-                                                        padding: "4px 8px",
-                                                        "&:hover": {
-                                                            backgroundColor: "rgba(0,0,0,0.05)",
-                                                        },
-                                                    }}
-                                                >
-                                                    YES
-                                                </Button>
-                                                <Button
-                                                    variant="text"
-                                                    sx={{
-                                                        color: "#333",
-                                                        fontWeight: 600,
-                                                        minWidth: "auto",
-                                                        padding: "4px 8px",
-                                                        "&:hover": {
-                                                            backgroundColor: "rgba(0,0,0,0.05)",
-                                                        },
-                                                    }}
-                                                >
-                                                    No
-                                                </Button>
-                                            </Box>
-
-                                            {/* Timestamp */}
-                                            <p
-                                                style={{
-                                                    color: "#999",
-                                                    fontSize: "0.875rem",
-                                                    margin: 0,
+                                            {/* Bell Icon */}
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: notification.isRead ? "#eee" : "#FFE8D6",
+                                                    borderRadius: "50%",
+                                                    width: "40px",
+                                                    height: "40px",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    flexShrink: 0,
                                                 }}
                                             >
-                                                {notification.time}
-                                            </p>
+                                                <FaBell color={notification.isRead ? "#999" : "#fd7e14"} size={18} />
+                                            </Box>
+
+                                            {/* Content */}
+                                            <Box sx={{ flex: 1 }}>
+                                                <p
+                                                    style={{
+                                                        color: "#333",
+                                                        margin: "0 0 0.75rem 0",
+                                                        lineHeight: 1.6,
+                                                    }}
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: notification.message.replace(
+                                                            notification.name,
+                                                            `<strong>${notification.name}</strong>`
+                                                        ),
+                                                    }}
+                                                />
+
+                                                {/* Action Buttons */}
+                                                <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
+                                                    <Button
+                                                        variant="text"
+                                                        sx={{
+                                                            color: "#333",
+                                                            fontWeight: 600,
+                                                            minWidth: "auto",
+                                                            padding: "4px 8px",
+                                                            "&:hover": {
+                                                                backgroundColor: "rgba(0,0,0,0.05)",
+                                                            },
+                                                        }}
+                                                    >
+                                                        YES
+                                                    </Button>
+                                                    <Button
+                                                        variant="text"
+                                                        sx={{
+                                                            color: "#333",
+                                                            fontWeight: 600,
+                                                            minWidth: "auto",
+                                                            padding: "4px 8px",
+                                                            "&:hover": {
+                                                                backgroundColor: "rgba(0,0,0,0.05)",
+                                                            },
+                                                        }}
+                                                    >
+                                                        No
+                                                    </Button>
+                                                </Box>
+
+                                                {/* CHANGE: Timestamp now computed from createdAt instead of hardcoded 'time' */}
+                                                <p
+                                                    style={{
+                                                        color: "#999",
+                                                        fontSize: "0.875rem",
+                                                        margin: 0,
+                                                    }}
+                                                >
+                                                    {formatTimeAgo(notification.createdAt)}
+                                                </p>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                ))}
-                            </Box>
-                        ))}
-                    </Box>
+                                    ))}
+                                </Box>
+                            ))}
+                        </Box>
+                    )}
                 </Container>
             </Box>
         </>
