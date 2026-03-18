@@ -9,9 +9,9 @@ import { useAuth } from "@/services/authorization/AuthContext";
 import { CExpDetails } from "./CExpDetails";
 import { CUserWorkPhotos } from "./CUserWorkPhotos";
 import Link from "next/link";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 
 type UserProfileProps = {
@@ -20,46 +20,24 @@ type UserProfileProps = {
 
 const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
     const { isSeeker } = useAuth();
+    const router = useRouter();
 
-  const [isActive, setIsActive] = useState(false);
+    const [isActive, setIsActive] = useState(false);
 
-  useEffect(() => {
-    // Check the `isActive` status from cookies
-    const activeStatus = Cookies.get("isActive") === "true";
-    setIsActive(activeStatus);
+    useEffect(() => {
+        // Check the `isActive` status from cookies
+        const activeStatus = Cookies.get("isActive") === "true";
+        setIsActive(activeStatus);
 
-    if (!activeStatus) {
-      Swal.fire({
-        title: "Access Denied",
-        text: "Please log in to view the details.",
-        icon: "warning",
-        confirmButtonText: "OK",
-    }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
+        if (!activeStatus) {
+            toast.warning("Please log in to view the details.");
+            router.push("/Login");
         }
-      });
-    }
-    if (!isSeeker) {
-        Swal.fire({
-          title: "Access Denied",
-          text: "Please become a service provider to view the details.",
-          icon: "warning",
-          confirmButtonText: "OK",
-      }).then((result) => {
-          if (result.isConfirmed) {
-            router.push("/Landing");
-          }
-        });
-      }
-  }, []);
+    }, []);
 
-  if (!isActive) {
-    return null; 
-  }
-  if (!isSeeker) {
-    return null; 
-  }
+    if (!isActive) {
+        return null;
+    }
 
     function returnLanguages() {
         return UserProfileProps.profile?.languagesSpoken == null
@@ -87,7 +65,7 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                 <div className="d-flex flex-column flex-md-row align-items-center">
                     {/* Profile Image */}
                     <div className="me-md-4 mb-3 mb-md-0">
-                        <CUserPhoto profile={UserProfileProps.profile} hideEditIcon ={true} />
+                        <CUserPhoto profile={UserProfileProps.profile} hideEditIcon={true} />
                     </div>
 
                     {/* Profile Information */}
@@ -102,8 +80,30 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                                     <i className="bi bi-geo-alt-fill me-1 text-danger"></i>{UserProfileProps.profile?.city},{UserProfileProps.profile?.state}
                                 </span>
                             </div>
-
                         </div>
+
+                        {/* Action Buttons */}
+                        <div className="d-flex flex-wrap gap-2 mt-2">
+                            {UserProfileProps.profile?.phone && (
+                                <a href={`tel:${UserProfileProps.profile.phone}`} className="btn btn-outline-secondary btn-sm">
+                                    📞 Call ME
+                                </a>
+                            )}
+                            {UserProfileProps.profile?.email && (
+                                <a href={`mailto:${UserProfileProps.profile.email}`} className="btn btn-outline-secondary btn-sm">
+                                    ✉️ Email Me
+                                </a>
+                            )}
+                            {UserProfileProps.profile?.userId && (
+                                <button
+                                    className="btn btn-success btn-sm"
+                                    onClick={() => router.push(`/Messages?userId=${UserProfileProps.profile?.userId}`)}
+                                >
+                                    💬 Message Me
+                                </button>
+                            )}
+                        </div>
+
                         <hr />
                         <div className="row text-muted">
                             <Col sm={12} md={4}>
@@ -114,7 +114,7 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                                 />
                             </Col>
                             <Col sm={12} md={4}>
-                                 {UserProfileProps.profile?.showMobile && (
+                                {UserProfileProps.profile?.showMobile && (
                                     <div
                                         className="d-flex flex-row align-items-center"
                                         onClick={handleWhatsAppClick}
@@ -137,7 +137,7 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                                 />
                             </Col>
                             <Col sm={12} md={4}>
-                            <CDisplay
+                                <CDisplay
                                     heading="Email"
                                     icon="/assets/icons/form_icons/icon_email.svg"
                                     label={
@@ -153,7 +153,7 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                                         )
                                     }
                                 />
-                                </Col> 
+                            </Col>
                             {/* </div> */}
 
                             {/* Address */}
@@ -165,7 +165,7 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                                 />
                             </Col>
 
-                                <Col sm={12} md={4}>
+                            <Col sm={12} md={4}>
                                 <CDisplay
                                     heading="Languages Spoken"
                                     icon="/assets/icons/form_icons/icon_languages_spoken.svg"

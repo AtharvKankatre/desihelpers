@@ -6,10 +6,11 @@ import { useRouter } from "next/router";
 import style from "@/styles/Common.module.css";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
-import Swal from "sweetalert2";
 import CookieService from "@/services/authorization/CookieService";
 import Radar from "radar-sdk-js";
 import { toast } from "react-toastify";
+import OtherDataServices from "@/services/other_data/OtherDataServices";
+import base64url from "base64url";
 
 // Define the form data interface for all steps
 interface SignupFormData {
@@ -40,6 +41,7 @@ interface SignupFormData {
   linkedinLink: string;
   twitterLink: string;
   websiteLink: string;
+  listProfileAs: string;
 }
 
 type ViewMode = "signup" | "login";
@@ -58,7 +60,15 @@ const Login = () => {
   const [isLoginOtpSent, setIsLoginOtpSent] = useState(false);
   const [loginOtp, setLoginOtp] = useState(["", "", "", "", "", ""]);
   const [loginTimer, setLoginTimer] = useState(59);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const loginTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Cleanup profile preview URL
+  useEffect(() => {
+    return () => {
+      if (profilePreview) URL.revokeObjectURL(profilePreview);
+    };
+  }, [profilePreview]);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const apiBaseUrl = process.env.NEXT_PUBLIC_Base_API_URL;
@@ -206,11 +216,22 @@ const Login = () => {
 
   const urlValidation = yup.string().url("Please enter a valid URL (e.g., https://example.com)");
   const step4Schema = yup.object({
+    profilePicture: yup.mixed().nullable().notRequired()
+      .test("fileSize", "File size must be less than 5MB", (value) => {
+        if (!value) return true; // Optional file
+        return (value as File).size <= 5 * 1024 * 1024;
+      })
+      .test("fileFormat", "Unsupported Format. Only JPEG, PNG, and WebP are allowed", (value) => {
+        if (!value) return true;
+        const supportedFormats = ['image/jpeg', 'image/png', 'image/webp'];
+        return supportedFormats.includes((value as File).type);
+      }),
     facebookLink: urlValidation,
     instagramLink: urlValidation,
     linkedinLink: urlValidation,
     twitterLink: urlValidation,
     websiteLink: urlValidation,
+    listProfileAs: yup.string().required("Please tell us what brings you here today"),
   });
 
   const getValidationSchema = () => {
@@ -248,6 +269,7 @@ const Login = () => {
       linkedinLink: "",
       twitterLink: "",
       websiteLink: "",
+      listProfileAs: "",
     },
     validationSchema: getValidationSchema(),
     validateOnChange: true,
@@ -342,7 +364,8 @@ const Login = () => {
       const signupPayload = {
         email: formik.values.email,
         password: "TempPass123!", // Will be set via OTP login
-        isJobSeeker: false,
+        isJobSeeker: formik.values.listProfileAs !== "Job Seeker",
+        listProfileAs: formik.values.listProfileAs,
       };
 
       const signupRes = await ApiService.crud(APIDetails.signup, signupPayload);
@@ -359,15 +382,10 @@ const Login = () => {
 
       if (!loginRes[0] || !loginRes[1]?.access_token) {
         // Account created but auto-login failed
-        Swal.fire({
-          title: "Account Created!",
-          text: "Please login with OTP to complete your profile.",
-          icon: "success",
-        }).then(() => {
-          formik.resetForm();
-          setCurrentStep(1);
-          setViewMode("login");
-        });
+        toast.info("Account Created! Please login with OTP to complete your profile.", { autoClose: 5000 });
+        formik.resetForm();
+        setCurrentStep(1);
+        setViewMode("login");
         setIsLoading(false);
         return;
       }
@@ -382,14 +400,59 @@ const Login = () => {
         displayName: formik.values.displayName || `${formik.values.firstName} ${formik.values.lastName}`,
         gender: formik.values.gender,
         email: formik.values.email,
-        mobile: formik.values.mobileNumber,
-        phone: formik.values.whatsappSameAsMobile ? formik.values.mobileNumber : formik.values.whatsappNumber,
+        phone: formik.values.mobileNumber,
+        mobile: formik.values.whatsappSameAsMobile ? formik.values.mobileNumber : formik.values.whatsappNumber,
         addressLine1: formik.values.addressLine1,
         addressLine2: formik.values.addressLine2,
         city: formik.values.city,
         state: formik.values.state,
         zipCode: formik.values.zipCode,
+        profilePhoto: "", // Default empty
+        listProfileAs: formik.values.listProfileAs,
       };
+
+      // Step 3a: Upload profile picture if exists
+      if (formik.values.profilePicture) {
+        try {
+          const otherServices = new OtherDataServices();
+          // Extract userId from access_token
+          // Extract userId from access_token
+          const token = loginRes[1].access_token;
+          const payloadStr = base64url.decode(token.split('.')[1]);
+          const payload = JSON.parse(payloadStr);
+          const userId = payload.id || payload._id || payload.sub;
+
+          if (userId) {
+            const fileName = `profilePhotos/${userId}`;
+            const uploadRes = await otherServices.uploadProfilePhoto(formik.values.profilePicture, fileName);
+            if (uploadRes && uploadRes[0]) {
+              const resData = uploadRes[1];
+              let photoUrl = "";
+              
+              if (typeof resData === 'string') {
+                photoUrl = resData;
+              } else if (resData && typeof resData === 'object') {
+                // Backend returns { urls: [string] } or { urls: { profilePhoto: string } }
+                if (Array.isArray(resData.urls)) {
+                    photoUrl = resData.urls[0];
+                } else if (resData.urls && typeof resData.urls.profilePhoto === 'string') {
+                    photoUrl = resData.urls.profilePhoto;
+                } else if (typeof resData.profilePhoto === 'string') {
+                    photoUrl = resData.profilePhoto;
+                }
+              }
+
+              if (photoUrl) {
+                // Strip query params if any
+                profilePayload.profilePhoto = photoUrl.split('?')[0];
+              }
+            }
+          }
+        } catch (uploadError) {
+          console.error("Profile photo upload failed:", uploadError);
+          // We continue anyway as the account is created, but maybe notify user
+        }
+      }
 
       // Only add social links if they are filled
       if (formik.values.facebookLink) profilePayload.facebookLink = formik.values.facebookLink;
@@ -401,6 +464,34 @@ const Login = () => {
       const profileRes = await ApiService.crud(APIDetails.postUserProfile, profilePayload);
 
       if (profileRes[0]) {
+        // Update local store with the profile data including the photo
+        const { userProfileStore } = await import("@/stores/UserProfileStore");
+        const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
+        
+        // Ensure we have a viewable photo URL for immediate rendering
+        let signedPhotoUrl = profilePayload.profilePhoto;
+        if (signedPhotoUrl && !signedPhotoUrl.includes('data:')) {
+           try {
+              const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "";
+              
+              // If it's already a full S3 URL, getWorkPhotoUrls expects just the key or it will sign the whole thing
+              let keyToSign = signedPhotoUrl;
+              if (signedPhotoUrl.includes('amazonaws.com/')) {
+                  keyToSign = signedPhotoUrl.split('amazonaws.com/')[1];
+              }
+
+              const signed = await getWorkPhotoUrls(bucketName, [keyToSign]);
+              if (Array.isArray(signed) && signed.length > 0) {
+                  signedPhotoUrl = signed[0];
+              }
+           } catch(e) { console.error("Could not sign URL for store", e); }
+        }
+
+        userProfileStore.getState().setUserProfile({
+           ...profilePayload,
+           profilePhoto: signedPhotoUrl || profilePayload.profilePhoto
+        });
+
         // Step 4: Re-login to get fresh tokens with isProfile=true
         const refreshLoginRes = await ApiService.crud(APIDetails.login, {
           email: formik.values.email,
@@ -410,24 +501,12 @@ const Login = () => {
           CookieService.SetCookies(refreshLoginRes[1]);
         }
 
-        Swal.fire({
-          title: "Welcome to DesiHelpers!",
-          text: "Your account and profile have been created successfully!",
-          icon: "success",
-          confirmButtonText: "View My Profile",
-        }).then(() => {
-          router.push("/profile");
-        });
+        toast.success("Welcome to DesiHelpers! Your account and profile have been created successfully.");
+        router.push("/profile");
       } else {
         // Account created + logged in, but profile save failed
-        Swal.fire({
-          title: "Account Created!",
-          text: "You are logged in. Please complete your profile from the profile page.",
-          icon: "info",
-          confirmButtonText: "Continue",
-        }).then(() => {
-          router.push("/profile");
-        });
+        toast.info("Account Created! You are logged in. Please complete your profile from the profile page.");
+        router.push("/profile");
       }
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
@@ -1067,27 +1146,94 @@ const Login = () => {
   // Render Step 4 - Social Details
   const renderStep4 = () => (
     <div className={style.stepContent}>
-      <h3 className={style.stepTitle}>Social details</h3>
-      <p className={style.stepSubtitle}>Enter below details to connect your social profiles.</p>
+      <h3 className={style.stepTitle}>Social details & Visibility</h3>
+      <p className={style.stepSubtitle}>Enter below details to connect your social profiles and define your account.</p>
+
+      {/* Profile Listing Choice */}
+      <div className={style.formGroup}>
+        <label className={style.formLabel}>What brings you here today? <span className={style.required}>*</span></label>
+        <p className={style.uploadHint}>Control how you appear to others on DesiHelpers. Don't worry, you can change this later!</p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px', marginBottom: '8px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '15px', color: '#333', fontWeight: 500, padding: '12px 16px', border: formik.values.listProfileAs === "Job Seeker" ? '2px solid #f07c00' : '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: formik.values.listProfileAs === "Job Seeker" ? '#fff9f2' : '#fff', transition: 'all 0.2s ease' }}>
+            <input
+              type="radio"
+              name="listProfileAs"
+              value="Job Seeker"
+              checked={formik.values.listProfileAs === "Job Seeker"}
+              onChange={formik.handleChange}
+              style={{ marginRight: '12px', accentColor: '#f07c00', width: '18px', height: '18px', cursor: 'pointer' }}
+            />
+            I want to hire someone
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '15px', color: '#333', fontWeight: 500, padding: '12px 16px', border: formik.values.listProfileAs === "Service Provider" ? '2px solid #3eb489' : '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: formik.values.listProfileAs === "Service Provider" ? '#f0fcf7' : '#fff', transition: 'all 0.2s ease' }}>
+            <input
+              type="radio"
+              name="listProfileAs"
+              value="Service Provider"
+              checked={formik.values.listProfileAs === "Service Provider"}
+              onChange={formik.handleChange}
+              style={{ marginRight: '12px', accentColor: '#3eb489', width: '18px', height: '18px', cursor: 'pointer' }}
+            />
+            I want to offer my services
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '15px', color: '#333', fontWeight: 500, padding: '12px 16px', border: formik.values.listProfileAs === "Both" ? '2px solid #003385' : '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: formik.values.listProfileAs === "Both" ? '#f2f6ff' : '#fff', transition: 'all 0.2s ease' }}>
+            <input
+              type="radio"
+              name="listProfileAs"
+              value="Both"
+              checked={formik.values.listProfileAs === "Both"}
+              onChange={formik.handleChange}
+              style={{ marginRight: '12px', accentColor: '#003385', width: '18px', height: '18px', cursor: 'pointer' }}
+            />
+            I want to do both
+          </label>
+        </div>
+        {formik.touched.listProfileAs && formik.errors.listProfileAs && (
+          <span className={style.errorText}>{formik.errors.listProfileAs}</span>
+        )}
+      </div>
 
       {/* Profile Picture Upload */}
       <div className={style.formGroup}>
         <label className={style.formLabel}>Profile Picture</label>
-        <p className={style.uploadHint}>Add your photo to build trust and attract more opportunities – profiles with pictures get hired faster!</p>
-        <div className={style.uploadArea}>
-          <div className={style.uploadIcon}>📷</div>
-          <p>Drag and drop your photo here, or <span className={style.browseLink}>browse</span></p>
+        <p className={style.uploadHint}>Add your photo to build trust and attract more opportunities – max 5MB (JPEG, PNG). Profiles with pictures get hired faster!</p>
+        <div className={style.uploadArea} style={{ borderColor: formik.touched.profilePicture && formik.errors.profilePicture ? '#d32f2f' : '#ccc', minHeight: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {profilePreview ? (
+            <div style={{ position: 'relative', width: '130px', height: '130px' }}>
+              <img
+                src={profilePreview}
+                alt="Profile Preview"
+                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '4px solid #00b67a' }}
+              />
+              <div style={{ position: 'absolute', bottom: '0px', right: '0px', backgroundColor: '#fff', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', border: '1px solid #eee' }}>
+                <img src="/assets/icons/form_icons/icon_edit_photo.svg" alt="Edit" style={{ width: '22px', height: '22px' }} />
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <div className={style.uploadIcon} style={{ fontSize: '40px', marginBottom: '10px' }}>📷</div>
+              <p style={{ margin: 0 }}>
+                Drag and drop your photo here, or <span className={style.browseLink}>browse</span>
+              </p>
+            </div>
+          )}
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg, image/png, image/webp"
             onChange={(e) => {
               if (e.target.files?.[0]) {
-                formik.setFieldValue("profilePicture", e.target.files[0]);
+                const file = e.target.files[0];
+                formik.setFieldValue("profilePicture", file);
+                setProfilePreview(URL.createObjectURL(file));
               }
             }}
             className={style.fileInput}
           />
         </div>
+        {formik.touched.profilePicture && formik.errors.profilePicture && (
+          <span className={style.errorText}>{formik.errors.profilePicture as string}</span>
+        )}
       </div>
 
       <div className={style.formRow}>
@@ -1367,3 +1513,4 @@ const Login = () => {
 };
 
 export default Login;
+

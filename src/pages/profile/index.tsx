@@ -108,6 +108,7 @@ const defaultProfile = {
         state: "",
         zipCode: ""
     },
+    listProfileAs: "Both",
     services: [],
     jobsOffered: [],
     testimonialsReceived: [],
@@ -157,6 +158,7 @@ interface PersonalSocialUpdateData {
     mobileNumber: string;
     whatsappNumber: string;
     whatsappSameAsMobile: boolean;
+    listProfileAs: string;
     facebookLink: string;
     instagramLink: string;
     linkedInLink: string;
@@ -189,6 +191,7 @@ interface ProfileData {
         state: string;
         zipCode: string;
     };
+    listProfileAs: string;
     services: any[];
     jobsOffered: any[];
     testimonialsReceived: any[];
@@ -266,6 +269,7 @@ const Profile: React.FC = () => {
                     commutePreference: apiProfile.commutePreference || "Not specified",
                     dietaryPreference: apiProfile.dietaryRestrictions || "Not specified",
                     okWithPets: apiProfile.okWithPets ? "Yes" : "No",
+                    listProfileAs: apiProfile.listProfileAs || "Both",
                     address: {
                         line1: apiProfile.addressLine1 || "",
                         line2: apiProfile.addressLine2 || "",
@@ -350,6 +354,54 @@ const Profile: React.FC = () => {
         fetchProfileData();
         fetchJobs();
     }, []);
+
+    // Sync local state when global userProfile store changes (e.g. from header popup or signup)
+    useEffect(() => {
+        if (userProfile && Object.keys(userProfile).length > 0) {
+            const syncData = async () => {
+                let signedPhotoUrl = userProfile.profilePhoto || profile.photo;
+                
+                // If it looks like a raw S3 path (not starting with http and not base64), sign it
+                if (userProfile.profilePhoto && !userProfile.profilePhoto.startsWith('http') && !userProfile.profilePhoto.startsWith('data:')) {
+                    if (userProfile.profilePhoto !== "/newassets/account_circle.png") {
+                        try {
+                            const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "";
+                            const signed = await getWorkPhotoUrls(bucketName, [userProfile.profilePhoto]);
+                            if (Array.isArray(signed) && signed.length > 0) {
+                                signedPhotoUrl = signed[0];
+                                console.log("[ProfileSync] Successfully signed photo:", signedPhotoUrl);
+                            }
+                        } catch (e) { console.error("Sync photo sign failed:", e); }
+                    }
+                }
+
+                setProfile(prev => ({
+                    ...prev,
+                    listProfileAs: userProfile.listProfileAs || prev.listProfileAs,
+                    firstName: userProfile.firstName || prev.firstName,
+                    lastName: userProfile.lastName || prev.lastName,
+                    displayName: userProfile.displayName || prev.displayName,
+                    email: userProfile.email || prev.email,
+                    mobileNumber: userProfile.mobile || prev.mobileNumber,
+                    whatsappNumber: userProfile.phone || prev.whatsappNumber,
+                    photo: signedPhotoUrl,
+                    address: {
+                        line1: userProfile.addressLine1 || prev.address.line1,
+                        line2: userProfile.addressLine2 || prev.address.line2,
+                        city: userProfile.city || prev.address.city,
+                        state: userProfile.state || prev.address.state,
+                        zipCode: userProfile.zipCode || prev.address.zipCode,
+                    }
+                }));
+                
+                // Clear the error flag just in case we were showing the fallback avatar previously
+                if (signedPhotoUrl && signedPhotoUrl !== "/newassets/account_circle.png") {
+                   setProfilePhotoError(false);
+                }
+            };
+            syncData();
+        }
+    }, [userProfile]);
 
     // Delete photo handler
     const handleDeletePhoto = (photoId: number) => {
@@ -537,6 +589,7 @@ const Profile: React.FC = () => {
             websiteLink: updatedData.websiteLink,
             twitterLink: updatedData.twitterLink,
             linkedinLink: updatedData.linkedInLink,
+            listProfileAs: updatedData.listProfileAs,
         };
 
         // Remove empty strings so backend doesn't run validation regex on them
@@ -581,6 +634,7 @@ const Profile: React.FC = () => {
                 mobileNumber: updatedData.mobileNumber,
                 whatsappNumber: updatedData.whatsappNumber,
                 whatsappSameAsMobile: updatedData.whatsappSameAsMobile,
+                listProfileAs: updatedData.listProfileAs,
                 socialLinks: {
                     ...profile.socialLinks,
                     facebook: updatedData.facebookLink,
@@ -591,6 +645,14 @@ const Profile: React.FC = () => {
                 }
             });
             setPersonalSocialModalOpen(false);
+            
+            // Update global store to keep header and popup in sync
+            const { setUserProfile } = userProfileStore.getState();
+            const resultFull = await ApiService.crud(APIDetails.getUserProfile);
+            if (resultFull[0]) {
+                setUserProfile(resultFull[1]);
+            }
+            
             toast.success("Details updated successfully!");
         } else {
             console.error("Personal details update failed:", result[1]);
@@ -824,10 +886,8 @@ const Profile: React.FC = () => {
                     </div>
                 )}
 
-                {/* Profile Info Section */}
                 <div className={`${styles.profileInfoSection} ${avatarOpen ? styles.profileInfoSectionHidden : ""}`}>
                     <div className={styles.profilePhotoContainer}>
-                        {console.log("[ProfileDebug] Rendering photo container. profile.photo:", profile.photo, "profilePhotoError:", profilePhotoError)}
                         {profile.photo && profile.photo !== "/newassets/account_circle.png" && !profilePhotoError ? (
                             <img
                                 src={profile.photo}
@@ -922,6 +982,23 @@ const Profile: React.FC = () => {
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>OK With Pets</div>
                                 <div className={styles.infoValue}>{profile.okWithPets || "-"}</div>
+                            </div>
+
+                            <div className={styles.infoRow} style={{ marginTop: "15px" }}>
+                                <div className={styles.infoLabel}>List Profile As</div>
+                                <div className={styles.infoValue}>
+                                    <span style={{ 
+                                        backgroundColor: '#fff0e0', 
+                                        color: '#f07c00', 
+                                        padding: '2px 10px', 
+                                        borderRadius: '12px', 
+                                        fontWeight: 600,
+                                        fontSize: '12px',
+                                        border: '1px solid #ffe0c0'
+                                    }}>
+                                        {profile.listProfileAs === "Job Seeker" ? "Hire Someone" : (profile.listProfileAs || "Both")}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1363,6 +1440,7 @@ const Profile: React.FC = () => {
                     mobileNumber: profile.mobileNumber || "",
                     whatsappNumber: profile.whatsappNumber || "",
                     whatsappSameAsMobile: profile.whatsappSameAsMobile || false,
+                    listProfileAs: profile.listProfileAs || "Both",
                     facebookLink: profile.socialLinks.facebook === "#" ? "" : (profile.socialLinks.facebook || ""),
                     instagramLink: profile.socialLinks.instagram === "#" ? "" : (profile.socialLinks.instagram || ""),
                     linkedInLink: profile.socialLinks.linkedin === "#" ? "" : (profile.socialLinks.linkedin || ""),

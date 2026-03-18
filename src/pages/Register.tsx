@@ -95,18 +95,8 @@ const Register: React.FC<Props> = ({ callback }) => {
 
     const res = await ApiService.crud(APIDetails.signup, apiPayload);
     if (res[0]) {
-      Swal.fire({
-        title: "Success! Welcome to DesiHelpers.com",
-        text: "Let us find the help you need!",
-        icon: "success",
-        imageUrl: "/DesiHelpersLogo.svg",
-        imageAlt: "Custom image",
-        imageWidth: 300,
-        imageHeight: "auto",
-        confirmButtonText: "OK",
-      }).then(() => {
-        callback();
-      });
+      toast.success("Welcome to DesiHelpers.com! Let us find the help you need!");
+      callback();
     } else {
       toast.error(res[1] || "Signup failed. Please try again.");
     }

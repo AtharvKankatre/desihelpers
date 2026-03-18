@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import styles from "@/styles/Common.module.css";
 import { useAuth } from "@/services/authorization/AuthContext";
 
@@ -10,28 +10,11 @@ export const PostJobAnimatedButton = () => {
   const handleClick = () => {
 
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please Login before posting a job",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please Login before posting a job");
+      router.push("/Login");
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before posting a job.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warning("Please build your profile first before posting a job.");
+      router.push("/Landing");
     } else {
       router.push("/jobs/PostAJob");
     }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/styles/Profile.module.css";
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaGlobe } from "react-icons/fa6";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 interface PersonalSocialData {
     firstName: string;
@@ -12,6 +12,7 @@ interface PersonalSocialData {
     mobileNumber: string;
     whatsappNumber: string;
     whatsappSameAsMobile: boolean;
+    listProfileAs: string;
     facebookLink: string;
     instagramLink: string;
     linkedInLink: string;
@@ -59,31 +60,35 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
     const handleUpdate = () => {
         // Only these 4 fields are required
         if (!formData.firstName.trim()) {
-            Swal.fire("Required", "First name is required", "warning");
+            toast.warning("First name is required");
             return;
         }
         if (!formData.lastName.trim()) {
-            Swal.fire("Required", "Last name is required", "warning");
+            toast.warning("Last name is required");
             return;
         }
         if (!formData.gender || formData.gender === "") {
-            Swal.fire("Required", "Please select a gender", "warning");
+            toast.warning("Please select a gender");
             return;
         }
         if (!formData.mobileNumber.trim()) {
-            Swal.fire("Required", "Mobile number is required", "warning");
+            toast.warning("Mobile number is required");
+            return;
+        }
+        if (!formData.listProfileAs) {
+            toast.warning("Please select a profile preference");
             return;
         }
         // Validate Email - backend requires a valid email format if present
         if (formData.email && formData.email.trim() !== "") {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(formData.email.trim())) {
-                Swal.fire("Required", "Please enter a valid email address (e.g., dishamehta838@gmail.com)", "warning");
+                toast.warning("Please enter a valid email address (e.g., dishamehta838@gmail.com)");
                 return;
             }
         } else {
             // If the user clears the email, warn them because the backend will reject it
-            Swal.fire("Required", "Email ID cannot be empty. The system requires a valid email.", "warning");
+            toast.warning("Email ID cannot be empty. The system requires a valid email.");
             return;
         }
 
@@ -107,7 +112,7 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
         const wel = processUrl(formData.websiteLink);
 
         if (fbl === "INVALID_URL" || igl === "INVALID_URL" || lnl === "INVALID_URL" || twl === "INVALID_URL" || wel === "INVALID_URL") {
-            Swal.fire("Invalid Link", "Please enter a valid URL with a domain (e.g., facebook.com/user). Simple words are not accepted.", "warning");
+            toast.warning("Please enter a valid URL with a domain (e.g., facebook.com/user). Simple words are not accepted.");
             return;
         }
 
@@ -191,21 +196,22 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                         </div>
                     </div>
 
-                    <div className={styles.formRow}>
-                        <div className={styles.formSection}>
-                            <label className={styles.fieldLabel}>Email ID <span style={{ fontSize: '11px', color: '#888', fontWeight: 400 }}>🔒 Set during signup</span></label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email ID"
-                                className={styles.formInput}
-                                value={formData.email}
-                                readOnly
-                                disabled
-                                style={{ backgroundColor: '#f0f0f0', color: '#888', cursor: 'not-allowed' }}
-                                title="Email cannot be changed after signup"
-                            />
-                        </div>
+                    <div className={styles.formSection}>
+                        <label className={styles.fieldLabel}>Email ID <span style={{ fontSize: '11px', color: '#888', fontWeight: 400 }}>🔒 Set during signup</span></label>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email ID"
+                            className={styles.formInput}
+                            value={formData.email}
+                            readOnly
+                            disabled
+                            style={{ backgroundColor: '#f0f0f0', color: '#888', cursor: 'not-allowed' }}
+                            title="Email cannot be changed after signup"
+                        />
+                    </div>
+
+                    <div className={styles.formRow} style={{ gridTemplateColumns: '0.8fr 1.2fr' }}>
                         <div className={styles.formSection}>
                             <label className={styles.fieldLabel}>Mobile number <span style={{ color: 'red' }}>*</span></label>
                             <input
@@ -217,6 +223,20 @@ const CPersonalSocialModal: React.FC<CPersonalSocialModalProps> = ({
                                 onChange={handleChange}
                                 required
                             />
+                        </div>
+                        <div className={styles.formSection}>
+                            <label className={styles.fieldLabel}>List Profile As <span style={{ color: 'red' }}>*</span></label>
+                            <select
+                                name="listProfileAs"
+                                className={styles.formSelect}
+                                value={formData.listProfileAs || "Both"}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="Job Seeker">Hire Someone</option>
+                                <option value="Service Provider">Service Provider</option>
+                                <option value="Both">Both</option>
+                            </select>
                         </div>
                     </div>
 

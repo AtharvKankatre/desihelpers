@@ -7,7 +7,7 @@ import { CWorkPhoto } from "./CWorkPhotoUpload";
 import styles from "@/styles/UserProfiles.module.css";
 import { IoImageOutline } from "react-icons/io5";
 import { SlSizeFullscreen } from "react-icons/sl";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import { getWorkPhotoUrls } from "@/utils/s3Helper";
 
 type Props = {
@@ -129,12 +129,9 @@ export const CEditUserWorkPhotos: FunctionComponent<Props> = ({
     // Check if the total images exceed the limit of 3
     if (totalImages + validImages.length > 3) {
       const maxAllowed = 3 - totalImages;
-      Swal.fire({
-        icon: "warning",
-        title: `Upload Limit Reached`,
-        text: `Only ${maxAllowed} more ${maxAllowed === 1 ? "photo" : "photos allowed"
-          } or please remove existing photos to upload new ones.`,
-      });
+      toast.warning(
+        `Only ${maxAllowed} more ${maxAllowed === 1 ? "photo" : "photos"} allowed. Please remove existing photos to upload new ones.`
+      );
     } else {
       // Add new valid images if within the limit
       setAddImages([...addImages, ...validImages]);

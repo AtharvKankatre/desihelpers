@@ -16,6 +16,9 @@ export interface IJobs {
   addressLine1?: string;
   addressLine2?: string;
   city?: string;
+  status: string;
+  rejectionReason: string;
+  postedBy: string; // User ID of the job poster
   state?: string;
   zipCode?: string;
   payRange?: string;

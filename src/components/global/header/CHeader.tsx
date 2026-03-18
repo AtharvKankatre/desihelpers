@@ -18,7 +18,9 @@ import { cookieParams } from "@/constants/ECookieParams";
 import Roles from "@/constants/ERoles";
 import styles from "@/styles/Common.module.css";
 import Image from "next/image";
-import { useNotification } from "@/context/NotificationContext";// ... imports
+import { useNotification } from "@/context/NotificationContext";
+import { FaEnvelope } from "react-icons/fa";
+import { useChatStore } from "@/stores/ChatStore";// ... imports
 // ... imports
 
 const _CHeader = () => {
@@ -32,13 +34,19 @@ const _CHeader = () => {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { unreadCount } = useNotification();
+  const chatUnreadCount = useChatStore((state) => state.unreadTotal);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const { isActive, isProfileBuild } = useAuth();
-  const roleStatus = Cookies.get(cookieParams.role);
-  const isAdmin = roleStatus === Roles.Admin;
-  const isSubAdmin = roleStatus === Roles.SubAdmin;
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isSubAdmin, setIsSubAdmin] = useState(false);
+
+  useEffect(() => {
+    const roleStatus = Cookies.get(cookieParams.role);
+    setIsAdmin(roleStatus === Roles.Admin);
+    setIsSubAdmin(roleStatus === Roles.SubAdmin);
+  }, []);
 
   useEffect(() => {
     // ... existing useEffect code
@@ -126,22 +134,22 @@ const _CHeader = () => {
               }}
             >
               Eng
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ marginLeft: "4px" }}
-              >
-                <path
-                  d="M3 4.5L6 7.5L9 4.5"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ marginLeft: "4px" }}
+                >
+                  <path
+                    d="M3 4.5L6 7.5L9 4.5"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
             </button>
             <Zoom in={langDropdownOpen} style={{ transformOrigin: 'top right' }}>
               <div className={`${styles.langDropdown} language-dropdown`}>
@@ -161,19 +169,40 @@ const _CHeader = () => {
             </Zoom>
           </div>
 
-          {/* Notification Button - Always show on mobile, only when active on desktop */}
-          {/* Temporary force show for demo if active check fails, or rely on correct logic. assuming user is logged in or we want to show it. 
-               The original code had `(mobile || tablet || isActive)` 
-               Forcing true for demo purposes if needed, but sticking to logic.
-           */}
-          {(mobile || tablet || true) && ( // Forced true for testing/demo as per user request flow usually implies they want to see it
+          {/* Chat / Messages Button */}
+          {(mobile || tablet || isActive) && (
+            <div style={{ position: "relative", marginRight: mobile ? "0px" : "10px" }}>
+              <button
+                className={styles.navIconButton}
+                onClick={() => router.push(Routes.messages)}
+                style={{ position: 'relative' }}
+              >
+                <FaEnvelope style={{ color: "white" }} />
+                {chatUnreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '2px',
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#ff0000',
+                    borderRadius: '50%',
+                    border: '1.5px solid #001838'
+                  }}></span>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Notification Button */}
+          {(mobile || tablet || isActive) && (
             <div style={{ position: "relative" }}>
               <button
                 className={styles.navIconButton}
                 onClick={() => setNotificationOpen(!notificationOpen)}
                 style={{ position: 'relative' }}
               >
-                <FaBell style={{ color: "white", fontSize: "24px" }} />
+                <FaBell style={{ color: "white" }} />
                 {unreadCount > 0 && (
                   <span style={{
                     position: 'absolute',

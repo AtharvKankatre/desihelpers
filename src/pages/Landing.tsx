@@ -16,7 +16,7 @@ import { jobStore } from "@/stores/JobStore";
 import { seekerStore } from "@/stores/SeekerStore";
 import { CCommonLoader } from "@/components/static/CommonLoader";
 import { Routes } from "@/services/routes/Routes";
-import Swal from "sweetalert2";
+
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import { toast } from "react-toastify";
@@ -68,22 +68,8 @@ const Landing: React.FC = () => {
             setTimeout(() => {
               const profileStatus = Cookies.get(cookieParams.isProfileBuild); // Retrieve the cookie value
               if (profileStatus == "false") {
-                Swal.fire({
-                  title: "Welcome to DesiHelpers.com",
-                  text: "Let us find the help you need!",
-                  icon: "success",
-                  imageUrl: "/DesiHelpers_without-tag-line.svg",
-                  imageAlt: "Custom image",
-                  imageWidth: 300,
-                  imageHeight: "auto",
-                  confirmButtonText: "Click here to build your profile",
-                  allowOutsideClick: false,
-                  allowEscapeKey: false,
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    router.replace(Routes.editUserProfile);
-                  }
-                });
+                toast.info("Welcome to DesiHelpers! Click here to build your profile.");
+                router.replace(Routes.editUserProfile);
               }
               else {
                 router.replace(Routes.landing);

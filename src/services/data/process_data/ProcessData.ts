@@ -190,6 +190,38 @@ class ProcessDataService {
         case APIDetails.deleteFeedback[0]:
           res = data;
           break;
+        // Chat endpoints — pass raw data through
+        case APIDetails.getOrCreateConversation[0]:
+          res = data;
+          break;
+        case APIDetails.getConversations[0]:
+          res = data;
+          break;
+        case APIDetails.getMessages[0]:
+          res = data;
+          break;
+        case APIDetails.markMessagesRead[0]:
+          res = data;
+          break;
+        case APIDetails.getUnreadMessageCount[0]:
+          res = data;
+          break;
+        // Notification endpoints
+        case APIDetails.getNotifications[0]:
+          res = data;
+          break;
+        case APIDetails.markNotificationRead[0]:
+          res = data;
+          break;
+        case APIDetails.markAllNotificationsRead[0]:
+          res = data;
+          break;
+        case APIDetails.getUnreadNotificationCount[0]:
+          res = data;
+          break;
+        case APIDetails.createNotification[0]:
+          res = data;
+          break;
         default:
           return [false, "Something went wrong"];
       }

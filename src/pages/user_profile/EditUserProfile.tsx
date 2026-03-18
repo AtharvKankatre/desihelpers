@@ -256,6 +256,7 @@ const EditUserProfile: FunctionComponent = () => {
       commutePreference: yup.string().trim(),
       dietaryRestrictions: yup.string().trim(),
       okWithPets: yup.boolean(),
+      listProfileAs: yup.string().required("Please select your profile visibility preference"),
       // jobDetails: yup.object<JobDetail>(),
     }),
   });

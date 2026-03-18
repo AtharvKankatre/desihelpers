@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from "react";
-import Swal from "sweetalert2";
+
 import { toast } from "react-toastify";
 import {
   FacebookShareButton,
@@ -42,41 +42,19 @@ const CCopyLinkButton: FC<CCopyLinkButtonProps> = ({ id }) => {
 
   const handleCopyLink = async () => {
     if (!id) {
-      Swal.fire({
-        title: "Error",
-        text: "Email is required to generate the link.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+      toast.error("Email is required to generate the link.");
       return;
     }
 
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to view seeker details.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.warning("Please login to view seeker details.");
+      router.push("/Login");
       return;
     }
 
     if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before viewing seeker details.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warning("Please build your profile first before viewing seeker details.");
+      router.push("/Landing");
       return;
     }
 
@@ -111,12 +89,7 @@ const CCopyLinkButton: FC<CCopyLinkButtonProps> = ({ id }) => {
       }
     } catch (err) {
       console.error("Failed to copy path to clipboard:", err);
-      Swal.fire({
-        title: "Error",
-        text: "Failed to copy link. Please try again.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
+      toast.error("Failed to copy link. Please try again.");
     }
   };
 

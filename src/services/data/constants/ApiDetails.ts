@@ -74,4 +74,11 @@ export const APIDetails = {
   markAllNotificationsRead: ["notifications/mark-all-read", ApiType.put, true],
   getUnreadNotificationCount: ["notifications/unread-count", ApiType.get, true],
   createNotification: ["notifications", ApiType.post, true],
+
+  // CHANGE: Added chat API endpoints
+  getOrCreateConversation: ["chat/conversation", ApiType.post, true],
+  getConversations: ["chat/conversations", ApiType.get, true],
+  getMessages: ["chat/messages/", ApiType.get, true], // append conversationId
+  markMessagesRead: ["chat/messages/", ApiType.put, true], // append conversationId/read
+  getUnreadMessageCount: ["chat/unread-count", ApiType.get, true],
 };

@@ -10,12 +10,12 @@ import { Routes } from "@/services/routes/Routes";
 import JobServices from "@/services/jobs/JobService";
 import { IJobFilters } from "@/models/JobFilters";
 import { CH1Label } from "../reusable/labels/CH1Label";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import { useAuth } from "@/services/authorization/AuthContext";
-import Slider from "react-slick"; 
+import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
-import customStyles from "@/styles/Carousel.module.css"; 
+import customStyles from "@/styles/Carousel.module.css";
 
 export const CDisplayJobPostersRow = () => {
   const router = useRouter();
@@ -23,7 +23,7 @@ export const CDisplayJobPostersRow = () => {
   const [jobs, setJobs] = useState<IJobs[]>([]);
   let filters: IJobFilters = {};
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { mobile, tablet } = useAppMediaQuery(); 
+  const { mobile, tablet } = useAppMediaQuery();
   const { isProfileBuild, isActive } = useAuth();
 
   // fetch the list of jobs
@@ -40,67 +40,50 @@ export const CDisplayJobPostersRow = () => {
 
   const viewAllJobs = () => {
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to view all jobs",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please login to view all jobs");
+      router.push("/Login");
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before viewing all jobs.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warning("Please build your profile first before viewing all jobs.");
+      router.push("/Landing");
     } else {
       router.push(Routes.viewAllJobs);
     }
   };
 
   const NextArrow: React.FC<{
-  className?: string;
-  style?: React.CSSProperties;
-  onClick?: () => void;
-}> = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <img
-      className={`${className} ${styles.nextRightArrow}`}
-      src="/assets/icons/icon_arrow_right.svg"
-      alt="Next Arrow"
-      style={style}
-      onClick={onClick}
-    />
-  );
-};
+    className?: string;
+    style?: React.CSSProperties;
+    onClick?: () => void;
+  }> = (props) => {
+    const { className, style, onClick } = props;
+    return (
+      <img
+        className={`${className} ${styles.nextRightArrow}`}
+        src="/assets/icons/icon_arrow_right.svg"
+        alt="Next Arrow"
+        style={style}
+        onClick={onClick}
+      />
+    );
+  };
 
-const PrevArrow: React.FC<{
-  className?: string;
-  style?: React.CSSProperties;
-  onClick?: () => void;
-}> = (props) => {
-  const { className, style, onClick } = props;
-  return (
-    <img
-      className={`${className} ${styles.nextLeftArrow}`}
-      src="/assets/icons/icon_arrow_left.svg"
-      alt="Prev Arrow"
-      style={style}
-      onClick={onClick}
-    />
-  );
-};
-const hasSingleJob = jobs.length === 1;
+  const PrevArrow: React.FC<{
+    className?: string;
+    style?: React.CSSProperties;
+    onClick?: () => void;
+  }> = (props) => {
+    const { className, style, onClick } = props;
+    return (
+      <img
+        className={`${className} ${styles.nextLeftArrow}`}
+        src="/assets/icons/icon_arrow_left.svg"
+        alt="Prev Arrow"
+        style={style}
+        onClick={onClick}
+      />
+    );
+  };
+  const hasSingleJob = jobs.length === 1;
 
   const sliderSettings = {
     dots: false,  // Remove dots indicator

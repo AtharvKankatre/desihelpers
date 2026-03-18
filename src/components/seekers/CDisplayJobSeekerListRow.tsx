@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { Routes } from "@/services/routes/Routes";
 import { ISeekerFilters } from "@/models/SeekerFilters";
 import { CH1Label } from "../reusable/labels/CH1Label";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import SeekerServices from "@/services/seekers/SeekerService";
 import { IUserProfileModel, JobDetailDto } from "@/models/UserProfileModel";
 import ViewAllSeekers from "@/pages/seekers/ViewAllSeekers";
@@ -44,28 +44,11 @@ export const CDisplayJobSeekerRow = () => {
 
   const ViewAllSeekers = () => {
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to view all seekers",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please login to view all seekers");
+      router.push("/Login");
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before viewing all service providers.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warning("Please build your profile first before viewing all service providers.");
+      router.push("/Landing");
     } else {
       router.push(Routes.viewAllSeekers);
     }

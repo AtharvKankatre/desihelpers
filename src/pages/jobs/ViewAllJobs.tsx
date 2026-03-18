@@ -276,6 +276,8 @@ const ViewAllJobs = () => {
                 setIsLoading(true);
                 const jobs = await jobServices.fetchJobs({
                     state: userProfile?.state ?? "",
+                    latitude: userLocation?.[1] ?? userProfile?.location?.coordinates?.[1] ?? undefined,
+                    longitude: userLocation?.[0] ?? userProfile?.location?.coordinates?.[0] ?? undefined,
                     radius: radiusFilter,
                     limit: 500,
                 });
@@ -288,18 +290,21 @@ const ViewAllJobs = () => {
             }
         };
         fetchData();
-    }, [radiusFilter]);
+    }, [radiusFilter, userLocation, userProfile]);
 
     // Fetch seekers for seekers tab
     useEffect(() => {
         const fetchSeekers = async () => {
             try {
-                const result = await ApiService.crud(APIDetails.getSeekers, `?skip=0&limit=50&state=${userProfile?.state ?? ""}&radius=${radiusFilter}`);
+                const lat = userLocation?.[1] ?? userProfile?.location?.coordinates?.[1] ?? "";
+                const lng = userLocation?.[0] ?? userProfile?.location?.coordinates?.[0] ?? "";
+                const result = await ApiService.crud(APIDetails.getSeekers, `?skip=0&limit=50&state=${userProfile?.state ?? ""}&radius=${radiusFilter}&latitude=${lat}&longitude=${lng}`);
                 if (result[0] && Array.isArray(result[1])) {
                     const mapped = result[1].map((s: any) => ({
                         id: s._id || s.id,
                         name: `${s.firstName || ""} ${s.lastName || ""}`.trim() || s.displayName || "Service Provider",
-                        rating: s.rating || 4,
+                        rating: s.rating || 0,
+                        reviewCount: s.reviewCount || 0,
                         photo: s.profilePhoto || "",
                         bio: s.aboutMe || "Experienced service provider.",
                         city: s.city || "",
@@ -320,7 +325,7 @@ const ViewAllJobs = () => {
             }
         };
         fetchSeekers();
-    }, [radiusFilter]);
+    }, [radiusFilter, userLocation, userProfile]);
 
     // Helper: format date as "20 Oct, 2025"
     const formatDate = (date?: Date) => {
@@ -795,8 +800,11 @@ const ViewAllJobs = () => {
                                             <h3 className={styles.seekerName}>{seeker.name}</h3>
                                             <div className={styles.seekerRating}>
                                                 {[1, 2, 3, 4, 5].map((star) => (
-                                                    <span key={star} className={star <= Math.floor(seeker.rating) ? styles.starFilled : styles.starEmpty}>★</span>
+                                                    <span key={star} className={star <= Math.round(seeker.rating || 0) ? styles.starFilled : styles.starEmpty}>★</span>
                                                 ))}
+                                                <span className={styles.ratingNumber} style={{ marginLeft: "4px", fontSize: "14px", fontWeight: "700", color: "#ffb400" }}>
+                                                    {seeker.rating ? Number(seeker.rating).toFixed(1) : "0"}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

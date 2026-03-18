@@ -1131,19 +1131,20 @@
 
   .navbarContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     height: 100%;
+    gap: 8px;
   }
 
   .navbarBrandMobile {
     position: relative;
     left: auto;
     transform: none;
-    flex: 1;
     display: flex;
     justify-content: flex-start;
-    padding-left: 12px;
+    padding-left: 0;
+    margin-right: 4px;
   }
 
   .navbarLinks {
@@ -1151,32 +1152,60 @@
   }
 
   .navbarActions {
-    gap: 12px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    margin-right: 0;
+  }
+
+  .langSelector {
+    margin-right: 0 !important;
   }
 
   .langButton {
-    padding: 6px 14px;
-    font-size: 14px;
-    border-radius: 20px;
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white;
+    padding: 0 8px !important;
+    width: auto !important;
+    height: 30px !important;
+    font-size: 13px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 0 !important;
+    border-radius: 15px !important;
   }
 
   .navIconButton {
-    padding: 0;
-    width: 38px;
-    height: 38px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
+    padding: 0 !important;
+    width: 30px !important;
+    height: 30px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .navIconButton img {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     filter: brightness(0) invert(1);
   }
 
+  .navIconButton svg {
+    font-size: 14px !important;
+  }
+
   .logoImageMobile {
-    max-height: 24px !important;
-    /* Even smaller for absolute safety */
+    max-height: 36px !important;
+    max-width: 130px !important;
+    object-fit: contain;
+    /* The most visually prominent element on the left */
     width: auto;
   }
 }

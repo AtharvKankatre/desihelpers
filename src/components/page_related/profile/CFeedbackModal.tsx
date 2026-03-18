@@ -41,6 +41,10 @@ const CFeedbackModal: React.FC<CFeedbackModalProps> = ({
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
+        if (rating === 0) {
+            alert("Please select a star rating.");
+            return;
+        }
         onUpdate({
             id: initialData?.id,
             rating,

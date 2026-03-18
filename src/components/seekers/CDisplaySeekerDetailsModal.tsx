@@ -1,6 +1,7 @@
 import { IUserProfileModel } from "@/models/UserProfileModel";
 import { FunctionComponent, useEffect, useState } from "react";
 import { Col, Image, Modal, Row, } from "react-bootstrap";
+import { useRouter } from "next/router";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { CExperienceDetails } from "../page_related/user_profile/CExperienceDetails";
 import { CUserWorkPhotos } from "../page_related/user_profile/CUserWorkPhotos";
@@ -26,6 +27,7 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
   toggleModal,
 }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const router = useRouter();
   const dummyImage = "/assets/icons/form_icons/icon_dummy_user.svg";
   const [PhotoUrls, setPhotoUrls] = useState<string | undefined>(undefined);
 
@@ -299,6 +301,15 @@ export const CDisplaySeekerDetailsModal: FunctionComponent<Props> = ({
           <CUserWorkPhotos workPhotos={profile?.uploadPhotoOfWork ?? []} />
         </Modal.Body>
         <Modal.Footer>
+          <button
+            className={'btn rounded ps-3 pe-3 pt-2 pb-2 text-white bgPrimary mx-2'}
+            onClick={() => {
+              toggleModalFn();
+              router.push(`/Messages?userId=${profile.userId}`);
+            }}
+          >
+            💬 Message
+          </button>
           <CButton
             label="Close"
             buttonClassName="btn btn-secondary"

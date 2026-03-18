@@ -4,8 +4,8 @@ import LanguageSelect from "@/components/form/CMultiSelect";
 import { CSelect } from "@/components/form/CSelect";
 import { CGetUserLocation } from "@/components/maps/CGetUserLocation";
 import { CExpandablePanel } from "@/components/reusable/CExpandablePanel";
+import { CH5Label } from "@/components/reusable/labels/CH5Label";
 import { ICities } from "@/models/Cities";
-import { IStates } from "@/models/States";
 import { ILocation } from "@/models/UserProfileModel";
 import { FunctionComponent } from "react";
 
@@ -142,8 +142,8 @@ export const CEditPersonalDetails: FunctionComponent<Props> = ({
                 formik.values.location == null
                   ? [-96.808891, 32.779167]
                   : formik.values.location.coordinates ?? [
-                      -96.808891, 32.779167,
-                    ]
+                    -96.808891, 32.779167,
+                  ]
               }
             />
           </div>
@@ -174,43 +174,85 @@ export const CEditPersonalDetails: FunctionComponent<Props> = ({
           </div>
         </div>
 
-        <CInput
-          className="col-md-3"
-          id="phone"
-          name="Mobile"
-          isEnabled={onLoad}
-          onChange={formik.handleChange}
-          value={formik.values.phone}
-          isMandatory={true}
-          error={formik.errors.phone}
-        />
+        <div className="row">
+          <div className="col-md-5">
+            <CInput
+              id="phone"
+              name="Mobile"
+              isEnabled={onLoad}
+              onChange={formik.handleChange}
+              value={formik.values.phone}
+              isMandatory={true}
+              error={formik.errors.phone}
+            />
+            <CCheckBox
+              formik={formik}
+              name="showPhone"
+              title={`Show "Phone No." on profile`}
+              value={formik.values.showPhone}
+              readonly={onLoad}
+              className="mt-1"
+            />
+          </div>
+          <div className="col-12 mt-2">
+            <label className="form-label fw-bold mb-2">What brings you here today? <span className="text-danger">*</span></label>
+            <div className="d-flex flex-column gap-2">
+              {[
+                { id: "Job Seeker", label: "Hire Someone", color: "#f07c00", bg: "#fff9f2" },
+                { id: "Service Provider", label: "Service Provider", color: "#3eb489", bg: "#f0fcf7" },
+                { id: "Both", label: "Both", color: "#003385", bg: "#f2f6ff" }
+              ].map((option) => (
+                <label key={option.id} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  color: '#333',
+                  fontWeight: 600,
+                  padding: '10px 14px',
+                  border: formik.values.listProfileAs === option.id ? `2px solid ${option.color}` : '1px solid #e0e0e0',
+                  borderRadius: '8px',
+                  backgroundColor: formik.values.listProfileAs === option.id ? option.bg : '#fff',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <input
+                    type="radio"
+                    name="listProfileAs"
+                    value={option.id}
+                    checked={formik.values.listProfileAs === option.id}
+                    onChange={formik.handleChange}
+                    style={{ marginRight: '10px', accentColor: option.color, width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
 
-        <CCheckBox
-          formik={formik}
-          name="showPhone"
-          title={`Show "Phone No." on profile`}
-          value={formik.values.showPhone}
-          readonly={onLoad}
-          className="col-md-3"
-        />
-
-        <CInput
-          className="col-md-3"
-          id="mobile"
-          name="WhatsApp"
-          isEnabled={onLoad}
-          onChange={formik.handleChange}
-          value={formik.values.mobile}
-          error={formik.errors.mobile}
-        />
-        <CCheckBox
-          formik={formik}
-          name="showMobile"
-          title={`Show "WhatsApp No." on profile`}
-          value={formik.values.showMobile}
-          readonly={onLoad}
-          className="col-md-3"
-        />
+        <div className="row mt-3">
+          <div className="col-md-6">
+            <CInput
+              id="mobile"
+              name="WhatsApp"
+              isEnabled={onLoad}
+              onChange={formik.handleChange}
+              value={formik.values.mobile}
+              error={formik.errors.mobile}
+            />
+            <CCheckBox
+              formik={formik}
+              name="showMobile"
+              title={`Show "WhatsApp No." on profile`}
+              value={formik.values.showMobile}
+              readonly={onLoad}
+              className="mt-1"
+            />
+          </div>
+          <div className="col-md-6">
+            {/* Empty space shared with row above */}
+          </div>
+        </div>
 
         <CInput
           className="col-md-4"

@@ -44,7 +44,8 @@ const ViewAllSeekers: FunctionComponent = () => {
           const mapped = result[1].map((s: any) => ({
             id: s._id || s.id,
             name: `${s.firstName || ""} ${s.lastName || ""}`.trim() || s.displayName || "Service Provider",
-            rating: s.rating || 4,
+            rating: s.rating || 0,
+            reviewCount: s.reviewCount || 0,
             photo: s.profilePhoto || "",
             bio: s.aboutMe || "Experienced service provider.",
             city: s.city || "",
@@ -62,6 +63,8 @@ const ViewAllSeekers: FunctionComponent = () => {
     };
     fetchSeekers();
   }, []);
+
+
 
   const getUniqueServiceTypes = () => {
     const serviceTypes = allSeekers.flatMap(seeker => seeker.services);
@@ -103,8 +106,9 @@ const ViewAllSeekers: FunctionComponent = () => {
     router.push(`/seekers/${seekerId}`);
   };
 
-  const handleContactClick = () => {
-    requireLogin();
+  const handleContactClick = (seekerId: string) => {
+    if (!requireLogin()) return;
+    router.push(`/Messages?userId=${seekerId}`);
   };
 
   if (!isLoggedIn) {
@@ -259,7 +263,8 @@ const ViewAllSeekers: FunctionComponent = () => {
                     <td>{seeker.rating} ⭐</td>
                     <td>{`${seeker.city}, ${seeker.country}`}</td>
                     <td>
-                      <span className={styles.viewDetailsLink} onClick={() => navigateToProfile(seeker.id)}>View Profile</span>
+                      <span className={styles.viewDetailsLink} onClick={() => navigateToProfile(seeker.id)} style={{ marginRight: '10px' }}>View Profile</span>
+                      <span className={styles.viewDetailsLink} onClick={() => handleContactClick(seeker.id)} style={{ color: '#25d366' }}>Contact Now</span>
                     </td>
                   </tr>
                 ))}
@@ -269,7 +274,7 @@ const ViewAllSeekers: FunctionComponent = () => {
         ) : (
           <div className={styles.seekerGrid}>
             {filteredSeekers.map((seeker) => (
-              <div key={seeker.id} className={styles.seekerCard}>
+              <div key={seeker.id} className={styles.seekerCard} onClick={() => navigateToProfile(seeker.id)}>
                 <div className={styles.seekerHeader}>
                   <div className={styles.seekerAvatarWrap}>
                     <div className={styles.seekerAvatar}>{seeker.name.charAt(0)}</div>
@@ -277,12 +282,15 @@ const ViewAllSeekers: FunctionComponent = () => {
                       <h3 className={styles.seekerName}>{seeker.name}</h3>
                       <div className={styles.seekerRating}>
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <span key={star} className={star <= Math.floor(seeker.rating) ? styles.starFilled : styles.starEmpty}>★</span>
+                          <span key={star} className={star <= Math.round(seeker.rating || 0) ? styles.starFilled : styles.starEmpty}>★</span>
                         ))}
+                        <span className={styles.ratingNumber} style={{ marginLeft: "4px", fontSize: "14px", fontWeight: "700", color: "#ffb400" }}>
+                            {seeker.rating ? Number(seeker.rating).toFixed(1) : "0"}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <button className={styles.cardShareBtn} title="Share">
+                  <button className={styles.cardShareBtn} title="Share" onClick={(e) => e.stopPropagation()}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                       <polyline points="16 6 12 2 8 6" />
@@ -315,13 +323,13 @@ const ViewAllSeekers: FunctionComponent = () => {
                   </div>
                 </div>
                 <div className={styles.seekerFooter}>
-                  <span className={styles.seekerContactBtn} onClick={handleContactClick}>
+                  <span className={styles.seekerContactBtn} onClick={(e) => { e.stopPropagation(); handleContactClick(seeker.id); }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                     Contact Now
                   </span>
-                  <span className={styles.seekerViewProfile} onClick={() => navigateToProfile(seeker.id)}>
+                  <span className={styles.seekerViewProfile} onClick={(e) => { e.stopPropagation(); navigateToProfile(seeker.id); }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />

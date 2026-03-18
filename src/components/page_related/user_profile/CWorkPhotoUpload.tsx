@@ -4,7 +4,7 @@ import OtherDataServices from "@/services/other_data/OtherDataServices";
 import { IUserProfileModel } from "@/models/UserProfileModel";
 import { useRouter } from "next/router";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 type Props = {
   formik: any;
@@ -48,45 +48,39 @@ export const CWorkPhoto: React.FC<Props> = ({ ...Props }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
-  
+
       let existingLength: number = Props.workPhotos.length ?? 0;
       let deletedLength: number = Props.deletedImages.length;
       let newImagesCount: number = selectedFiles.length;
       const netExistingPhotos = Math.abs(existingLength - deletedLength);
       const remainingSpace = Math.max(3 - netExistingPhotos, 0);
-  
+
       // Check if the number of newly selected files exceeds the allowed space
       if (newImagesCount > remainingSpace) {
-        Swal.fire({
-          icon: "warning",
-          title: `Upload Limit Reached`,
-          text: `Only ${remainingSpace} more photo(s) allowed or please remove existing photos to upload new ones.`,
-        });
+        toast.warning(
+          `Only ${remainingSpace} more photo(s) allowed. Please remove existing photos to upload new ones.`
+        );
         return;
       }
-  
+
       // Check for file size (limit: 500KB)
       const filesOverSizeLimit = selectedFiles.filter(
         (file) => file.size > 500 * 1024
       );
-  
+
       if (filesOverSizeLimit.length > 0) {
-        Swal.fire({
-          icon: "error",
-          title: "File Size Exceeded",
-          text: "Each file must be less than 500KB.",
-        });
+        toast.error("Each file must be less than 500KB.");
         return;
       }
-  
+
       // Proceed with adding selected files if within allowed limits
       Props.setFiles(selectedFiles);
       Props.setAddImages(selectedFiles.map((file) => file.name));
       handleClose();
     }
   };
-  
-  
+
+
 
   return (
     <>

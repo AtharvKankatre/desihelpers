@@ -1,7 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
 import Link from "next/link";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -88,28 +88,11 @@ export const PostJobCarousel: React.FC = () => {
     // const isActive = sessionStorage.getItem("isActive") === "true";
 
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login before posting a job",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please login before posting a job");
+      router.push("/Login");
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before posting a job.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warning("Please build your profile first before posting a job.");
+      router.push("/Landing");
     } else {
       router.push({
         pathname: path,

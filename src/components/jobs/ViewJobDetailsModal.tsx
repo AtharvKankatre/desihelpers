@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
+import { useRouter } from "next/router";
 import { IJobs } from "@/models/Jobs";
 import Link from "next/link";
 import styles from "@/styles/Jobs.module.css";
@@ -28,6 +29,7 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
   const { tablet } = useAppMediaQuery();
   const dummyImage = "/assets/icons/form_icons/icon_dummy_user.svg";
   const [PhotoUrls, setPhotoUrls] = useState<string | undefined>(undefined);
+  const router = useRouter();
 
   const whatappApiUrl = process.env.NEXT_PUBLIC_WHATAPP_API;
   const handleWhatsAppClick = () => {
@@ -202,6 +204,25 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
             </Col>
           </Row>
         </Container>
+        <div className="d-flex w-100 justify-content-end mt-3">
+          {job.postedBy && (
+            <button
+              className={'btn rounded ps-3 pe-3 pt-2 pb-2 text-white bgPrimary mx-2'}
+              onClick={() => {
+                handleClose();
+                router.push(`/Messages?userId=${job.postedBy}`);
+              }}
+            >
+              💬 Message Poster
+            </button>
+          )}
+          <button
+            className={"btn rounded ps-4 pe-4 pt-2 pb-2 text-white bgCancel"}
+            onClick={handleClose}
+          >
+            Close
+          </button>
+        </div>
       </Modal.Footer>
     </Modal>
   );

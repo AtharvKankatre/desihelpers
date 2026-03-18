@@ -5,7 +5,7 @@ import { ICities } from "@/models/Cities";
 import { ILanguages } from "@/models/Languages";
 
 class OtherDataServices {
-  constructor() {}
+  constructor() { }
 
   public fetchStates = async () => {
     let list: IStates[] = [];
@@ -49,41 +49,41 @@ class OtherDataServices {
     }
   };
 
-public uploadImages = async (files: File[], fileNames: string[]) => {
-  const validTypes = ["image/jpeg", "image/png", "image/jpg"];
-  const maxFileSize = 500 * 1024; // 500KB
-  const maxFiles = 3;
+  public uploadImages = async (files: File[], fileNames: string[]) => {
+    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const maxFileSize = 500 * 1024; // 500KB
+    const maxFiles = 3;
 
-  if (files.length > maxFiles) {
-    return [false, `You can only upload up to ${maxFiles} photos.`];
-  }
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (!validTypes.includes(file.type)) {
-      return [false, "Only .jpg, .jpeg, and .png files are allowed"];
+    if (files.length > maxFiles) {
+      return [false, `You can only upload up to ${maxFiles} photos.`];
     }
-    if (file.size > maxFileSize) {
-      return [false, `File size should be less than 500KB for each photo.`];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!validTypes.includes(file.type)) {
+        return [false, "Only .jpg, .jpeg, and .png files are allowed"];
+      }
+      if (file.size > maxFileSize) {
+        return [false, `File size should be less than 500KB for each photo.`];
+      }
     }
-  }
 
-  const uploadPromises = files.map((file, index) => 
-    ApiService.crud(APIDetails.uploadImages, [file, fileNames[index]])
-      .catch(error => {
-        throw new Error(`Failed to upload ${fileNames[index]}: ${error.message}`);
-      })
-  );
+    const uploadPromises = files.map((file, index) =>
+      ApiService.crud(APIDetails.uploadImages, [file, fileNames[index]])
+        .catch(error => {
+          throw new Error(`Failed to upload ${fileNames[index]}: ${error.message}`);
+        })
+    );
 
-  try {
-    const results = await Promise.all(uploadPromises);
-    const newList = results.map((e) => e[1]); // Assuming e[1] is the URL or identifier of the uploaded file
-    return [true, newList];
-  } catch (error: any) {
-    console.error(error);
-    return [false, `Failed to upload photos: ${error.message}`];
-  }
-};
+    try {
+      const results = await Promise.all(uploadPromises);
+      const newList = results.map((e) => e[1]); // Assuming e[1] is the URL or identifier of the uploaded file
+      return [true, newList];
+    } catch (error: any) {
+      console.error(error);
+      return [false, `Failed to upload photos: ${error.message}`];
+    }
+  };
 }
 
 export default OtherDataServices;

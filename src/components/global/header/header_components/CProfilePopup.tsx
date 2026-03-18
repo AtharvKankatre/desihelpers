@@ -1,9 +1,13 @@
-import React, { useState } from "react";
-import { Box, Typography, Button, Paper, LinearProgress, Avatar, Zoom } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button, Paper, LinearProgress, Avatar, Zoom, FormControl } from "@mui/material";
 import { styled } from "@mui/system";
 import { FaUserCircle, FaShareAlt, FaSignOutAlt, FaPencilAlt, FaChevronDown } from "react-icons/fa";
 import Link from "next/link";
 import { Routes } from "@/services/routes/Routes"; // Adjust import path if needed
+import { toast } from "react-toastify";
+import ApiService from "@/services/data/crud/crud";
+import { APIDetails } from "@/services/data/constants/ApiDetails";
+import { userProfileStore } from "@/stores/UserProfileStore";
 
 interface CProfilePopupProps {
     user: {
@@ -12,6 +16,7 @@ interface CProfilePopupProps {
         lastLogin: string;
         profileCompletion: number;
         avatarUrl?: string;
+        listProfileAs?: string;
     };
     onLogout: () => void;
     open: boolean;
@@ -55,6 +60,54 @@ const ActionRow = styled(Box)(({ theme }) => ({
 }));
 
 export const CProfilePopup: React.FC<CProfilePopupProps> = ({ user, onLogout, open, onClose }) => {
+    const { userProfile, setUserProfile } = userProfileStore();
+    const [localProfileAs, setLocalProfileAs] = useState(user.listProfileAs || "Both");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    useEffect(() => {
+        setLocalProfileAs(user.listProfileAs || "Both");
+    }, [user.listProfileAs]);
+
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        event.stopPropagation();
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleMenuClose = () => {
+        setIsDropdownOpen(false);
+    };
+
+    const handleProfileAsSelect = async (newValue: string) => {
+        setIsDropdownOpen(false);
+        if (newValue === localProfileAs) return;
+
+        setLocalProfileAs(newValue); // Optimistic UI update
+
+        try {
+            const result = await ApiService.crud(
+                APIDetails.updateUserProfile,
+                null,
+                { listProfileAs: newValue }
+            );
+            if (result[0]) {
+                const displayValue = newValue === "Job Seeker" ? "Hire Someone" : newValue;
+                toast.success(`Profile visibility updated to ${displayValue}.`);
+                
+                // Update global store to reflect changes across app
+                if (userProfile) {
+                    setUserProfile({ ...userProfile, listProfileAs: newValue });
+                }
+            } else {
+                setLocalProfileAs(user.listProfileAs || "Both"); // Revert on failure
+                toast.error(result[1] || "Failed to update profile visibility.");
+            }
+        } catch (error) {
+            console.error("Error updating profile visibility:", error);
+            setLocalProfileAs(user.listProfileAs || "Both"); // Revert on failure
+            toast.error("An error occurred.");
+        }
+    };
+
     return (
         <Zoom in={open} style={{ transformOrigin: 'top right' }}>
             <PopupContainer>
@@ -114,7 +167,7 @@ export const CProfilePopup: React.FC<CProfilePopupProps> = ({ user, onLogout, op
                     </Box>
 
                     {/* List As Dropdown */}
-                    <Box sx={{ mb: 2 }}>
+                    <Box sx={{ mb: 2, position: "relative" }}>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
                             <Box sx={{
                                 width: 32, height: 32, borderRadius: "50%", backgroundColor: "#fff0e0",
@@ -130,13 +183,68 @@ export const CProfilePopup: React.FC<CProfilePopupProps> = ({ user, onLogout, op
                         <Typography variant="caption" sx={{ color: "#666", display: "block", mb: 1 }}>
                             Control your visibility — list yourself as,
                         </Typography>
-                        <Box sx={{
-                            border: "1px solid #ddd", borderRadius: "8px", p: "8px 12px",
-                            display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer"
-                        }}>
-                            <Typography variant="body2" sx={{ color: "#333" }}>Both</Typography>
-                            <FaChevronDown size={12} color="#666" />
+                        <Box
+                            onClick={handleMenuOpen}
+                            sx={{
+                                border: `1px solid ${isDropdownOpen ? '#fd7e14' : '#ddd'}`, borderRadius: "8px", p: "8px 12px",
+                                display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer",
+                                backgroundColor: "#fff",
+                                "&:hover": { borderColor: "#fd7e14" }
+                            }}
+                        >
+                            <Typography variant="body2" sx={{ color: "#333" }}>
+                                {localProfileAs === "Job Seeker" ? "Hire Someone" : localProfileAs}
+                            </Typography>
+                            <FaChevronDown
+                                size={12}
+                                color="#666"
+                                style={{
+                                    transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                                    transition: 'transform 0.2s ease'
+                                }}
+                            />
                         </Box>
+
+                        <Zoom in={isDropdownOpen} unmountOnExit>
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    position: "absolute",
+                                    top: "100%",
+                                    left: 0,
+                                    right: 0,
+                                    mt: 1,
+                                    zIndex: 10,
+                                    borderRadius: "8px",
+                                    backgroundColor: "#fff",
+                                    border: "1px solid #eee",
+                                    boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                                    pb: 0.5,
+                                    pt: 0.5
+                                }}
+                            >
+                                {["Job Seeker", "Service Provider", "Both"].map((option) => (
+                                    <Box
+                                        key={option}
+                                        onClick={(e) => { e.stopPropagation(); handleProfileAsSelect(option); }}
+                                        sx={{
+                                            p: "10px 16px",
+                                            cursor: "pointer",
+                                            transition: "background-color 0.2s ease",
+                                            backgroundColor: localProfileAs === option ? "#fff5f0" : "transparent",
+                                            "&:hover": { backgroundColor: "#f9f9f9" }
+                                        }}
+                                    >
+                                        <Typography variant="body2" sx={{
+                                            color: localProfileAs === option ? "#fd7e14" : "#333",
+                                            fontWeight: localProfileAs === option ? 600 : 400
+                                        }}>
+                                            {option === "Job Seeker" ? "Hire Someone" : option}
+                                        </Typography>
+                                    </Box>
+                                ))}
+                            </Paper>
+                        </Zoom>
                     </Box>
 
                     <Box sx={{ borderTop: "1px solid #f0f0f0", my: 1 }} />

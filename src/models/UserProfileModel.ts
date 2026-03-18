@@ -44,6 +44,7 @@ export interface IUserProfileModel {
   commutePreference?: string;
   dietaryRestrictions?: string;
   location?: ILocation;
+  listProfileAs?: string;
 }
 
 export interface JobDetailDto {

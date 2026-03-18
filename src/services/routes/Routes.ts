@@ -25,4 +25,5 @@ export const Routes = {
   AdminMyJobPost: "/admin/AdminMyPostedJob",
   aboutUs: "/about",
   resources: "/resources",
+  messages: "/Messages",
 };

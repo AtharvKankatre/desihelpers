@@ -101,7 +101,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: "8px 8px 8px 0px",
+                    padding: "8px 4px 8px 0px",
                     marginLeft: "-10px"
                 }}
             >

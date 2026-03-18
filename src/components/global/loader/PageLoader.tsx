@@ -10,7 +10,10 @@ export const PageLoader: React.FC = () => {
     useEffect(() => {
         // Show loader only for Find Job (/jobs) and Hire Help (/seekers) pages
         const handleStart = (url: string) => {
-            if (url !== router.asPath && (url.startsWith('/jobs') || url.startsWith('/seekers'))) {
+            const prioritizedRoutes = ['/jobs', '/seekers', '/profile', '/Messages', '/user_profile', '/admin'];
+            const shouldShowLoader = prioritizedRoutes.some(route => url.startsWith(route));
+
+            if (url !== router.asPath && shouldShowLoader) {
                 setLoading(true);
             }
         };

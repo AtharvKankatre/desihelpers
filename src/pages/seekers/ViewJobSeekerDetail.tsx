@@ -130,13 +130,21 @@ const ViewJobSeekerDetails: FunctionComponent = () => {
             </div>
 
             <hr className="mt-4" />
-            <div className="col-md-4 mb-3">
+            <div className="col-md-12 mb-3 d-flex gap-3">
               <button
                 className="btn btn-secondary btn-small"
                 onClick={() => router.back()}
               >
                 Return
               </button>
+              {jobSeeker?.userId && (
+                <button
+                  className={'btn rounded ps-3 pe-3 pt-2 pb-2 text-white bgPrimary'}
+                  onClick={() => router.push(`/Messages?userId=${jobSeeker.userId}`)}
+                >
+                  💬 Message User
+                </button>
+              )}
             </div>
           </div>
         </div>

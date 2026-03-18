@@ -59,8 +59,8 @@ export const CEditAboutMe: FunctionComponent<Props> = ({ formik, onLoad }) => {
             formik.values.okWithPets == true
               ? "Yes"
               : formik.values.okWithPets == false
-              ? "No"
-              : ""
+                ? "No"
+                : ""
           }
         />
       </div>

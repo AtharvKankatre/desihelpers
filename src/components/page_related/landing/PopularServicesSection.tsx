@@ -10,7 +10,7 @@ import { getOptimizedIcon } from "@/utils/iconMapping";
 import { Routes } from "@/services/routes/Routes";
 import { useAuth } from "@/services/authorization/AuthContext";
 import CookieService from "@/services/authorization/CookieService";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 // Default skill icons shown on each card
 const DEFAULT_SKILL_KEYS = ["nanny", "catering", "cleaning", "movers"];
@@ -202,14 +202,8 @@ export const PopularServicesSection: React.FC = () => {
     const handleCardClick = () => {
         if (hasDragged.current) return;
         if (!isActive) {
-            Swal.fire({
-                title: "Alert",
-                text: "Please login to view details",
-                icon: "warning",
-                confirmButtonText: "OK",
-            }).then((result) => {
-                if (result.isConfirmed) router.push("/Login");
-            });
+            toast.info("Please login to view details");
+            router.push("/Login");
         } else {
             router.push(Routes.mapSearch);
         }

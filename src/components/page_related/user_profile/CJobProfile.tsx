@@ -13,7 +13,7 @@ import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import Link from "next/link";
 import router from "next/router";
 import { Routes } from "@/services/routes/Routes";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 
 
@@ -30,16 +30,8 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
         const activeStatus = Cookies.get("isActive") === "true";
         setIsActive(activeStatus);
         if (!activeStatus) {
-            Swal.fire({
-                title: "Access Denied",
-                text: "Please log in to view the details.",
-                icon: "warning",
-                confirmButtonText: "OK",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    router.push("/Login");
-                }
-            });
+            toast.warning("Please log in to view the details.");
+            router.push("/Login");
         }
     }, []);
 
@@ -102,6 +94,18 @@ const ProfileCard: React.FC<UserProfileProps> = ({ ...UserProfileProps }) => {
                                     <img src="/assets/icons/form_icons/icon_email.svg" alt="Email" width="20" height="20" />
                                 </button>
                             </Link>
+                        )}
+                        {/* Message Button */}
+                        {UserProfileProps.profile?.userId && (
+                            <button
+                                className={jobStyles.cardShareBtn}
+                                title="Message"
+                                onClick={() => router.push(`/Messages?userId=${UserProfileProps.profile?.userId}`)}
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#25d366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
                         )}
                     </div>
                 </div>

@@ -21,7 +21,7 @@ interface CUserAvatarProps {
 
 export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, style, onToggle }) => {
   const { isActive, setIsActive, isProfileBuild } = useAuth();
-  const { reset } = userProfileStore();
+  const { userProfile, reset } = userProfileStore();
   const router = useRouter();
   let sStore = seekerStore();
   let jStore = jobStore();
@@ -35,7 +35,8 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
     location: "",
     lastLogin: new Date().toLocaleString(),
     profileCompletion: 0,
-    profilePhoto: "/newassets/account_circle.png"
+    profilePhoto: "/newassets/account_circle.png",
+    listProfileAs: "Both"
   });
 
   const logOut = () => {
@@ -61,63 +62,72 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
     };
   }, [wrapperRef, onToggle]);
 
-  // Fetch real profile data for the popup
+  // Sync local data whenever the global userProfile store changes
+  useEffect(() => {
+    if (userProfile && Object.keys(userProfile).length > 0) {
+      const p = userProfile;
+      const fullName = `${p.firstName || ""} ${p.lastName || ""}`.trim() || "User";
+      const location = `${p.city || ""}, ${p.state || ""}`.replace(/^, |, $/g, "") || "";
+
+      // Calculate completion based on key profile fields
+      const fields = [
+        p.firstName,
+        p.lastName,
+        p.email,
+        p.mobile || p.phone,
+        p.addressLine1,
+        p.city,
+        p.state,
+        p.zipCode,
+        p.languagesSpoken && p.languagesSpoken.length > 0 ? "filled" : "",
+        p.aboutMe,
+        p.gender,
+        p.displayName,
+      ];
+      const filled = fields.filter(
+        (f) => f !== undefined && f !== null && f !== ""
+      ).length;
+      const percent = Math.round((filled / fields.length) * 100);
+
+      // If we have a profile photo, we might need to sign it if it's new
+      const updatePhoto = async () => {
+        let signedPhoto = "/newassets/account_circle.png";
+        if (p.profilePhoto && p.profilePhoto !== "/newassets/account_circle.png") {
+          try {
+            const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
+            const signedUrls = await getWorkPhotoUrls("", [p.profilePhoto]);
+            signedPhoto = (signedUrls && signedUrls.length > 0) ? signedUrls[0] : p.profilePhoto;
+          } catch (s3Error) {
+            signedPhoto = p.profilePhoto;
+          }
+        }
+        
+        setUserData({
+          name: fullName,
+          location: location,
+          lastLogin: userData.lastLogin,
+          profileCompletion: percent,
+          profilePhoto: signedPhoto,
+          listProfileAs: p.listProfileAs || "Both"
+        });
+      };
+      
+      updatePhoto();
+    }
+  }, [userProfile]);
+
+  // Initial fetch on mount to ensure store is populated
   useEffect(() => {
     if (!isActive) return;
     const fetchProfile = async () => {
       try {
         const result = await ApiService.crud(APIDetails.getUserProfile);
         if (result[0] && result[1]) {
-          const p = result[1];
-          const fullName = `${p.firstName || ""} ${p.lastName || ""}`.trim() || "User";
-          const location = `${p.city || ""}, ${p.state || ""}`.replace(/^, |, $/g, "") || "";
-
-          // Calculate completion based on key profile fields
-          const fields = [
-            p.firstName,
-            p.lastName,
-            p.email,
-            p.mobile || p.phone,
-            p.addressLine1,
-            p.city,
-            p.state,
-            p.zipCode,
-            p.languagesSpoken && p.languagesSpoken.length > 0 ? "filled" : "",
-            p.aboutMe,
-            p.gender,
-            p.displayName,
-          ];
-          const filled = fields.filter(
-            (f) => f !== undefined && f !== null && f !== ""
-          ).length;
-          const percent = Math.round((filled / fields.length) * 100);
-
-          let signedPhoto = "/newassets/account_circle.png";
-          if (p.profilePhoto && p.profilePhoto !== "/newassets/account_circle.png") {
-            try {
-              const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
-              const signedUrls = await getWorkPhotoUrls("", [p.profilePhoto]);
-              if (signedUrls && signedUrls.length > 0) {
-                signedPhoto = signedUrls[0];
-              } else {
-                signedPhoto = p.profilePhoto;
-              }
-            } catch (s3Error) {
-              console.error("Error signing profile photo for avatar:", s3Error);
-              signedPhoto = p.profilePhoto;
-            }
-          }
-
-          setUserData({
-            name: fullName,
-            location: location,
-            lastLogin: new Date().toLocaleString(),
-            profileCompletion: percent,
-            profilePhoto: signedPhoto
-          });
+          const { setUserProfile } = userProfileStore.getState();
+          setUserProfile(result[1]);
         }
       } catch (err) {
-        console.error("Error fetching profile for popup:", err);
+        console.error("Error fetching profile for avatar initialization:", err);
       }
     };
     fetchProfile();
@@ -137,10 +147,12 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
           }}
         >
           <Image
-            src="/newassets/account_circle.png"
+            src={typeof userData.profilePhoto === 'string' && userData.profilePhoto.trim().length > 1 ? userData.profilePhoto : "/newassets/account_circle.png"}
             alt="Profile"
             width={28}
             height={28}
+            className="rounded-circle"
+            style={{ objectFit: 'cover' }}
           />
         </button>
 

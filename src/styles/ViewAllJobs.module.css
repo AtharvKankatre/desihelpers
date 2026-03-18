@@ -769,12 +769,14 @@
     flex-direction: column;
     gap: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
 }
 
 .seekerCard:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border-color: #f07c00;
 }
 
 .seekerHeader {
@@ -811,17 +813,28 @@
 
 .seekerRating {
     display: flex;
+    align-items: center;
     gap: 2px;
     font-size: 12px;
     margin-top: 2px;
+    line-height: 1;
 }
 
 .starFilled {
     color: #ffb400;
+    line-height: 1;
 }
 
 .starEmpty {
     color: #e0e0e0;
+    line-height: 1;
+}
+
+.ratingNumber {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
 }
 
 .seekerBio {

@@ -1,24 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
-  Row,
-  Col,
-  Navbar,
-  Nav,
-  Collapse,
-  Button,
-  Form,
-  Card,
-  OverlayTrigger,
-  Tooltip,
-  DropdownButton,
   Dropdown,
 } from "react-bootstrap";
 import {
   FaBars,
-  FaFileExcel,
   FaFileExport,
   FaPhoneAlt,
   FaPlus,
+  FaUser,
   FaUserFriends,
   FaUserPlus,
   FaUsers,
@@ -42,10 +31,7 @@ import Swal from "sweetalert2";
 import { useAuth } from "@/services/authorization/AuthContext";
 import AdminSignUpModal from "@/components/admin/AdminSignUpModal";
 import { toast } from "react-toastify";
-import { FaUser } from "react-icons/fa";
 import Roles from "@/constants/ERoles";
-import { CH4Label } from "@/components/reusable/labels/CH4Label";
-import CCards from "@/components/reusable/CCards";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import UpdateJobSeekerStatus from "@/components/admin/UpdateJobSeekerStatus";
@@ -67,6 +53,7 @@ interface RowData {
   email: string;
   isJobSeeker: boolean;
   isProfile: boolean;
+  listProfileAs?: string;
 }
 
 interface Props {
@@ -78,6 +65,11 @@ const Dashboard: React.FC<Props> = ({ data }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth <= 768) {
+      setIsSidebarOpen(false);
+    }
+  };
   const router = useRouter();
 
   const [SeekerDetails, setDetails] = useState<any[]>([]); // State to hold the fetched data
@@ -123,7 +115,7 @@ const Dashboard: React.FC<Props> = ({ data }) => {
       if (Array.isArray(fetchedDetails[1])) {
         const emailList = fetchedDetails[1].map((item) => item.email).length;
         const jobSeekerCount = fetchedDetails[1].filter(
-          (item) => item.isJobSeeker === true
+          (item: any) => item.listProfileAs === "Service Provider" || item.listProfileAs === "Both"
         ).length;
         const profileCount = fetchedDetails[1].filter(
           (item) => item.isProfile === true
@@ -233,25 +225,28 @@ const Dashboard: React.FC<Props> = ({ data }) => {
       sortable: true,
     },
     {
-      name: "Job Seeker Status",
+      name: "List Profile As",
       sortable: true,
       minWidth: "180px",
       cell: (row: any) =>
-        row.isJobSeeker ? (
-          "Yes"
+        row.listProfileAs ? (
+          <span className={`${style.profileBadge} ${row.listProfileAs === 'Both' ? style.badgeBoth :
+            row.listProfileAs === 'Service Provider' ? style.badgeProvider :
+              style.badgeSeeker
+            }`}>
+            {row.listProfileAs}
+          </span>
         ) : (
           <>
             {row.roles?.includes(Roles.Admin) ? (
-              <span>N/A</span>
+              <span className={`${style.profileBadge} ${style.badgeNA}`}>Admin</span>
             ) : row.roles?.includes(Roles.SubAdmin) ? (
-              <span>N/A</span>
+              <span className={`${style.profileBadge} ${style.badgeNA}`}>SubAdmin</span>
             ) : (
-              <label
-                style={{ display: "flex", alignItems: "center", gap: "8px" }}
-              >
+              <label className={style.seekerCheckLabel}>
                 <input
                   type="checkbox"
-                  onClick={() => handleModalOpen(row)} // Open modal when clicked
+                  onClick={() => handleModalOpen(row)}
                 />
                 Make them seeker
               </label>
@@ -499,7 +494,7 @@ const Dashboard: React.FC<Props> = ({ data }) => {
     const formattedData = filteredItems.map(item => ({
       UserID: item.id,
       Email: item.email,
-      JobSeekerStatus: item.isJobSeeker,
+      ListProfileAs: item.listProfileAs || "Both",
       BuildProfileStatus: item.isProfile,
       Roles: item.roles.join(", "),
       socialLogin: item.socialLogin,
@@ -515,248 +510,190 @@ const Dashboard: React.FC<Props> = ({ data }) => {
 
 
   return (
-    <>
-      <div style={{ marginTop: "50px" }}>
-        <Navbar
-          className="d-flex   justify-content-start align-items-center bgPrimary text-white navbar-expand-xl"
-          style={{ width: "100vw", margin: 0, padding: 10 }}
-          variant="dark"
-          expand="xl"
-        >
-          <Navbar.Brand href="#" style={{ marginLeft: "25px" }}>
-            {roleStatus === "subadmin"
-              ? "Welcome, SubAdmin!"
-              : "Welcome, Admin!"}
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <div
-            className="collapse navbar-collapse"
-            id="navbarTogglerDemo02"
-          ></div>
+    <div className={style.dashboardWrapper}>
+      {/* ── Mobile Overlay ── */}
+      {isSidebarOpen && (
+        <div className={style.mobileOverlay} onClick={toggleSidebar}></div>
+      )}
 
-          <Button variant="outline-light" onClick={handleShowSignup}>
-            <FaPlus /> Add User
-          </Button>
-        </Navbar>
-
-        <Row>
-          {/* Collapsible Sidebar */}
-          <Col
-            md={isSidebarOpen ? 2 : 1}
-            className={`sidebar bgPrimary text-white d-flex flex-column align-items-center p-0`}
-            style={{ minHeight: "100vh" }}
-          >
-            <Button
-              onClick={toggleSidebar}
-              className=" bgPrimary"
-              //aria-controls="sidebar-nav"
-              aria-expanded={isSidebarOpen}
-            >
-              {isSidebarOpen ? <FaBars /> : <FaBars />}
-            </Button>
-
-            <Nav defaultActiveKey="/admin/users" className="flex-column">
-              <Nav.Link
-                href="#"
-                onClick={() => handleTabSelect("users")}
-                className="text-white d-flex align-items-center"
-              >
-                <OverlayTrigger
-                  placement="right"
-                  overlay={<Tooltip id="tooltip-users">User List</Tooltip>}
-                >
-                  <FaUsers size={20} className="me-2" />
-                </OverlayTrigger>
-                <Collapse in={isSidebarOpen}>
-                  <span>User List</span>
-                </Collapse>
-              </Nav.Link>
-
-              <Nav.Link
-                href="#"
-                onClick={() => handleTabSelect("contactedUsers")}
-                className="text-white d-flex align-items-center"
-              >
-                <OverlayTrigger
-                  placement="right"
-                  overlay={
-                    <Tooltip id="tooltip-contacted-users">
-                      Contacted Users
-                    </Tooltip>
-                  }
-                >
-                  <FaPhoneAlt size={20} className="me-2" />
-                </OverlayTrigger>
-                <Collapse in={isSidebarOpen}>
-                  <span>Contacted Users</span>
-                </Collapse>
-              </Nav.Link>
-            </Nav>
-          </Col>
-
-          {/* Main Content */}
-          <Col md={isSidebarOpen ? 10 : 11} className="p-4">
-            <Row>
-              {/* <div>
-                <CStats />
-              </div> */}
-              <Col md={4}>
-                <CCards
-                  cardHeader="Registered Users"
-                  cardTitle={emailList}
-                  cardText=""
-                  cardColor="#FFFFFF"
-                  titleColor="dark"
-                  Icons={<FaUserFriends />}
-                />
-              </Col>
-
-              <Col md={4}>
-                <CCards
-                  cardHeader="Total Service Providers"
-                  cardTitle={jobSeekerCount}
-                  cardText=""
-                  cardColor="#FFFFFF"
-                  titleColor="dark"
-                  Icons={<FaUser />}
-                />
-              </Col>
-              <Col md={4}>
-                <CCards
-                  cardHeader="Total Build Profiles"
-                  cardTitle={profileCount}
-                  cardText=""
-                  cardColor="#FFFFFF"
-                  titleColor="dark"
-                  Icons={<FaUserPlus />}
-                />
-              </Col>
-            </Row>
-            <Card.Body>
-              {selectedTab === "users" && (
-                <div>
-                  <CH4Label label={"User Details"}></CH4Label>
-                  <Row className="mb-3">
-                    <Col xs={12} sm={6} md={4}>
-                      <Form.Control
-                        type="text"
-                        placeholder={`Search...`}
-                        value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
-                        className="mb-3"
-                      />
-                    </Col>
-                  </Row>
-                  <div style={{ textAlign: "right", marginBottom: "10px" }}>
-                    {/* Add Export to Excel Button */}
-                    <OverlayTrigger
-                      placement="top"
-                      overlay={
-                        <Tooltip id="export-tooltip">Excelsheet</Tooltip>
-                      }
-                    >
-                      <button
-                        onClick={handleExport}
-                        className="btn bgSecondary text-white"
-                      >
-                        Export Data <FaFileExport />
-                      </button>
-                    </OverlayTrigger>
-                  </div>
-                  <DataTable
-                    //title=""
-                    columns={columns}
-                    pagination
-                    data={filteredItems}
-                    striped
-                    highlightOnHover
-                    responsive
-                    customStyles={{
-                      headRow: {
-                        style: {
-                          backgroundColor: "#E5FCFF",
-                          fontWeight: "bold",
-                          color: "black",
-                          boxShadow: "0 2px 6px 2px #eee",
-                          borderRadius: "5px",
-                          fontSize: "14px",
-                        },
-                      },
-                      rows: {
-                        style: {
-                          fontSize: "16px", // Increase font size for row data
-                          padding: "10px", // Adjust padding if needed
-                        },
-                      },
-                    }}
-                    paginationPerPage={100} // Set default rows per page
-                    paginationComponentOptions={{
-                      rowsPerPageText: 'Rows per page:',
-                    }}
-                    paginationRowsPerPageOptions={[100, 150, 200, 250]} // Options for rows per page
-                  />
-                </div>
-              )}
-              {selectedTab === "contactedUsers" && (
-                <div>
-                  <CH4Label label={"Contacted Users"}></CH4Label>
-                  <Row className="mb-3">
-                    <Col xs={12} sm={6} md={4}>
-                      <Form.Control
-                        type="text"
-                        placeholder={`Search...`}
-                        value={searchText}
-                        onChange={(e: {
-                          target: { value: React.SetStateAction<string> };
-                        }) => setSearchText(e.target.value)}
-                        className="mb-3"
-                      />
-                    </Col>
-                  </Row>
-                  <DataTable
-                    columns={Contactcolumns}
-                    data={filteredData}
-                    pagination
-                    highlightOnHover
-                    striped
-                    customStyles={{
-                      headRow: {
-                        style: {
-                          backgroundColor: "#E5FCFF",
-                          fontWeight: "bold",
-                          color: "black",
-                          boxShadow: "0 2px 6px 2px #eee",
-                          borderRadius: "5px",
-                          fontSize: "14px",
-                        },
-                      },
-                      rows: {
-                        style: {
-                          fontSize: "16px", // Increase font size for row data
-                          padding: "10px", // Adjust padding if needed
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              )}
-            </Card.Body>
-          </Col>
-        </Row>
-        <UserModal
-          show={showModal}
-          userData={userData}
-          handleClose={handleCloseModal}
-        />
-        <AdminSignUpModal show={showSignup} handleClose={handleCloseSignup} />
-        <UpdateJobSeekerStatus
-          show={showJobModal}
-          onClose={handleModalClose}
-          onConfirm={handleJobSeekerUpdate}
-          userId={selectedRow?.email || null}
-        />
+      {/* ── Top Bar ── */}
+      <div className={style.topBar}>
+        <div className={style.topBarTitle}>
+          <button className={style.mobileMenuBtn} onClick={toggleSidebar}>
+            <FaBars />
+          </button>
+          {roleStatus === "subadmin" ? "Welcome, " : "Welcome, "}
+          <span>{roleStatus === "subadmin" ? "SubAdmin" : "Admin"}</span>
+        </div>
+        <button className={style.addUserBtn} onClick={handleShowSignup}>
+          <FaPlus size={14} /> Add User
+        </button>
       </div>
-    </>
+
+      {/* ── Main Layout ── */}
+      <div className={style.mainContent}>
+        {/* ── Sidebar ── */}
+        <div className={`${style.sidebar} ${isSidebarOpen ? style.sidebarExpanded : ""}`}>
+          <button className={style.sidebarToggle} onClick={toggleSidebar}>
+            <FaBars size={18} />
+          </button>
+
+          <button
+            className={`${style.sidebarLink} ${selectedTab === "users" ? style.sidebarLinkActive : ""}`}
+            onClick={() => { handleTabSelect("users"); closeSidebarOnMobile(); }}
+          >
+            <span className={style.sidebarIcon}><FaUsers /></span>
+            <span className={`${style.sidebarLabel} ${isSidebarOpen ? style.sidebarLabelVisible : ""}`}>
+              User List
+            </span>
+          </button>
+
+          <button
+            className={`${style.sidebarLink} ${selectedTab === "contactedUsers" ? style.sidebarLinkActive : ""}`}
+            onClick={() => { handleTabSelect("contactedUsers"); closeSidebarOnMobile(); }}
+          >
+            <span className={style.sidebarIcon}><FaPhoneAlt /></span>
+            <span className={`${style.sidebarLabel} ${isSidebarOpen ? style.sidebarLabelVisible : ""}`}>
+              Contacted Users
+            </span>
+          </button>
+        </div>
+
+        {/* ── Content Panel ── */}
+        <div className={style.contentPanel}>
+          {/* ── Stat Cards ── */}
+          <div className={style.statsRow}>
+            <div className={`${style.statCard} ${style.statCardBlue}`}>
+              <div className={style.statInfo}>
+                <span className={style.statLabel}>Registered Users</span>
+                <span className={style.statValue}>{emailList}</span>
+              </div>
+              <div className={`${style.statIcon} ${style.statIconBlue}`}>
+                <FaUserFriends />
+              </div>
+            </div>
+
+            <div className={`${style.statCard} ${style.statCardTeal}`}>
+              <div className={style.statInfo}>
+                <span className={style.statLabel}>Service Providers</span>
+                <span className={style.statValue}>{jobSeekerCount}</span>
+              </div>
+              <div className={`${style.statIcon} ${style.statIconTeal}`}>
+                <FaUser />
+              </div>
+            </div>
+
+            <div className={`${style.statCard} ${style.statCardOrange}`}>
+              <div className={style.statInfo}>
+                <span className={style.statLabel}>Built Profiles</span>
+                <span className={style.statValue}>{profileCount}</span>
+              </div>
+              <div className={`${style.statIcon} ${style.statIconOrange}`}>
+                <FaUserPlus />
+              </div>
+            </div>
+          </div>
+
+          {/* ── Tab Navigation (mobile-friendly) ── */}
+          <div className={style.tabNav}>
+            <button
+              className={`${style.tabBtn} ${selectedTab === "users" ? style.tabBtnActive : ""}`}
+              onClick={() => handleTabSelect("users")}
+            >
+              <FaUsers size={15} /> Users
+            </button>
+            <button
+              className={`${style.tabBtn} ${selectedTab === "contactedUsers" ? style.tabBtnActive : ""}`}
+              onClick={() => handleTabSelect("contactedUsers")}
+            >
+              <FaPhoneAlt size={14} /> Contacted
+            </button>
+          </div>
+
+          {/* ── Users Tab ── */}
+          {selectedTab === "users" && (
+            <div className={style.tablePanel}>
+              <div className={style.tablePanelHeader}>
+                <div className={style.tablePanelTitle}>
+                  <FaUsers style={{ color: "#06b9a3" }} /> User Details
+                </div>
+                <div className={style.tablePanelActions}>
+                  <input
+                    type="text"
+                    className={style.searchInput}
+                    placeholder="Search by name or email..."
+                    value={filterText}
+                    onChange={(e) => setFilterText(e.target.value)}
+                  />
+                  <button className={style.exportBtn} onClick={handleExport}>
+                    <FaFileExport /> Export
+                  </button>
+                </div>
+              </div>
+              <div className={style.tablePanelBody}>
+                <DataTable
+                  columns={columns}
+                  pagination
+                  data={filteredItems}
+                  highlightOnHover
+                  responsive
+                  paginationPerPage={100}
+                  paginationComponentOptions={{
+                    rowsPerPageText: "Rows per page:",
+                  }}
+                  paginationRowsPerPageOptions={[100, 150, 200, 250]}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ── Contacted Users Tab ── */}
+          {selectedTab === "contactedUsers" && (
+            <div className={style.tablePanel}>
+              <div className={style.tablePanelHeader}>
+                <div className={style.tablePanelTitle}>
+                  <FaPhoneAlt style={{ color: "#FF812B" }} /> Contacted Users
+                </div>
+                <div className={style.tablePanelActions}>
+                  <input
+                    type="text"
+                    className={style.searchInput}
+                    placeholder="Search by name, email, or issue..."
+                    value={searchText}
+                    onChange={(e: {
+                      target: { value: React.SetStateAction<string> };
+                    }) => setSearchText(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className={style.tablePanelBody}>
+                <DataTable
+                  columns={Contactcolumns}
+                  data={filteredData}
+                  pagination
+                  highlightOnHover
+                  responsive
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Modals ── */}
+      <UserModal
+        show={showModal}
+        userData={userData}
+        handleClose={handleCloseModal}
+      />
+      <AdminSignUpModal show={showSignup} handleClose={handleCloseSignup} />
+      <UpdateJobSeekerStatus
+        show={showJobModal}
+        onClose={handleModalClose}
+        onConfirm={handleJobSeekerUpdate}
+        userId={selectedRow?.email || null}
+      />
+    </div>
   );
 };
 

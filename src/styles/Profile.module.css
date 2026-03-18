@@ -361,6 +361,22 @@
     height: 12px;
 }
 
+.messageBtn {
+    color: #003385;
+    border: 1px solid #c0ccda;
+}
+
+.messageBtn:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.messageBtn svg {
+    color: #003385;
+    width: 14px;
+    height: 14px;
+}
+
 .whatsappBtn {
     color: #10b981;
     border: 1px solid #a7f3d0;

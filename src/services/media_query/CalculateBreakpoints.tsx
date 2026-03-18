@@ -6,13 +6,16 @@ type Breakpoints = {
   desktop: number;
 };
 
+const defaultMatches = {
+  mobile: false,
+  tablet: false,
+  desktop: false,
+  desktopLarge: false,
+};
+
 export const useAppMediaQuery = () => {
-  const [matches, setMatches] = useState({
-    mobile: false,
-    tablet: false,
-    desktop: false,
-    desktopLarge: false,
-  });
+  const [mounted, setMounted] = useState(false);
+  const [matches, setMatches] = useState(defaultMatches);
 
   const updateMatches = useCallback(() => {
     const mobile = window.matchMedia(`(max-width: ${480}px)`).matches;
@@ -24,6 +27,7 @@ export const useAppMediaQuery = () => {
   }, []);
 
   useEffect(() => {
+    setMounted(true);
     updateMatches(); // Set initial match state
 
     // Add event listeners for each media query
@@ -45,6 +49,9 @@ export const useAppMediaQuery = () => {
       desktopLargeMedia.removeEventListener("change", updateMatches);
     };
   }, [updateMatches]);
+
+  // Return default (all false) until mounted to prevent SSR hydration mismatch
+  if (!mounted) return defaultMatches;
 
   return matches;
 };

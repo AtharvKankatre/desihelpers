@@ -5,7 +5,7 @@ import { Routes } from "@/services/routes/Routes";
 import JobServices from "@/services/jobs/JobService";
 import { useAuth } from "@/services/authorization/AuthContext";
 import { ISubCategory } from "@/models/JobCategories";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 type Props = {
   title: string;
@@ -24,28 +24,11 @@ const HomeDropdownButton: FunctionComponent<Props> = ({ title, id }) => {
 
   const onClick = (e: ISubCategory) => {
     if (!isActive) {
-      Swal.fire({
-        title: "Alert",
-        text: "Please login to find helpers in your area",
-        icon: "warning",
-        confirmButtonText: "OK",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Login");
-        }
-      });
+      toast.info("Please login to find helpers in your area");
+      router.push("/Login");
     } else if (!isProfileBuild) {
-      Swal.fire({
-        icon: "warning",
-        title: "Profile Incomplete",
-        text: "Please build your profile first before finding helpers in your area.",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/Landing");
-        }
-      });
+      toast.warning("Please build your profile first before finding helpers in your area.");
+      router.push("/Landing");
     } else {
       let data: any = { queryCat: title, querySubCat: e.name };
       router.push({ pathname: Routes.mapSearch, query: data });
