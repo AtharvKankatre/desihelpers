@@ -21,7 +21,7 @@ export const WelcomeBanner = () => {
       toast.warning("Please build your profile first before finding helpers in your area.");
       router.push("/Landing");
     } else {
-      router.push(Routes.mapSearch);
+      router.push(Routes.viewAllJobs);
     }
   };
 

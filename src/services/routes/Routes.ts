@@ -9,7 +9,7 @@ export const Routes = {
   viewAllJobs: "/jobs/ViewAllJobs",
   myPostedJobs: "/jobs/MyPostedJobs",
   register: "/Login?mode=signup",
-  viewAllSeekers: "/seekers/ViewAllSeekers",
+  viewAllSeekers: "/jobs/ViewAllJobs?view=seekers",
   viewJobSeekerDetails: "/seekers/ViewJobSeekerDetail",
   postJob: "/jobs/PostAJob",
   editSeeekerForm: "/user_profile/EditSeekerProfile",

@@ -177,7 +177,7 @@ const _CHeader = () => {
                 onClick={() => router.push(Routes.messages)}
                 style={{ position: 'relative' }}
               >
-                <FaEnvelope style={{ color: "white" }} />
+                <FaEnvelope size={20} style={{ color: "white" }} />
                 {chatUnreadCount > 0 && (
                   <span style={{
                     position: 'absolute',
@@ -202,7 +202,7 @@ const _CHeader = () => {
                 onClick={() => setNotificationOpen(!notificationOpen)}
                 style={{ position: 'relative' }}
               >
-                <FaBell style={{ color: "white" }} />
+                <FaBell size={20} style={{ color: "white" }} />
                 {unreadCount > 0 && (
                   <span style={{
                     position: 'absolute',

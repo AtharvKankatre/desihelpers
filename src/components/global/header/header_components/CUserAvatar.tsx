@@ -149,8 +149,8 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
           <Image
             src={typeof userData.profilePhoto === 'string' && userData.profilePhoto.trim().length > 1 ? userData.profilePhoto : "/newassets/account_circle.png"}
             alt="Profile"
-            width={28}
-            height={28}
+            width={40}
+            height={40}
             className="rounded-circle"
             style={{ objectFit: 'cover' }}
           />

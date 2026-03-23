@@ -299,7 +299,7 @@ const Profile: React.FC = () => {
 
                 // Also update the global store with latest profile data
                 const storeActions = userProfileStore.getState();
-                storeActions.setUserProfile(apiProfile);
+                storeActions.setUserProfile({ ...apiProfile, profilePhoto: signedInitPhotoUrl });
 
                 // Try fetching testimonials if user ID is present
                 const userId = apiProfile._id || apiProfile.id;
@@ -360,7 +360,7 @@ const Profile: React.FC = () => {
         if (userProfile && Object.keys(userProfile).length > 0) {
             const syncData = async () => {
                 let signedPhotoUrl = userProfile.profilePhoto || profile.photo;
-                
+
                 // If it looks like a raw S3 path (not starting with http and not base64), sign it
                 if (userProfile.profilePhoto && !userProfile.profilePhoto.startsWith('http') && !userProfile.profilePhoto.startsWith('data:')) {
                     if (userProfile.profilePhoto !== "/newassets/account_circle.png") {
@@ -393,10 +393,10 @@ const Profile: React.FC = () => {
                         zipCode: userProfile.zipCode || prev.address.zipCode,
                     }
                 }));
-                
+
                 // Clear the error flag just in case we were showing the fallback avatar previously
                 if (signedPhotoUrl && signedPhotoUrl !== "/newassets/account_circle.png") {
-                   setProfilePhotoError(false);
+                    setProfilePhotoError(false);
                 }
             };
             syncData();
@@ -645,14 +645,14 @@ const Profile: React.FC = () => {
                 }
             });
             setPersonalSocialModalOpen(false);
-            
+
             // Update global store to keep header and popup in sync
             const { setUserProfile } = userProfileStore.getState();
             const resultFull = await ApiService.crud(APIDetails.getUserProfile);
             if (resultFull[0]) {
                 setUserProfile(resultFull[1]);
             }
-            
+
             toast.success("Details updated successfully!");
         } else {
             console.error("Personal details update failed:", result[1]);
@@ -838,8 +838,6 @@ const Profile: React.FC = () => {
                         </button>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <CUserAvatar
-                                className={styles.navIconButton}
-                                style={{ padding: 0 }}
                                 onToggle={(isOpen) => setAvatarOpen(isOpen)}
                             />
                         </div>
@@ -987,11 +985,11 @@ const Profile: React.FC = () => {
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
                                 <div className={styles.infoLabel}>List Profile As</div>
                                 <div className={styles.infoValue}>
-                                    <span style={{ 
-                                        backgroundColor: '#fff0e0', 
-                                        color: '#f07c00', 
-                                        padding: '2px 10px', 
-                                        borderRadius: '12px', 
+                                    <span style={{
+                                        backgroundColor: '#fff0e0',
+                                        color: '#f07c00',
+                                        padding: '2px 10px',
+                                        borderRadius: '12px',
                                         fontWeight: 600,
                                         fontSize: '12px',
                                         border: '1px solid #ffe0c0'

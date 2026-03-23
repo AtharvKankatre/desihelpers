@@ -31,7 +31,7 @@ const HomeDropdownButton: FunctionComponent<Props> = ({ title, id }) => {
       router.push("/Landing");
     } else {
       let data: any = { queryCat: title, querySubCat: e.name };
-      router.push({ pathname: Routes.mapSearch, query: data });
+      router.push({ pathname: Routes.viewAllJobs, query: data });
     }
   };
 

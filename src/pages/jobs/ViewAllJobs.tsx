@@ -163,6 +163,21 @@ const ViewAllJobs = () => {
     const [categoryFilter, setCategoryFilter] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("");
 
+    // Sync filters with router query (e.g. from header dropdowns)
+    useEffect(() => {
+        if (router.isReady) {
+            if (router.query.queryCat) {
+                setCategoryFilter(router.query.queryCat as string);
+            }
+            if (router.query.querySubCat) {
+                setSubCategoryFilter(router.query.querySubCat as string);
+            }
+            if (router.query.view === "seekers" || router.pathname.includes("seekers")) {
+                setViewType("seekers");
+            }
+        }
+    }, [router.isReady, router.query, router.pathname]);
+
     // Radar autocomplete state
     const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);

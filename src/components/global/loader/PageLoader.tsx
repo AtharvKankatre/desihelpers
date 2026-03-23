@@ -18,8 +18,11 @@ export const PageLoader: React.FC = () => {
             }
         };
 
+        let timeoutId: NodeJS.Timeout;
         const handleComplete = () => {
-            setLoading(false);
+            timeoutId = setTimeout(() => {
+                setLoading(false);
+            }, 800); // 800ms purposeful delay ensures underlying data fetches have time to resolve, preventing empty-screen flashing
         };
 
         router.events.on("routeChangeStart", handleStart);
@@ -30,6 +33,7 @@ export const PageLoader: React.FC = () => {
             router.events.off("routeChangeStart", handleStart);
             router.events.off("routeChangeComplete", handleComplete);
             router.events.off("routeChangeError", handleComplete);
+            if (timeoutId) clearTimeout(timeoutId);
         };
     }, [router]);
 

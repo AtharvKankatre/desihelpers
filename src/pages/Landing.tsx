@@ -21,6 +21,8 @@ import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import { toast } from "react-toastify";
 import { useRef } from "react";
+import { getWorkPhotoUrls } from "@/utils/s3Helper";
+
 
 import { HeroSection } from "@/components/page_related/landing/HeroSection";
 import { WhyUsSection } from "@/components/page_related/landing/WhyUsSection";
@@ -105,6 +107,10 @@ const Landing: React.FC = () => {
           sStore.reset();
           jStore.reset();
           let profile: IUserProfileModel = result[1];
+          if (profile.profilePhoto) {
+            const signedUrls = await getWorkPhotoUrls("", [profile.profilePhoto]);
+            profile.profilePhoto = signedUrls[0] || "";
+          }
           userStore.setUserProfile(profile);
         }
         setGlobalLoader(false);

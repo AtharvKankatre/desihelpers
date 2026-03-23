@@ -9,7 +9,6 @@ import { APIDetails } from "@/services/data/constants/ApiDetails";
 import CookieService from "@/services/authorization/CookieService";
 import Radar from "radar-sdk-js";
 import { toast } from "react-toastify";
-import OtherDataServices from "@/services/other_data/OtherDataServices";
 import base64url from "base64url";
 
 // Define the form data interface for all steps
@@ -393,6 +392,12 @@ const Login = () => {
       // Save tokens so the profile API call is authenticated
       CookieService.SetCookies(loginRes[1]);
 
+      // Extract userId from access_token
+      const token = loginRes[1].access_token;
+      const payloadStr = base64url.decode(token.split('.')[1]);
+      const jwtPayload = JSON.parse(payloadStr);
+      const userId = jwtPayload.id || jwtPayload._id || jwtPayload.sub;
+
       // Step 3: Create user profile with corrected field names
       const profilePayload: any = {
         firstName: formik.values.firstName,
@@ -407,52 +412,9 @@ const Login = () => {
         city: formik.values.city,
         state: formik.values.state,
         zipCode: formik.values.zipCode,
-        profilePhoto: "", // Default empty
+        profilePhoto: "", // Will be set after upload
         listProfileAs: formik.values.listProfileAs,
       };
-
-      // Step 3a: Upload profile picture if exists
-      if (formik.values.profilePicture) {
-        try {
-          const otherServices = new OtherDataServices();
-          // Extract userId from access_token
-          // Extract userId from access_token
-          const token = loginRes[1].access_token;
-          const payloadStr = base64url.decode(token.split('.')[1]);
-          const payload = JSON.parse(payloadStr);
-          const userId = payload.id || payload._id || payload.sub;
-
-          if (userId) {
-            const fileName = `profilePhotos/${userId}`;
-            const uploadRes = await otherServices.uploadProfilePhoto(formik.values.profilePicture, fileName);
-            if (uploadRes && uploadRes[0]) {
-              const resData = uploadRes[1];
-              let photoUrl = "";
-              
-              if (typeof resData === 'string') {
-                photoUrl = resData;
-              } else if (resData && typeof resData === 'object') {
-                // Backend returns { urls: [string] } or { urls: { profilePhoto: string } }
-                if (Array.isArray(resData.urls)) {
-                    photoUrl = resData.urls[0];
-                } else if (resData.urls && typeof resData.urls.profilePhoto === 'string') {
-                    photoUrl = resData.urls.profilePhoto;
-                } else if (typeof resData.profilePhoto === 'string') {
-                    photoUrl = resData.profilePhoto;
-                }
-              }
-
-              if (photoUrl) {
-                // Strip query params if any
-                profilePayload.profilePhoto = photoUrl.split('?')[0];
-              }
-            }
-          }
-        } catch (uploadError) {
-          console.error("Profile photo upload failed:", uploadError);
-          // We continue anyway as the account is created, but maybe notify user
-        }
-      }
 
       // Only add social links if they are filled
       if (formik.values.facebookLink) profilePayload.facebookLink = formik.values.facebookLink;
@@ -464,32 +426,51 @@ const Login = () => {
       const profileRes = await ApiService.crud(APIDetails.postUserProfile, profilePayload);
 
       if (profileRes[0]) {
-        // Update local store with the profile data including the photo
-        const { userProfileStore } = await import("@/stores/UserProfileStore");
-        const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
-        
-        // Ensure we have a viewable photo URL for immediate rendering
-        let signedPhotoUrl = profilePayload.profilePhoto;
-        if (signedPhotoUrl && !signedPhotoUrl.includes('data:')) {
-           try {
-              const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "";
-              
-              // If it's already a full S3 URL, getWorkPhotoUrls expects just the key or it will sign the whole thing
-              let keyToSign = signedPhotoUrl;
-              if (signedPhotoUrl.includes('amazonaws.com/')) {
-                  keyToSign = signedPhotoUrl.split('amazonaws.com/')[1];
-              }
+        // Step 3a: Upload profile picture AFTER profile is created
+        // Uses the same endpoint as the profile page — this both uploads to S3
+        // AND updates the profilePhoto field on the DB document atomically
+        let signedPhotoUrl = "";
+        if (formik.values.profilePicture && userId) {
+          try {
+            const formData = new FormData();
+            formData.append('file', formik.values.profilePicture);
 
-              const signed = await getWorkPhotoUrls(bucketName, [keyToSign]);
-              if (Array.isArray(signed) && signed.length > 0) {
-                  signedPhotoUrl = signed[0];
+            const uploadResponse = await fetch(`${apiUrl}user-profile/upload/${userId}/profilePhotos`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${loginRes[1].access_token}`
+              },
+              body: formData
+            });
+
+            if (uploadResponse.ok) {
+              const uploadResult = await uploadResponse.json();
+              // Backend returns { message: 'true', urls: UserProfile } where UserProfile has profilePhoto
+              const photoUrl = uploadResult.urls?.profilePhoto
+                || (Array.isArray(uploadResult.urls) ? uploadResult.urls[0] : null)
+                || uploadResult.profilePhoto;
+
+              if (photoUrl) {
+                // Sign the URL for immediate display (same approach as profile page)
+                const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
+                const signedUrls = await getWorkPhotoUrls("", [photoUrl]);
+                signedPhotoUrl = signedUrls.length > 0 ? signedUrls[0] : photoUrl;
+                profilePayload.profilePhoto = photoUrl;
               }
-           } catch(e) { console.error("Could not sign URL for store", e); }
+            } else {
+              console.error("Profile photo upload failed with status:", uploadResponse.status);
+            }
+          } catch (uploadError) {
+            console.error("Profile photo upload failed:", uploadError);
+            // Continue anyway — account and profile are created, photo can be added later
+          }
         }
 
+        // Update local store with the profile data including the photo
+        const { userProfileStore } = await import("@/stores/UserProfileStore");
         userProfileStore.getState().setUserProfile({
            ...profilePayload,
-           profilePhoto: signedPhotoUrl || profilePayload.profilePhoto
+           profilePhoto: profilePayload.profilePhoto || ""
         });
 
         // Step 4: Re-login to get fresh tokens with isProfile=true

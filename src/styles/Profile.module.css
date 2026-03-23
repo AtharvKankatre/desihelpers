@@ -143,9 +143,13 @@
 }
 
 .navIconButton img {
-    filter: brightness(0) invert(1);
     width: 24px;
     height: 24px;
+}
+
+/* Only filter specific icons like notification, NOT the avatar */
+.navIconButton img[alt="Notification"] {
+    filter: brightness(0) invert(1);
 }
 
 /* Word cloud background overlay - very faint */

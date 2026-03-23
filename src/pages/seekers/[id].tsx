@@ -109,7 +109,7 @@ const SeekerProfilePage = ({ seekerProfile }: PageProps) => {
     const [modalRating, setModalRating] = useState(0);
     const [testimonials, setTestimonials] = useState<any[]>([]);
 
-    const displayRating = Number(seekerProfile?.rating) || 0; 
+    const displayRating = Number(seekerProfile?.rating) || 0;
     // e.g. 3.4, 4.5
 
     const toggleSection = (section: keyof typeof expandedSections) => {
@@ -330,8 +330,8 @@ const SeekerProfilePage = ({ seekerProfile }: PageProps) => {
                                     </a>
                                 )}
                                 {seekerProfile.id && (
-                                    <button 
-                                        className={`${styles.actionBtn} ${styles.messageBtn}`} 
+                                    <button
+                                        className={`${styles.actionBtn} ${styles.messageBtn}`}
                                         onClick={() => router.push(`/Messages?userId=${seekerProfile.id}`)}
                                     >
                                         <MessageIcon /> Message Me

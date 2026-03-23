@@ -24,7 +24,7 @@ const fallbackServices = [
         location: "Bothell, Washington",
         date: "Mon 25, 2025",
         rate: "$25-$35 / hr",
-        image: "/assets/icons/categories/nanny.svg",
+        image: "/newillustration/Group 1000004170.svg",
         urgent: true,
         skillKeys: ["nanny", "catering", "cleaning", "movers"],
     },
@@ -42,7 +42,7 @@ const fallbackServices = [
         location: "Adair County, Kentucky",
         date: "Sep 19, 2025",
         rate: "$25-$35 / hr",
-        image: "/assets/icons/categories/baker.svg",
+        image: "/newillustration/Group 1000004165.svg",
         urgent: true,
         skillKeys: ["cake bakers", "catering", "servers", "movers"],
     },
@@ -60,7 +60,7 @@ const fallbackServices = [
         location: "Morrisville, Pennsylvania",
         date: "Jul 1, 2025",
         rate: "$15-$25 / hr",
-        image: "/assets/icons/categories/server.svg",
+        image: "/newillustration/Group 1000004170.svg",
         urgent: true,
         skillKeys: ["servers", "catering", "nanny", "movers"],
     },
@@ -199,13 +199,20 @@ export const PopularServicesSection: React.FC = () => {
         glide();
     };
 
-    const handleCardClick = () => {
+    const handleCardClick = (item: any) => {
         if (hasDragged.current) return;
         if (!isActive) {
-            toast.info("Please login to view details");
+            toast.info("Please login to view details", { toastId: "login-provider" });
             router.push("/Login");
         } else {
-            router.push(Routes.mapSearch);
+            const rawId = String(item.id);
+            if (item.type === "helper") {
+                const seekerId = rawId.replace("seeker-", "");
+                router.push(`/seekers/${seekerId}`);
+            } else {
+                const jobId = rawId.replace("job-", "");
+                router.push(`/jobs/${jobId}`);
+            }
         }
     };
 
@@ -228,7 +235,7 @@ export const PopularServicesSection: React.FC = () => {
     );
 
     const renderJobCard = (item: any, index: number) => (
-        <div key={`${item.id}-${index}`} className={styles.card} onClick={handleCardClick}>
+        <div key={`${item.id}-${index}`} className={styles.card} onClick={() => handleCardClick(item)}>
             {item.urgent && <span className={styles.urgentBadge}>URGENT</span>}
             <div className={styles.cardImageArea}>
                 <Image
@@ -258,7 +265,7 @@ export const PopularServicesSection: React.FC = () => {
     );
 
     const renderHelperCard = (item: any, index: number) => (
-        <div key={`${item.id}-${index}`} className={`${styles.card} ${styles.helperCard}`} onClick={handleCardClick}>
+        <div key={`${item.id}-${index}`} className={`${styles.card} ${styles.helperCard}`} onClick={() => handleCardClick(item)}>
             <div className={styles.helperImageArea}>
                 {item.image ? (
                     <Image
@@ -271,15 +278,17 @@ export const PopularServicesSection: React.FC = () => {
                         draggable={false}
                     />
                 ) : (
-                    <Image
-                        src="/assets/helpers/sukhreet-kaur-1.png"
-                        alt={item.name}
-                        width={260}
-                        height={140}
-                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                        unoptimized={true}
-                        draggable={false}
-                    />
+                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #EAF0FA 0%, #D6E4F7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px' }}>
+                        <Image
+                            src="/newillustration/Group 1000004166.svg"
+                            alt={item.name}
+                            width={100}
+                            height={100}
+                            style={{ objectFit: "contain" }}
+                            unoptimized={true}
+                            draggable={false}
+                        />
+                    </div>
                 )}
             </div>
             <h3 className={`${styles.cardTitle} ${styles.helperName}`}>{item.name}</h3>

@@ -18,7 +18,7 @@ const fallbackJobCards = [
     location: "Bothell, Washington",
     date: "Mon 25, 2025",
     rate: "$25-$35 / hr",
-    image: "/assets/icons/categories/nanny.svg",
+    image: "/newillustration/Group 1000004170.svg",
     urgent: true,
   },
   {
@@ -28,7 +28,7 @@ const fallbackJobCards = [
     location: "Bothell, Washington",
     date: "Mon 25, 2025",
     rate: "-",
-    image: "/assets/icons/categories/movers.svg",
+    image: "/newillustration/flat.svg",
     urgent: true,
   },
   {
@@ -38,7 +38,7 @@ const fallbackJobCards = [
     location: "Oakland, California",
     date: "Sep 12, 2025",
     rate: "-",
-    image: "/assets/icons/categories/mothers_helper.svg",
+    image: "/newillustration/Group 1000004166.svg",
     urgent: true,
   },
   {
@@ -48,7 +48,7 @@ const fallbackJobCards = [
     location: "Oakland, California",
     date: "Oct 1, 2025",
     rate: "-",
-    image: "/assets/icons/categories/tiffin.svg",
+    image: "/newillustration/Group.svg",
     urgent: true,
   },
   {
@@ -58,7 +58,7 @@ const fallbackJobCards = [
     location: "Issaquah, Washington",
     date: "Sep 12, 2025",
     rate: "$15-$25 / hr",
-    image: "/assets/icons/categories/cleaner.svg",
+    image: "/newillustration/Group (1).svg",
     urgent: true,
   },
   {
@@ -68,7 +68,7 @@ const fallbackJobCards = [
     location: "Adair County, Kentucky",
     date: "Sep 19, 2025",
     rate: "$25-$35 / hr",
-    image: "/assets/icons/categories/baker.svg",
+    image: "/newillustration/Group 1000004165.svg",
     urgent: true,
   },
   {
@@ -78,7 +78,7 @@ const fallbackJobCards = [
     location: "Morrisville, Pennsylvania",
     date: "Jul 1, 2025",
     rate: "$15-$25 / hr",
-    image: "/assets/icons/categories/server.svg",
+    image: "/newillustration/Group 1000004170.svg",
     urgent: true,
   },
 ];
@@ -228,7 +228,7 @@ const _HeroSection: React.FC = () => {
   const onTouchMove = (e: React.TouchEvent) => handlePointerMove(e.touches[0].clientX);
   const onTouchEnd = () => handlePointerUp();
 
-  const handleCardClick = (jobTitle: string) => {
+  const handleCardClick = (job: any) => {
     // Prevent click if user was dragging
     if (hasDragged.current) return;
 
@@ -238,7 +238,7 @@ const _HeroSection: React.FC = () => {
     } else if (!isProfileBuild) {
       toast.warn("Please build your profile first.", { toastId: 'profile-incomplete' });
     } else {
-      router.push(Routes.mapSearch);
+      router.push(`/jobs/${job.id}`);
     }
   };
 
@@ -247,7 +247,7 @@ const _HeroSection: React.FC = () => {
   };
 
   const handleExploreJobs = () => {
-    router.push(Routes.mapSearch);
+    router.push(Routes.viewAllJobs);
   };
 
   return (
@@ -335,7 +335,7 @@ const _HeroSection: React.FC = () => {
             <div
               key={`${job.id}-${index}`}
               className={styles.jobCard}
-              onClick={() => handleCardClick(job.title)}
+              onClick={() => handleCardClick(job)}
             >
               {job.urgent && <span className={styles.urgentBadge}>URGENT</span>}
 
