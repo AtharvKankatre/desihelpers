@@ -6,13 +6,15 @@ interface CPhotoUploadModalProps {
     onClose: () => void;
     onSave: (photos: File[]) => void;
     isLoading?: boolean;
+    title?: string;
 }
 
 const CPhotoUploadModal: React.FC<CPhotoUploadModalProps> = ({
     open,
     onClose,
     onSave,
-    isLoading = false
+    isLoading = false,
+    title = "Update Profile Photo"
 }) => {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -25,9 +27,9 @@ const CPhotoUploadModal: React.FC<CPhotoUploadModalProps> = ({
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
 
-            // Limit to 5MB
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File size exceeds 5MB limit. Please choose a smaller image.");
+            // Limit to 20MB
+            if (file.size > 20 * 1024 * 1024) {
+                alert("File size exceeds 20MB limit. Please choose a smaller image.");
                 e.target.value = "";
                 return;
             }
@@ -79,7 +81,7 @@ const CPhotoUploadModal: React.FC<CPhotoUploadModalProps> = ({
         <div className={styles.modalOverlay}>
             <div className={styles.modalContainer}>
                 <div className={styles.modalHeader}>
-                    <h2 className={styles.modalTitle}>Update Profile Photo</h2>
+                    <h2 className={styles.modalTitle}>{title}</h2>
                     <button className={styles.closeBtn} onClick={handleCancel}>×</button>
                 </div>
 
@@ -120,7 +122,7 @@ const CPhotoUploadModal: React.FC<CPhotoUploadModalProps> = ({
                                 </span>
                             </div>
                             <p className={styles.uploadLimit}>
-                                Supports (JPG, JPEG, PNG) Max 5MB file size.
+                                Supports (JPG, JPEG, PNG) Max 20MB file size.
                             </p>
                         </div>
                     )}

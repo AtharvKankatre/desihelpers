@@ -48,9 +48,9 @@ export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, on
                 sx={{
                     position: "absolute",
                     top: { xs: "55px", sm: "60px" },
-                    right: { xs: "5vw", sm: "20px" },
-                    width: { xs: "90vw", sm: "360px" },
-                    maxWidth: "360px",
+                    right: { xs: "-50px", sm: "20px" },
+                    width: { xs: "320px", sm: "360px" },
+                    maxWidth: "90vw",
                     borderRadius: "12px",
                     boxShadow: "0px 8px 24px rgba(0,0,0,0.12)",
                     zIndex: 1400,
@@ -76,17 +76,17 @@ export const CNotificationPopup: React.FC<CNotificationPopupProps> = ({ open, on
                 <Box sx={{ maxHeight: { xs: "60vh", sm: "400px" }, overflowY: "auto" }}>
                     {recentNotifications.length > 0 ? (
                         recentNotifications.map((notif) => (
-                            <NotificationItem key={notif.id} onClick={() => markAsRead(notif.id)}>
+                            <NotificationItem key={notif._id} onClick={() => markAsRead(notif._id)}>
                                 <NotificationIcon>
                                     <FaBell color="#fd7e14" size={16} />
                                 </NotificationIcon>
                                 <Box sx={{ flex: 1 }}>
                                     <Typography variant="body2" sx={{ color: "#444 !important", mb: 1, fontSize: "0.9rem" }} dangerouslySetInnerHTML={{ __html: notif.message.replace(notif.name, `<b style="color: #444 !important">${notif.name}</b>`) }} />
                                     <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 0.5 }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer", "&:hover": { color: "#fd7e14 !important" } }} onClick={(e) => { e.stopPropagation(); if (notif.id === 3) { onFeedbackClick(); onClose(); } }}>YES</Typography>
+                                        <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer", "&:hover": { color: "#fd7e14 !important" } }} onClick={(e) => { e.stopPropagation(); if (notif._id === '3') { onFeedbackClick(); onClose(); } }}>YES</Typography>
                                         <Typography variant="caption" sx={{ fontWeight: 700, color: "#333 !important", cursor: "pointer", "&:hover": { color: "#fd7e14 !important" } }} onClick={(e) => { e.stopPropagation(); }}>No</Typography>
                                     </Box>
-                                    <Typography variant="caption" sx={{ color: "#999 !important" }}>{notif.time}</Typography>
+                                    <Typography variant="caption" sx={{ color: "#999 !important" }}>{new Date(notif.createdAt).toLocaleDateString()}</Typography>
                                 </Box>
                                 {!notif.isRead && (
                                     <Box sx={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#fd7e14", mt: 1 }} />

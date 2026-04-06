@@ -1,3 +1,7 @@
+.offcanvasContainer {
+    z-index: 10500 !important;
+}
+
 .offcanvasHeader {
     background-color: #ffffff;
     border-bottom: 1px solid #eee;
@@ -17,18 +21,106 @@
     color: #1a5891;
     font-weight: 600;
     font-size: 0.9rem;
+    flex: 1;
+    min-width: 0;
+    margin-right: 12px;
+}
+
+.locationInfo span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .closeIcon {
-    font-size: 20px;
-    color: #666;
+    font-size: 22px;
+    color: #888;
     cursor: pointer;
+    transition: color 0.2s;
+    padding: 4px;
+}
+
+.closeIcon:hover {
+    color: #d32f2f;
 }
 
 .lastLogin {
     font-size: 0.8rem;
     color: #666;
     margin-top: 5px;
+}
+
+.headerRightActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.langSelector {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.langButton {
+    background: #FFF5F0;
+    /* Soft brand orange background */
+    border: 1px solid #ffccb3;
+    /* Light orange border */
+    color: #ff6b35;
+    /* Brand orange text */
+    padding: 2px 14px;
+    height: 32px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 16px;
+    /* Smooth pill shape */
+    gap: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.langButton:hover {
+    background: #ff6b35;
+    border-color: #ff6b35;
+    color: white;
+}
+
+.langDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 6px 0;
+    min-width: 100px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.langOption {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.langOption:hover {
+    background: #FFF5F0;
+    color: #f07c00;
 }
 
 .editIcon {
@@ -66,14 +158,24 @@
 }
 
 .iconBox {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: #FFF5F0;
+    background: linear-gradient(135deg, #fff2e6 0%, #ffe0cc 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #f07c00;
+    color: #ff6b35;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(255, 107, 53, 0.2);
+    transition: all 0.3s ease;
+}
+
+.menuItem:hover .iconBox {
+    background: linear-gradient(135deg, #ff6b35 0%, #f07c00 100%);
+    color: white;
+    box-shadow: 0 6px 14px rgba(240, 124, 0, 0.35);
+    transform: scale(1.05);
 }
 
 .separator {
@@ -87,8 +189,15 @@
 }
 
 .logoutIconBox {
-    background-color: #ffebee;
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
     color: #d32f2f;
+    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.15);
+}
+
+.menuItem:hover .logoutIconBox {
+    background: linear-gradient(135deg, #ef5350 0%, #d32f2f 100%);
+    color: white;
+    box-shadow: 0 6px 14px rgba(211, 47, 47, 0.35);
 }
 
 /* Footer Section */

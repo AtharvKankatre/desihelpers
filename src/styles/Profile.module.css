@@ -73,6 +73,14 @@
     gap: 12px;
 }
 
+/* Hidden on desktop, shown on mobile */
+.mobileMenuBtnWrapper {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
 .langSelector {
     position: relative;
     display: flex;
@@ -136,6 +144,8 @@
     justify-content: center;
     border-radius: 50%;
     transition: background-color 0.2s ease;
+    width: 40px;
+    height: 40px;
 }
 
 .navIconButton:hover {
@@ -143,8 +153,8 @@
 }
 
 .navIconButton img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
 /* Only filter specific icons like notification, NOT the avatar */
@@ -2431,35 +2441,52 @@
     /* Navbar */
     .profileNavbar {
         padding: 12px 16px;
+        justify-content: flex-start;
+        gap: 8px;
+        min-height: 60px;
+        /* same as CHeader */
     }
 
     .navbarBrand {
         margin-right: auto;
+        margin-left: 0;
+        display: flex;
+        justify-content: flex-start;
     }
 
     .navbarActions {
-        gap: 8px;
+        gap: 4px;
+        /* match exactly with CHeader */
+        margin-left: auto;
+        margin-right: 0;
+        /* match exactly with CHeader */
     }
 
-    .mobileMenuBtn {
+    .mobileMenuBtnWrapper {
         display: flex;
-        margin-left: 5px;
-        padding: 8px;
-        border-radius: 8px;
-        transition: background 0.2s;
-    }
-
-    .mobileMenuBtn:active {
-        background: rgba(255, 255, 255, 0.1);
+        align-items: center;
+        justify-content: center;
+        height: 100%;
     }
 
     .navbarLinks {
         display: none;
     }
 
-    .navIconButton:last-child {
-        display: none;
-        /* Hide profile icon on mobile */
+    .navIconButton {
+        padding: 0 !important;
+        width: 30px !important;
+        height: 30px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .navIconButton img {
+        width: 14px !important;
+        height: 14px !important;
     }
 
     /* Header & Profile Photo */

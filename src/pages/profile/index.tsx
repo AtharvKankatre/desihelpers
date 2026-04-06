@@ -20,6 +20,15 @@ import { cookieParams } from "@/constants/ECookieParams";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { getWorkPhotoUrls } from "@/utils/s3Helper";
+import { FaBell, FaEnvelope } from "react-icons/fa";
+import { useNotification } from "@/context/NotificationContext";
+import { useChatStore } from "@/stores/ChatStore";
+import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
+
+const CNotificationPopup = dynamic(() => import("@/components/global/header/header_components/CNotificationPopup").then(mod => mod.CNotificationPopup));
+const CMobileCanvas = dynamic(() => import("@/components/global/mobile_canvas/CMobileCanvas").then(mod => mod.CMobileCanvas));
 
 // Icons as components
 const LocationIcon = () => (
@@ -228,6 +237,8 @@ const Profile: React.FC = () => {
     const [addressModalOpen, setAddressModalOpen] = useState(false);
     const [personalSocialModalOpen, setPersonalSocialModalOpen] = useState(false);
     const [photoModalOpen, setPhotoModalOpen] = useState(false);
+    const [galleryPhotoModalOpen, setGalleryPhotoModalOpen] = useState(false);
+    const [isGalleryUploading, setIsGalleryUploading] = useState(false);
     const [jobsModalOpen, setJobsModalOpen] = useState(false);
     const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
     const [editingTestimonial, setEditingTestimonial] = useState<any>(null);
@@ -240,6 +251,12 @@ const Profile: React.FC = () => {
     const [avatarOpen, setAvatarOpen] = useState(false);
     const [profilePhotoError, setProfilePhotoError] = useState(false);
     const [isPhotoUploading, setIsPhotoUploading] = useState(false);
+    const [notificationOpen, setNotificationOpen] = useState(false);
+    const [showCanvas, setShowCanvas] = useState(false);
+    const router = useRouter();
+    const { mobile, tablet } = useAppMediaQuery();
+    const { unreadCount } = useNotification();
+    const chatUnreadCount = useChatStore((state) => state.unreadTotal);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -737,6 +754,53 @@ const Profile: React.FC = () => {
         }
     };
 
+    const handleGallerySave = async (photos: File[]) => {
+        if (photos.length === 0) return;
+        const file = photos[0];
+        setIsGalleryUploading(true);
+        const toastId = toast.loading("Uploading photo to gallery...");
+        try {
+            // Show an instant local preview immediately
+            const localUrl = URL.createObjectURL(file);
+            const newPhoto = { id: Date.now(), url: localUrl, alt: `Work photo ${profile.photoGallery.length + 1}` };
+            setProfile(prev => ({ ...prev, photoGallery: [...prev.photoGallery, newPhoto] }));
+
+            const userId = profile.userId || userProfileStore.getState().userProfile?.userId;
+            if (!userId) throw new Error("User ID not found. Please log in again.");
+
+            const formData = new FormData();
+            formData.append('file', file);
+            const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+            const accessToken = Cookies.get(cookieParams.accessToken);
+            
+            const response = await fetch(`${BASE_URL}user-profile/upload/${userId}/SeekerPhotos`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${accessToken}` },
+                body: formData
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+            }
+            
+            const result = await response.json();
+            const uploadedUrl = Array.isArray(result.urls) ? result.urls[0] : (result.urls?.profilePhoto || localUrl);
+            // Replace local preview with signed remote URL
+            setProfile(prev => ({
+                ...prev,
+                photoGallery: prev.photoGallery.map(p => p.id === newPhoto.id ? { ...p, url: uploadedUrl } : p)
+            }));
+            setGalleryPhotoModalOpen(false);
+            toast.update(toastId, { render: "Photo added to gallery!", type: "success", isLoading: false, autoClose: 3000 });
+        } catch (error: any) {
+            console.error("Gallery upload error:", error);
+            toast.update(toastId, { render: error.message || 'Upload failed. Please try again.', type: "error", isLoading: false, autoClose: 3000 });
+        } finally {
+            setIsGalleryUploading(false);
+        }
+    };
+
     const handleJobsUpdate = (updatedJobs: any[]) => {
         setProfile({
             ...profile,
@@ -806,6 +870,16 @@ const Profile: React.FC = () => {
 
                 {/* Navbar row */}
                 <div className={styles.profileNavbar}>
+                    {/* Hamburger - LEFT side, before logo, using actual CMobileCanvas */}
+                    {(mobile || tablet) && (
+                        <div className={styles.mobileMenuBtnWrapper}>
+                            <CMobileCanvas
+                                show={showCanvas}
+                                handleClose={() => setShowCanvas(false)}
+                                handleShow={() => setShowCanvas(true)}
+                            />
+                        </div>
+                    )}
                     <Link href="/Landing" className={styles.navbarBrand}>
                         <DesiHelpersIcon />
                     </Link>
@@ -816,39 +890,73 @@ const Profile: React.FC = () => {
                         <Link href="/resources" className={styles.navLink}>Resources</Link>
                     </div>
                     <div className={styles.navbarActions}>
-                        <div className={styles.langSelector}>
-                            <button
-                                className={styles.langButton}
-                                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                            >
-                                {selectedLang}
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ marginLeft: "4px" }}>
-                                    <path d="M3 4.5L6 7.5L9 4.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </button>
-                            {langDropdownOpen && (
-                                <div className={styles.langDropdown}>
-                                    <button className={styles.langOption} onClick={() => handleLangChange("Eng")}>English</button>
-                                    <button className={styles.langOption} onClick={() => handleLangChange("Hindi")}>Hindi</button>
-                                </div>
-                            )}
+                        {/* Language Selector - Desktop only */}
+                        <div className={styles.desktopOnly}>
+                            <div className={styles.langSelector}>
+                                <button
+                                    className={styles.langButton}
+                                    onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                                >
+                                    {selectedLang}
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ marginLeft: "4px" }}>
+                                        <path d="M3 4.5L6 7.5L9 4.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </button>
+                                {langDropdownOpen && (
+                                    <div className={styles.langDropdown}>
+                                        <button className={styles.langOption} onClick={() => handleLangChange("Eng")}>English</button>
+                                        <button className={styles.langOption} onClick={() => handleLangChange("Hindi")}>Hindi</button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <button className={styles.navIconButton}>
-                            <Image src="/newassets/notification.png" alt="Notification" width={24} height={24} />
-                        </button>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <CUserAvatar
-                                onToggle={(isOpen) => setAvatarOpen(isOpen)}
+
+                        {/* Messages Button */}
+                        <div style={{ position: "relative" }}>
+                            <button
+                                className={styles.navIconButton}
+                                onClick={() => router.push(Routes.messages)}
+                                style={{ position: 'relative' }}
+                            >
+                                <FaEnvelope size={20} style={{ color: "white" }} />
+                                {chatUnreadCount > 0 && (
+                                    <span style={{
+                                        position: 'absolute', top: '2px', right: '2px',
+                                        width: '8px', height: '8px',
+                                        backgroundColor: '#ff0000', borderRadius: '50%',
+                                        border: '1.5px solid #001838'
+                                    }}></span>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Notification Button */}
+                        <div style={{ position: "relative" }}>
+                            <button
+                                className={styles.navIconButton}
+                                onClick={() => setNotificationOpen(!notificationOpen)}
+                                style={{ position: 'relative' }}
+                            >
+                                <FaBell size={20} style={{ color: "white" }} />
+                                {unreadCount > 0 && (
+                                    <span style={{
+                                        position: 'absolute', top: '2px', right: '2px',
+                                        width: '8px', height: '8px',
+                                        backgroundColor: '#ff0000', borderRadius: '50%',
+                                        border: '1.5px solid #001838'
+                                    }}></span>
+                                )}
+                            </button>
+                            <CNotificationPopup
+                                open={notificationOpen}
+                                onClose={() => setNotificationOpen(false)}
+                                onFeedbackClick={() => {}}
                             />
                         </div>
+
+                        {/* Profile Avatar */}
+                        <CUserAvatar size={22} onToggle={(isOpen) => setAvatarOpen(isOpen)} />
                     </div>
-                    <button className={styles.mobileMenuBtn}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
                 </div>
 
                 {/* Header Actions - Positioned absolutely via CSS */}
@@ -982,22 +1090,7 @@ const Profile: React.FC = () => {
                                 <div className={styles.infoValue}>{profile.okWithPets || "-"}</div>
                             </div>
 
-                            <div className={styles.infoRow} style={{ marginTop: "15px" }}>
-                                <div className={styles.infoLabel}>List Profile As</div>
-                                <div className={styles.infoValue}>
-                                    <span style={{
-                                        backgroundColor: '#fff0e0',
-                                        color: '#f07c00',
-                                        padding: '2px 10px',
-                                        borderRadius: '12px',
-                                        fontWeight: 600,
-                                        fontSize: '12px',
-                                        border: '1px solid #ffe0c0'
-                                    }}>
-                                        {profile.listProfileAs === "Job Seeker" ? "Hire Someone" : (profile.listProfileAs || "Both")}
-                                    </span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
 
@@ -1364,7 +1457,7 @@ const Profile: React.FC = () => {
                                             ))}
 
                                             {/* Add Photo Placeholder */}
-                                            <div className={styles.addPhotoPlaceholder} onClick={() => setPhotoModalOpen(true)}>
+                                            <div className={styles.addPhotoPlaceholder} onClick={() => setGalleryPhotoModalOpen(true)}>
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
                                                     <line x1="12" y1="5" x2="12" y2="19" />
                                                     <line x1="5" y1="12" x2="19" y2="12" />
@@ -1451,6 +1544,13 @@ const Profile: React.FC = () => {
                 onClose={() => setPhotoModalOpen(false)}
                 onSave={handlePhotoSave}
                 isLoading={isPhotoUploading}
+            />
+            <CPhotoUploadModal
+                open={galleryPhotoModalOpen}
+                onClose={() => setGalleryPhotoModalOpen(false)}
+                onSave={handleGallerySave}
+                isLoading={isGalleryUploading}
+                title="Add to Gallery"
             />
             <CJobsOfferingModal
                 open={jobsModalOpen}

@@ -230,7 +230,6 @@ const Login = () => {
     linkedinLink: urlValidation,
     twitterLink: urlValidation,
     websiteLink: urlValidation,
-    listProfileAs: yup.string().required("Please tell us what brings you here today"),
   });
 
   const getValidationSchema = () => {
@@ -268,7 +267,7 @@ const Login = () => {
       linkedinLink: "",
       twitterLink: "",
       websiteLink: "",
-      listProfileAs: "",
+      listProfileAs: "Both",
     },
     validationSchema: getValidationSchema(),
     validateOnChange: true,
@@ -469,8 +468,8 @@ const Login = () => {
         // Update local store with the profile data including the photo
         const { userProfileStore } = await import("@/stores/UserProfileStore");
         userProfileStore.getState().setUserProfile({
-           ...profilePayload,
-           profilePhoto: profilePayload.profilePhoto || ""
+          ...profilePayload,
+          profilePhoto: profilePayload.profilePhoto || ""
         });
 
         // Step 4: Re-login to get fresh tokens with isProfile=true
@@ -965,8 +964,28 @@ const Login = () => {
 
     // Handle selecting an address suggestion — auto-fill city, state, zip
     const handleAddressSelect = (address: any) => {
-      // Set address line 1 to the full formatted address or street
-      const streetAddress = address.formattedAddress || address.addressLabel || address.street || '';
+      // Extract ONLY street address (number + street), not full formatted address
+      const streetNumber = address.number || '';
+      const street = address.street || '';
+      let streetAddress = '';
+      if (streetNumber && street) {
+        streetAddress = `${streetNumber} ${street}`;
+      } else if (street) {
+        streetAddress = street;
+      } else {
+        // Fallback: strip city, state, zip, country from the formatted address
+        let raw = address.addressLabel || address.formattedAddress || '';
+        const addrCity = address.city || address.borough || '';
+        const addrState = address.state || address.stateCode || '';
+        const addrZip = address.postalCode || '';
+        const addrCountry = address.country || address.countryCode || '';
+        [addrCity, addrState, addrZip, addrCountry, 'US', 'USA'].forEach(part => {
+          if (part) {
+            raw = raw.replace(new RegExp(`[,\\s]*\\b${part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b[,\\s]*`, 'gi'), ' ');
+          }
+        });
+        streetAddress = raw.replace(/,\s*$/, '').replace(/^\s*,/, '').trim();
+      }
       formik.setFieldValue('addressLine1', streetAddress);
 
       // Auto-fill city
@@ -1129,51 +1148,6 @@ const Login = () => {
     <div className={style.stepContent}>
       <h3 className={style.stepTitle}>Social details & Visibility</h3>
       <p className={style.stepSubtitle}>Enter below details to connect your social profiles and define your account.</p>
-
-      {/* Profile Listing Choice */}
-      <div className={style.formGroup}>
-        <label className={style.formLabel}>What brings you here today? <span className={style.required}>*</span></label>
-        <p className={style.uploadHint}>Control how you appear to others on DesiHelpers. Don't worry, you can change this later!</p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px', marginBottom: '8px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '15px', color: '#333', fontWeight: 500, padding: '12px 16px', border: formik.values.listProfileAs === "Job Seeker" ? '2px solid #f07c00' : '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: formik.values.listProfileAs === "Job Seeker" ? '#fff9f2' : '#fff', transition: 'all 0.2s ease' }}>
-            <input
-              type="radio"
-              name="listProfileAs"
-              value="Job Seeker"
-              checked={formik.values.listProfileAs === "Job Seeker"}
-              onChange={formik.handleChange}
-              style={{ marginRight: '12px', accentColor: '#f07c00', width: '18px', height: '18px', cursor: 'pointer' }}
-            />
-            I want to hire someone
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '15px', color: '#333', fontWeight: 500, padding: '12px 16px', border: formik.values.listProfileAs === "Service Provider" ? '2px solid #3eb489' : '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: formik.values.listProfileAs === "Service Provider" ? '#f0fcf7' : '#fff', transition: 'all 0.2s ease' }}>
-            <input
-              type="radio"
-              name="listProfileAs"
-              value="Service Provider"
-              checked={formik.values.listProfileAs === "Service Provider"}
-              onChange={formik.handleChange}
-              style={{ marginRight: '12px', accentColor: '#3eb489', width: '18px', height: '18px', cursor: 'pointer' }}
-            />
-            I want to offer my services
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '15px', color: '#333', fontWeight: 500, padding: '12px 16px', border: formik.values.listProfileAs === "Both" ? '2px solid #003385' : '1px solid #e0e0e0', borderRadius: '8px', backgroundColor: formik.values.listProfileAs === "Both" ? '#f2f6ff' : '#fff', transition: 'all 0.2s ease' }}>
-            <input
-              type="radio"
-              name="listProfileAs"
-              value="Both"
-              checked={formik.values.listProfileAs === "Both"}
-              onChange={formik.handleChange}
-              style={{ marginRight: '12px', accentColor: '#003385', width: '18px', height: '18px', cursor: 'pointer' }}
-            />
-            I want to do both
-          </label>
-        </div>
-        {formik.touched.listProfileAs && formik.errors.listProfileAs && (
-          <span className={style.errorText}>{formik.errors.listProfileAs}</span>
-        )}
-      </div>
 
       {/* Profile Picture Upload */}
       <div className={style.formGroup}>

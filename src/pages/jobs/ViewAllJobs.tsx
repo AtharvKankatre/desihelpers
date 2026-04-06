@@ -807,7 +807,7 @@ const ViewAllJobs = () => {
 
                             return matchesSearch && matchesLocation;
                         }).map((seeker) => (
-                            <div key={seeker.id} className={styles.seekerCard}>
+                            <div key={seeker.id} className={styles.seekerCard} onClick={() => { if (requireLogin()) router.push(`/seekers/${seeker.id}`); }}>
                                 <div className={styles.seekerHeader}>
                                     <div className={styles.seekerAvatarWrap}>
                                         <div className={styles.seekerAvatar}>{seeker.name.charAt(0)}</div>
@@ -823,7 +823,7 @@ const ViewAllJobs = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <button className={styles.cardShareBtn} title="Share">
+                                    <button className={styles.cardShareBtn} title="Share" onClick={(e) => e.stopPropagation()}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                                             <polyline points="16 6 12 2 8 6" />
@@ -856,13 +856,13 @@ const ViewAllJobs = () => {
                                     </div>
                                 </div>
                                 <div className={styles.seekerFooter}>
-                                    <span className={styles.seekerContactBtn} onClick={() => requireLogin()}>
+                                    <span className={styles.seekerContactBtn} onClick={(e) => { e.stopPropagation(); requireLogin(); }}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                                         </svg>
                                         Contact Now
                                     </span>
-                                    <span className={styles.seekerViewProfile} onClick={() => { if (requireLogin()) router.push(`/seekers/${seeker.id}`); }}>
+                                    <span className={styles.seekerViewProfile} onClick={(e) => { e.stopPropagation(); if (requireLogin()) router.push(`/seekers/${seeker.id}`); }}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                             <circle cx="12" cy="12" r="3" />

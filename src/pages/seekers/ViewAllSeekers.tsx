@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import styles from "@/styles/ViewAllJobs.module.css";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
 import { FaList, FaSlidersH } from "react-icons/fa";
 import ApiService from "@/services/data/crud/crud";
@@ -23,6 +24,7 @@ const ViewAllSeekers: FunctionComponent = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [allSeekers, setAllSeekers] = useState<any[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   // Block page for non-logged-in users — show alert and redirect
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
@@ -42,7 +44,7 @@ const ViewAllSeekers: FunctionComponent = () => {
         const result = await ApiService.crud(APIDetails.getSeekers, `?skip=0&limit=100&state=&radius=50`);
         if (result[0] && Array.isArray(result[1])) {
           const mapped = result[1].map((s: any) => ({
-            id: s._id || s.id,
+            id: s.userId || s._id || s.id,
             name: `${s.firstName || ""} ${s.lastName || ""}`.trim() || s.displayName || "Service Provider",
             rating: s.rating || 0,
             reviewCount: s.reviewCount || 0,
@@ -52,13 +54,22 @@ const ViewAllSeekers: FunctionComponent = () => {
             country: s.state || "",
             languages: s.languagesSpoken || [],
             services: s.jobDetails?.map((j: any) => j.subCategory || j.jobType || "Service") || [],
+            createdAt: s.createdAt || s.created_at || "",
           }));
+          // Sort by newest registered first
+          mapped.sort((a: any, b: any) => {
+            if (a.createdAt && b.createdAt) {
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            }
+            return 0;
+          });
           setAllSeekers(mapped);
         }
       } catch (err) {
         console.error("Failed to fetch seekers:", err);
       } finally {
         setIsLoading(false);
+        setHasLoaded(true);
       }
     };
     fetchSeekers();
@@ -198,7 +209,7 @@ const ViewAllSeekers: FunctionComponent = () => {
 
             <div className={styles.mobileTitleRow}>
               <h2 className={styles.listTitle}>
-                Service Provider List <span className={styles.jobCount}>{filteredSeekers.length}</span>
+                Service Provider List {hasLoaded && <span className={styles.jobCount}>{filteredSeekers.length}</span>}
               </h2>
               <div className={styles.mobileActions}>
                 <button className={`${styles.mobileActionBtn} ${viewMode === "card" ? styles.activeMobileBtn : ""}`} onClick={() => setViewMode("card")}>
@@ -214,7 +225,7 @@ const ViewAllSeekers: FunctionComponent = () => {
           <div className={styles.filterBottomRow}>
             <div className={styles.listHeader}>
               <h2 className={styles.listTitle}>
-                Service Provider List <span className={styles.jobCount}>{filteredSeekers.length}</span>
+                Service Provider List {hasLoaded && <span className={styles.jobCount}>{filteredSeekers.length}</span>}
               </h2>
             </div>
             <div className={styles.searchContainer}>
@@ -255,7 +266,7 @@ const ViewAllSeekers: FunctionComponent = () => {
               </thead>
               <tbody>
                 {filteredSeekers.map((seeker) => (
-                  <tr key={seeker.id}>
+                  <tr key={seeker.id} onClick={() => navigateToProfile(seeker.id)} style={{ cursor: 'pointer' }}>
                     <td><strong>{seeker.name}</strong></td>
                     <td>
                       {seeker.services.join(", ")}
@@ -263,8 +274,8 @@ const ViewAllSeekers: FunctionComponent = () => {
                     <td>{seeker.rating} ⭐</td>
                     <td>{`${seeker.city}, ${seeker.country}`}</td>
                     <td>
-                      <span className={styles.viewDetailsLink} onClick={() => navigateToProfile(seeker.id)} style={{ marginRight: '10px' }}>View Profile</span>
-                      <span className={styles.viewDetailsLink} onClick={() => handleContactClick(seeker.id)} style={{ color: '#25d366' }}>Contact Now</span>
+                      <span className={styles.viewDetailsLink} onClick={(e) => { e.stopPropagation(); navigateToProfile(seeker.id); }} style={{ marginRight: '10px' }}>View Profile</span>
+                      <span className={styles.viewDetailsLink} onClick={(e) => { e.stopPropagation(); handleContactClick(seeker.id); }} style={{ color: '#25d366' }}>Contact Now</span>
                     </td>
                   </tr>
                 ))}
@@ -274,7 +285,7 @@ const ViewAllSeekers: FunctionComponent = () => {
         ) : (
           <div className={styles.seekerGrid}>
             {filteredSeekers.map((seeker) => (
-              <div key={seeker.id} className={styles.seekerCard} onClick={() => navigateToProfile(seeker.id)}>
+              <Link key={seeker.id} href={`/seekers/${seeker.id}`} className={styles.seekerCard} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div className={styles.seekerHeader}>
                   <div className={styles.seekerAvatarWrap}>
                     <div className={styles.seekerAvatar}>{seeker.name.charAt(0)}</div>
@@ -323,13 +334,13 @@ const ViewAllSeekers: FunctionComponent = () => {
                   </div>
                 </div>
                 <div className={styles.seekerFooter}>
-                  <span className={styles.seekerContactBtn} onClick={(e) => { e.stopPropagation(); handleContactClick(seeker.id); }}>
+                  <span className={styles.seekerContactBtn} onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleContactClick(seeker.id); }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                     Contact Now
                   </span>
-                  <span className={styles.seekerViewProfile} onClick={(e) => { e.stopPropagation(); navigateToProfile(seeker.id); }}>
+                  <span className={styles.seekerViewProfile}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />
@@ -337,7 +348,7 @@ const ViewAllSeekers: FunctionComponent = () => {
                     View Profile
                   </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

@@ -19,7 +19,7 @@ import Roles from "@/constants/ERoles";
 import styles from "@/styles/Common.module.css";
 import Image from "next/image";
 import { useNotification } from "@/context/NotificationContext";
-import { FaEnvelope } from "react-icons/fa";
+import { FaEnvelope, FaHome } from "react-icons/fa";
 import { useChatStore } from "@/stores/ChatStore";// ... imports
 // ... imports
 
@@ -124,16 +124,17 @@ const _CHeader = () => {
 
         {/* Right Side Actions */}
         <div className={styles.navbarActions}>
-          {/* Language Selector */}
-          <div className={styles.langSelector}>
-            <button
-              className={styles.langButton}
-              onClick={() => {
-                setNotificationOpen(false);
-                setLangDropdownOpen(!langDropdownOpen);
-              }}
-            >
-              Eng
+          {/* Language Selector - Desktop only */}
+          {!mobile && !tablet && (
+            <div className={styles.langSelector}>
+              <button
+                className={styles.langButton}
+                onClick={() => {
+                  setNotificationOpen(false);
+                  setLangDropdownOpen(!langDropdownOpen);
+                }}
+              >
+                Eng
                 <svg
                   width="12"
                   height="12"
@@ -150,24 +151,38 @@ const _CHeader = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
-            </button>
-            <Zoom in={langDropdownOpen} style={{ transformOrigin: 'top right' }}>
-              <div className={`${styles.langDropdown} language-dropdown`}>
-                <button
-                  className={styles.langOption}
-                  onClick={() => setLangDropdownOpen(false)}
-                >
-                  English
-                </button>
-                <button
-                  className={styles.langOption}
-                  onClick={() => setLangDropdownOpen(false)}
-                >
-                  Hindi
-                </button>
-              </div>
-            </Zoom>
-          </div>
+              </button>
+              <Zoom in={langDropdownOpen} style={{ transformOrigin: 'top right' }}>
+                <div className={`${styles.langDropdown} language-dropdown`}>
+                  <button
+                    className={styles.langOption}
+                    onClick={() => setLangDropdownOpen(false)}
+                  >
+                    English
+                  </button>
+                  <button
+                    className={styles.langOption}
+                    onClick={() => setLangDropdownOpen(false)}
+                  >
+                    Hindi
+                  </button>
+                </div>
+              </Zoom>
+            </div>
+          )}
+
+          {/* Home Button */}
+          {(mobile || tablet || isActive) && (
+            <div style={{ position: "relative", marginRight: mobile ? "0px" : "10px" }}>
+              <button
+                className={styles.navIconButton}
+                onClick={() => router.push(Routes.landing)}
+                style={{ position: 'relative' }}
+              >
+                <FaHome size={22} style={{ color: "white" }} />
+              </button>
+            </div>
+          )}
 
           {/* Chat / Messages Button */}
           {(mobile || tablet || isActive) && (
@@ -224,8 +239,8 @@ const _CHeader = () => {
             </div>
           )}
 
-          {/* User Avatar - Only on Desktop */}
-          {!mobile && !tablet && <CUserAvatar />}
+          {/* Profile Avatar */}
+          <CUserAvatar size={30} />
         </div>
       </div>
 

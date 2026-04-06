@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from '@/styles/Chat.module.css';
-import { IoSendSharp, IoArrowBack, IoRefreshOutline } from 'react-icons/io5';
+import { IoSendSharp, IoArrowBack, IoRefreshOutline, IoTrashOutline, IoWarningOutline } from 'react-icons/io5';
 import { Conversation, Message, useChatStore } from '@/stores/ChatStore';
 import { MessageBubble } from './MessageBubble';
 import { chatService } from '@/services/chat/chatService';
@@ -18,6 +18,8 @@ export const ChatWindow: React.FC<Props> = ({ conversation, currentUserId, onBac
   const [inputValue, setInputValue] = useState('');
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -214,18 +216,80 @@ export const ChatWindow: React.FC<Props> = ({ conversation, currentUserId, onBac
           </div>
         </div>
 
-        {/* Reconnect button shown when disconnected */}
-        {!isConnected && !isConnecting && (
+        {/* Right side actions */}
+        <div className={styles.chatHeaderActions}>
+          {/* Reconnect button shown when disconnected */}
+          {!isConnected && !isConnecting && (
+            <button
+              className={styles.reconnectBtn}
+              onClick={() => chatService.connect()}
+              title="Reconnect"
+            >
+              <IoRefreshOutline size={18} />
+              Reconnect
+            </button>
+          )}
+
+          {/* Delete conversation button */}
           <button
-            className={styles.reconnectBtn}
-            onClick={() => chatService.connect()}
-            title="Reconnect"
+            className={styles.headerActionBtn}
+            title="Delete conversation"
+            aria-label="Delete conversation"
+            onClick={() => setShowDeleteConfirm(true)}
           >
-            <IoRefreshOutline size={18} />
-            Reconnect
+            <IoTrashOutline size={18} />
           </button>
-        )}
+        </div>
       </div>
+
+      {/* ── Delete Confirmation Modal ── */}
+      {showDeleteConfirm && (
+        <div className={styles.deleteModalOverlay} onClick={() => setShowDeleteConfirm(false)}>
+          <div className={styles.deleteModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.deleteModalIcon}>
+              <IoWarningOutline size={32} />
+            </div>
+            <h3 className={styles.deleteModalTitle}>Delete Conversation</h3>
+            <p className={styles.deleteModalText}>
+              Are you sure you want to delete the entire conversation with <strong>{displayName}</strong>? This action cannot be undone.
+            </p>
+            <div className={styles.deleteModalActions}>
+              <button
+                className={styles.deleteModalCancel}
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.deleteModalConfirm}
+                disabled={isDeleting}
+                onClick={async () => {
+                  if (!conversation) return;
+                  setIsDeleting(true);
+                  try {
+                    const result = await ApiService.crud(APIDetails.deleteConversation, conversation._id);
+                    if (result[0]) {
+                      useChatStore.getState().removeConversation(conversation._id);
+                      setShowDeleteConfirm(false);
+                      onBack();
+                    } else {
+                      alert('Failed to delete conversation. Please try again.');
+                    }
+                  } catch (err) {
+                    console.error('Failed to delete conversation:', err);
+                    alert('Failed to delete conversation. Please try again.');
+                  } finally {
+                    setIsDeleting(false);
+                  }
+                }}
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Messages ── */}
       <div className={styles.messageList} id="messageList">

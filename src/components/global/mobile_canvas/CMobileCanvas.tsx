@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Offcanvas } from "react-bootstrap";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -23,6 +23,9 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
         setIsSeeker,
         setIsProfileBuild
     } = useAuth();
+
+    const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+    const [selectedLang, setSelectedLang] = useState("Eng");
 
     // Fallback for user data
     const displayName = "Desi Helper";
@@ -120,7 +123,26 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                                 <FaMapMarkerAlt />
                                 <span>{location}</span>
                             </div>
-                            <FaTimes className={styles.closeIcon} onClick={handleClose} />
+                            <div className={styles.headerRightActions}>
+                                <div className={styles.langSelector}>
+                                    <button
+                                        className={styles.langButton}
+                                        onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                                    >
+                                        {selectedLang}
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </button>
+                                    {langDropdownOpen && (
+                                        <div className={styles.langDropdown}>
+                                            <button className={styles.langOption} onClick={() => { setSelectedLang("Eng"); setLangDropdownOpen(false); }}>English</button>
+                                            <button className={styles.langOption} onClick={() => { setSelectedLang("Hindi"); setLangDropdownOpen(false); }}>Hindi</button>
+                                        </div>
+                                    )}
+                                </div>
+                                <FaTimes className={styles.closeIcon} onClick={handleClose} />
+                            </div>
                         </div>
                         <div className={styles.lastLogin}>{lastLogin}</div>
                     </div>

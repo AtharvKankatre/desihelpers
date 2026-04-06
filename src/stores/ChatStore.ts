@@ -34,6 +34,8 @@ interface ChatState {
   setActiveConversation: (id: string | null) => void;
   setMessages: (conversationId: string, messages: Message[]) => void;
   addMessage: (conversationId: string, message: Message) => void;
+  removeMessage: (conversationId: string, messageId: string) => void;
+  removeConversation: (conversationId: string) => void;
   setUnreadTotal: (count: number) => void;
   decreaseUnreadCount: (conversationId: string) => void;
   setConnectionStatus: (isConnecting: boolean, isConnected: boolean) => void;
@@ -57,6 +59,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
   onlineUsers: new Set<string>(),
 
   setConversations: (conversations) => set({ conversations }),
+
+  removeConversation: (conversationId) => set((state) => {
+    const newMessages = { ...state.messages };
+    delete newMessages[conversationId];
+    return {
+      conversations: state.conversations.filter(c => c._id !== conversationId),
+      messages: newMessages,
+      activeConversationId: state.activeConversationId === conversationId ? null : state.activeConversationId,
+    };
+  }),
 
   updateConversationPreview: (conversationId, content, date) => set((state) => {
     const updatedConversations = state.conversations.map(conv => {
@@ -93,6 +105,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
       messages: {
         ...state.messages,
         [conversationId]: [...existingMessages, message],
+      }
+    };
+  }),
+
+  removeMessage: (conversationId, messageId) => set((state) => {
+    const existingMessages = state.messages[conversationId] || [];
+    return {
+      messages: {
+        ...state.messages,
+        [conversationId]: existingMessages.filter(m => m._id !== messageId),
       }
     };
   }),

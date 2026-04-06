@@ -49,14 +49,32 @@ class ChatService {
       val && typeof val === 'object' && val.toString ? val.toString() : String(val ?? '');
 
     // Construct the backend WebSocket URL
-    let backendUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001')
+    const rawUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001')
       .replace(/\/api\/?$/, '')
       .replace(/\/+$/, '');
 
-    console.log('[ChatService] Connecting to WebSocket at:', `${backendUrl}/chat`);
+    // Extract the origin (protocol + host) and any path prefix
+    // e.g. "https://projects.inpinitesolutions.com/desi-helpers-backend"
+    //   -> origin: "https://projects.inpinitesolutions.com"
+    //   -> pathPrefix: "/desi-helpers-backend"
+    let origin = rawUrl;
+    let socketPath = '/socket.io';
+    try {
+      const parsed = new URL(rawUrl);
+      origin = parsed.origin; // e.g. "https://projects.inpinitesolutions.com"
+      const prefix = parsed.pathname.replace(/\/+$/, ''); // e.g. "/desi-helpers-backend"
+      if (prefix && prefix !== '/') {
+        socketPath = `${prefix}/socket.io`;
+      }
+    } catch (e) {
+      // fallback: use rawUrl as-is
+    }
 
-    this.socket = io(`${backendUrl}/chat`, {
+    console.log('[ChatService] Connecting to WebSocket at:', origin, 'path:', socketPath, 'namespace: /chat');
+
+    this.socket = io(`${origin}/chat`, {
       auth: { token },
+      path: socketPath,
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 15,

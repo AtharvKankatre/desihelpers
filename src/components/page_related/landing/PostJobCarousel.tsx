@@ -34,7 +34,7 @@ const images = [
     path: "/jobs/PostAJob",
   },
   {
-    src: "/assets/img_tutoring1.png",
+    src: "/newillustration/image 507.svg",
     label: "Tutoring",
     path: "/jobs/PostAJob",
   },

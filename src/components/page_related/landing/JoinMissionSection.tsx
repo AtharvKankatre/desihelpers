@@ -108,9 +108,9 @@ export const JoinMissionSection: React.FC = () => {
                         {completionPercent === 100 ? (
                             <div style={{ textAlign: "center", padding: "20px 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
                                 <div style={{
-                                    width: "80px",
-                                    height: "80px",
-                                    borderRadius: "50%",
+                                    width: "120px",
+                                    height: "120px",
+                                    borderRadius: "16px",
                                     overflow: "hidden",
                                     border: "3px solid #10b981",
                                     marginBottom: "16px",
@@ -141,7 +141,7 @@ export const JoinMissionSection: React.FC = () => {
                                     Welcome, {profileName.split(' ')[0]}!
                                 </h3>
                                 <p style={{ color: "#6b7280", marginBottom: "24px", fontSize: "0.875rem" }}>
-                                    Your profile is 100% complete and ready to go.
+                                    Your profile is 100% complete.
                                 </p>
                                 <button type="button" onClick={() => router.push("/profile")} className={styles.submitButton} style={{ width: "100%" }}>
                                     Go to My Profile

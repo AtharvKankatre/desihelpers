@@ -222,6 +222,12 @@ class ProcessDataService {
         case APIDetails.createNotification[0]:
           res = data;
           break;
+        case APIDetails.deleteMessage[0]:
+          res = data;
+          break;
+        case APIDetails.deleteConversation[0]:
+          res = data;
+          break;
         default:
           return [false, "Something went wrong"];
       }

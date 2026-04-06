@@ -53,12 +53,12 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
     const handleAddJob = () => {
         const newJob: JobData = {
             id: Date.now().toString(),
-            title: "Looking for Nanny Services",
+            title: "",
             jobRequirements: "",
-            location: "Bayonne, New Jersey",
-            startDate: "2025-02-24T18:30",
+            location: "",
+            startDate: "",
             workType: "Part Time",
-            reqExperience: "5",
+            reqExperience: "",
             payRange: "$15-$25",
             dietaryPreference: "Veg",
             daysPerWeek: "5",
@@ -117,7 +117,9 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                 className={styles.accordionHeader}
                                 onClick={() => toggleAccordion(job.id)}
                             >
-                                <span className={styles.accordionTitle}>{job.title}</span>
+                                <span className={styles.accordionTitle}>
+                                    {job.title.trim() ? job.title : "New Job"}
+                                </span>
                                 <div className={styles.accordionHeaderActions}>
                                     {jobs.length > 1 && (
                                         <button
@@ -139,6 +141,19 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                             {/* Accordion Content — Form Fields */}
                             {job.isExpanded && (
                                 <div className={styles.accordionContent}>
+
+                                    {/* Job Title — user types their own */}
+                                    <div className={styles.formSection} style={{ padding: 0, marginBottom: '15px' }}>
+                                        <label className={styles.fieldLabel}>Job Title</label>
+                                        <input
+                                            type="text"
+                                            className={styles.formInput}
+                                            value={job.title}
+                                            onChange={(e) => updateJobField(job.id, 'title', e.target.value)}
+                                            placeholder="e.g. Looking for a Nanny, Gas Station Cashier..."
+                                        />
+                                    </div>
+
                                     {/* Job Requirements */}
                                     <div className={styles.formSection} style={{ padding: 0 }}>
                                         <label className={styles.fieldLabel}>Job Requirements</label>
@@ -147,7 +162,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 className={styles.textarea}
                                                 value={job.jobRequirements}
                                                 onChange={(e) => updateJobField(job.id, 'jobRequirements', e.target.value)}
-                                                placeholder="Needs of the job (e.g. Nanny for 6 month old)"
+                                                placeholder="Describe the job needs (e.g. Nanny for 6 month old)"
                                                 maxLength={1250}
                                                 style={{ minHeight: '100px', padding: '15px' }}
                                             />
@@ -160,18 +175,13 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                     {/* Location */}
                                     <div className={styles.formSection} style={{ padding: 0, marginTop: '15px' }}>
                                         <label className={styles.fieldLabel}>Location</label>
-                                        <select
-                                            className={styles.formSelect}
+                                        <input
+                                            type="text"
+                                            className={styles.formInput}
                                             value={job.location}
                                             onChange={(e) => updateJobField(job.id, 'location', e.target.value)}
-                                        >
-                                            <option value="">Select Location</option>
-                                            <option value="Bayonne, New Jersey">Bayonne, New Jersey</option>
-                                            <option value="Bothell, Washington">Bothell, Washington</option>
-                                            <option value="Seattle, Washington">Seattle, Washington</option>
-                                            <option value="Dallas, Texas">Dallas, Texas</option>
-                                            <option value="Boston, Massachusetts">Boston, Massachusetts</option>
-                                        </select>
+                                            placeholder="e.g. Bayonne, New Jersey"
+                                        />
                                     </div>
 
                                     {/* Triple column rows */}
@@ -209,7 +219,7 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
                                                 className={styles.formInput}
                                                 value={job.reqExperience}
                                                 onChange={(e) => updateJobField(job.id, 'reqExperience', e.target.value)}
-                                                placeholder="Required Experience"
+                                                placeholder="e.g. 2"
                                             />
                                         </div>
                                     </div>
@@ -274,4 +284,3 @@ const CJobsOfferingModal: React.FC<CJobsOfferingModalProps> = ({
 };
 
 export default CJobsOfferingModal;
-

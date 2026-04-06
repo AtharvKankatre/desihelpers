@@ -268,15 +268,17 @@ export const PopularServicesSection: React.FC = () => {
         <div key={`${item.id}-${index}`} className={`${styles.card} ${styles.helperCard}`} onClick={() => handleCardClick(item)}>
             <div className={styles.helperImageArea}>
                 {item.image ? (
-                    <Image
-                        src={item.image}
-                        alt={item.name}
-                        width={260}
-                        height={140}
-                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                        unoptimized={true}
-                        draggable={false}
-                    />
+                    <div style={{ width: '100%', height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Image
+                            src={item.image}
+                            alt={item.name}
+                            width={260}
+                            height={140}
+                            style={{ objectFit: "contain", width: "100%", height: "100%" }}
+                            unoptimized={true}
+                            draggable={false}
+                        />
+                    </div>
                 ) : (
                     <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #EAF0FA 0%, #D6E4F7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px' }}>
                         <Image

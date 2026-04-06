@@ -16,10 +16,11 @@ import { APIDetails } from "@/services/data/constants/ApiDetails";
 interface CUserAvatarProps {
   className?: string;
   style?: React.CSSProperties;
+  size?: number;
   onToggle?: (isOpen: boolean) => void;
 }
 
-export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, style, onToggle }) => {
+export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, style, size = 40, onToggle }) => {
   const { isActive, setIsActive, isProfileBuild } = useAuth();
   const { userProfile, reset } = userProfileStore();
   const router = useRouter();
@@ -101,7 +102,7 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
             signedPhoto = p.profilePhoto;
           }
         }
-        
+
         setUserData({
           name: fullName,
           location: location,
@@ -111,7 +112,7 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
           listProfileAs: p.listProfileAs || "Both"
         });
       };
-      
+
       updatePhoto();
     }
   }, [userProfile]);
@@ -149,8 +150,8 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
           <Image
             src={typeof userData.profilePhoto === 'string' && userData.profilePhoto.trim().length > 1 ? userData.profilePhoto : "/newassets/account_circle.png"}
             alt="Profile"
-            width={40}
-            height={40}
+            width={size}
+            height={size}
             className="rounded-circle"
             style={{ objectFit: 'cover' }}
           />

@@ -121,6 +121,15 @@ export const TestimonialsGrid: React.FC = () => {
     const router = useRouter();
     const sectionRef = useRef<HTMLElement>(null);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detect mobile viewport
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Maximum pixels to translate columns during the scroll through the section
     const maxTranslate = 1000;
@@ -180,6 +189,10 @@ export const TestimonialsGrid: React.FC = () => {
     const column1Transform = scrollProgress * maxTranslate;
     const column2Transform = -scrollProgress * maxTranslate;
 
+    // On mobile, show only 2 testimonials in a single column
+    const column1Data = isMobile ? testimonialsData.slice(0, 2) : testimonialsData.slice(0, 7);
+    const column2Data = isMobile ? [] : testimonialsData.slice(7, 14);
+
     return (
         <section ref={sectionRef} className={styles.testimonialsSection}>
             <div className={styles.container}>
@@ -205,12 +218,12 @@ export const TestimonialsGrid: React.FC = () => {
                     {/* Column 1 - Slides Down */}
                     <div
                         className={styles.column}
-                        style={{
+                        style={isMobile ? {} : {
                             transform: `translateY(${column1Transform}px)`,
                             marginTop: `-${maxTranslate}px`
                         }}
                     >
-                        {testimonialsData.slice(0, 7).map((testimonial) => (
+                        {column1Data.map((testimonial) => (
                             <div key={testimonial.id} className={styles.testimonialCard}>
                                 <div className={styles.stars}>
                                     {"★".repeat(testimonial.rating)}
@@ -232,34 +245,36 @@ export const TestimonialsGrid: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Column 2 - Slides Up */}
-                    <div
-                        className={styles.column}
-                        style={{
-                            transform: `translateY(${column2Transform}px)`
-                        }}
-                    >
-                        {testimonialsData.slice(7, 14).map((testimonial) => (
-                            <div key={testimonial.id} className={styles.testimonialCard}>
-                                <div className={styles.stars}>
-                                    {"★".repeat(testimonial.rating)}
-                                </div>
-                                <p className={styles.quote}>"{testimonial.text}"</p>
-                                <div className={styles.author}>
-                                    <img src={testimonial.image} alt={testimonial.name} className={styles.avatar} />
-                                    <div className={styles.authorInfo}>
-                                        <h4 className={styles.authorName}>{testimonial.name}</h4>
-                                        <div className={styles.location}>
-                                            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                            </svg>
-                                            {testimonial.location}
+                    {/* Column 2 - Slides Up (hidden on mobile) */}
+                    {column2Data.length > 0 && (
+                        <div
+                            className={styles.column}
+                            style={{
+                                transform: `translateY(${column2Transform}px)`
+                            }}
+                        >
+                            {column2Data.map((testimonial) => (
+                                <div key={testimonial.id} className={styles.testimonialCard}>
+                                    <div className={styles.stars}>
+                                        {"★".repeat(testimonial.rating)}
+                                    </div>
+                                    <p className={styles.quote}>"{testimonial.text}"</p>
+                                    <div className={styles.author}>
+                                        <img src={testimonial.image} alt={testimonial.name} className={styles.avatar} />
+                                        <div className={styles.authorInfo}>
+                                            <h4 className={styles.authorName}>{testimonial.name}</h4>
+                                            <div className={styles.location}>
+                                                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                                </svg>
+                                                {testimonial.location}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

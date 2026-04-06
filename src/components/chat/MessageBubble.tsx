@@ -3,8 +3,6 @@ import styles from '@/styles/Chat.module.css';
 import { Message } from '@/stores/ChatStore';
 import { IoCheckmark, IoCheckmarkDone } from 'react-icons/io5';
 
-// Dummy user ID for determining if a message was sent or received.
-// This will be passed down from the parent component.
 interface Props {
   message: Message;
   currentUserId: string;

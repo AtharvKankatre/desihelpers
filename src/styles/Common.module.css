@@ -435,14 +435,14 @@
 }
 
 .avatar {
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: 0;
+  margin-right: 0;
   background-color: rgba(255, 255, 255, 0.1);
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 4px;
+  /* Reduced from 8px so the icon fills the circle more */
   border-radius: 50%;
-  /* Circular avatar */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,6 +454,16 @@
 
 .avatar:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+.avatar img {
+  width: 30px !important;
+  /* Increased from 22px to make the head bigger */
+  height: 30px !important;
+  min-width: 30px;
+  min-height: 30px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .titlePlusLabelForTitle {
@@ -1159,6 +1169,7 @@
     flex-wrap: nowrap;
     align-items: center;
     gap: 4px;
+    margin-left: auto;
     margin-right: 0;
   }
 
@@ -1203,11 +1214,29 @@
     font-size: 14px !important;
   }
 
+  .avatar {
+    width: 30px !important;
+    height: 30px !important;
+    padding: 5px !important;
+    margin: 0 !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .avatar img {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px;
+    min-height: 26px;
+  }
+
   .logoImageMobile {
     max-height: 36px !important;
     max-width: 130px !important;
     object-fit: contain;
-    /* The most visually prominent element on the left */
     width: auto;
   }
 }
@@ -1596,6 +1625,14 @@
 /* =================================== */
 @media (max-width: 768px) {
 
+  .headerButtonCSS {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    white-space: nowrap;
+    border-radius: 15px !important;
+    min-width: auto;
+  }
+
   /* Form Row - Single Column */
   .formRow {
     grid-template-columns: 1fr;
@@ -1633,7 +1670,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     max-width: 360px;
     width: 100%;
-    margin-top: 250px;
+    margin-top: 80px;
     position: relative;
   }
 

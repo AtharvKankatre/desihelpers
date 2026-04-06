@@ -81,4 +81,6 @@ export const APIDetails = {
   getMessages: ["chat/messages/", ApiType.get, true], // append conversationId
   markMessagesRead: ["chat/messages/", ApiType.put, true], // append conversationId/read
   getUnreadMessageCount: ["chat/unread-count", ApiType.get, true],
+  deleteMessage: ["chat/message/", ApiType.delete, true], // append messageId
+  deleteConversation: ["chat/conversation/", ApiType.delete, true], // append conversationId
 };

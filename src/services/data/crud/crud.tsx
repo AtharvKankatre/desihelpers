@@ -242,6 +242,8 @@ class ApiService {
       case APIDetails.markNotificationRead: // CHANGE: Added for notification mark-as-read (appends :id/read)
       case APIDetails.getMessages:
       case APIDetails.markMessagesRead:
+      case APIDetails.deleteMessage:
+      case APIDetails.deleteConversation:
         return `${api[0]}${data}`;
 
       default:

@@ -544,6 +544,124 @@
   color: #6ee7b7;
 }
 
+/* ---- Delete Confirmation Modal ---- */
+.deleteModalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 24, 56, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.deleteModal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  animation: slideUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.deleteModalIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: #dc3545;
+}
+
+.deleteModalTitle {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a3557;
+}
+
+.deleteModalText {
+  margin: 0 0 24px;
+  font-size: 13.5px;
+  color: #6b8aaa;
+  line-height: 1.6;
+}
+
+.deleteModalText strong {
+  color: #1a3557;
+}
+
+.deleteModalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.deleteModalCancel {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: 1.5px solid #e0e8f0;
+  background: #ffffff;
+  color: #1a3557;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.deleteModalCancel:hover {
+  background: #f4f7fb;
+  border-color: #c2cfe0;
+}
+
+.deleteModalConfirm {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+  flex: 1;
+}
+
+.deleteModalConfirm:hover {
+  background: linear-gradient(135deg, #c82333, #b21f2d);
+  box-shadow: 0 5px 16px rgba(220, 53, 69, 0.4);
+  transform: translateY(-1px);
+}
+
+.deleteModalConfirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ---- Typing Indicator ---- */
 .typingIndicatorRow {
   display: flex;
@@ -1062,5 +1180,11 @@
 
   .messageWrapper {
     max-width: 88%;
+  }
+
+  /* Modal adjustments for mobile */
+  .deleteModal {
+    padding: 24px 20px;
+    max-width: 320px;
   }
 }

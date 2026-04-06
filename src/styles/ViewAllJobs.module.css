@@ -762,21 +762,33 @@
 .seekerCard {
     background-color: #fff;
     border: 1px solid #e2e8f0;
-    /* consistent border color */
     border-radius: 16px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+    color: inherit;
 }
 
 .seekerCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
     border-color: #f07c00;
+}
+
+.seekerCard:active {
+    transform: translateY(0) scale(0.985);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-color: #f07c00;
+    transition-duration: 0.1s;
 }
 
 .seekerHeader {
@@ -916,10 +928,17 @@
     align-items: center;
     gap: 6px;
     color: #f07c00;
-    /* Orange */
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.seekerContactBtn:hover {
+    background-color: rgba(240, 124, 0, 0.08);
+    color: #e06800;
 }
 
 .seekerViewProfile {
@@ -930,6 +949,14 @@
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.seekerViewProfile:hover {
+    background-color: rgba(26, 88, 145, 0.08);
+    color: #001838;
 }
 
 .seekerInfoWrap {
