@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install dependencies
 # RUN npm install
 RUN rm -rf node_modules package-lock.json \
-&& npm install --no-optional
+&& npm install
 
 # Copy the rest of your application code to the container
 COPY . .
