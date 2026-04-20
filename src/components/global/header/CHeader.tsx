@@ -179,7 +179,7 @@ const _CHeader = () => {
                 onClick={() => router.push(Routes.landing)}
                 style={{ position: 'relative' }}
               >
-                <FaHome size={22} style={{ color: "white" }} />
+                <FaHome size={mobile ? 20 : 22} style={{ color: "white" }} />
               </button>
             </div>
           )}
@@ -192,7 +192,7 @@ const _CHeader = () => {
                 onClick={() => router.push(Routes.messages)}
                 style={{ position: 'relative' }}
               >
-                <FaEnvelope size={20} style={{ color: "white" }} />
+                <FaEnvelope size={mobile ? 14 : 20} style={{ color: "white" }} />
                 {chatUnreadCount > 0 && (
                   <span style={{
                     position: 'absolute',
@@ -217,7 +217,7 @@ const _CHeader = () => {
                 onClick={() => setNotificationOpen(!notificationOpen)}
                 style={{ position: 'relative' }}
               >
-                <FaBell size={20} style={{ color: "white" }} />
+                <FaBell size={mobile ? 14 : 20} style={{ color: "white" }} />
                 {unreadCount > 0 && (
                   <span style={{
                     position: 'absolute',
@@ -240,7 +240,7 @@ const _CHeader = () => {
           )}
 
           {/* Profile Avatar */}
-          <CUserAvatar size={30} />
+          <CUserAvatar size={mobile ? 22 : 30} />
         </div>
       </div>
 

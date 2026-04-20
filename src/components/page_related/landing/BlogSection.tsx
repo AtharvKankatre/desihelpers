@@ -7,28 +7,28 @@ import Link from 'next/link';
 
 const blogPosts = [
     {
-        id: 1,
-        image: "https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        id: 13,
+        image: "/newassets/indian_realtor_vastu.png",
         category: "Articles",
-        date: "October 2, 2025",
-        title: "Finding Trusted Help in the U.S. – How the DESI Community Supports Each Other",
-        excerpt: "Moving to the U.S. can be exciting, but it often comes with challenges like finding reliable help..."
+        date: "April 13, 2026",
+        title: "Finding a U.S. Realtor Who Understands Indian Housing Needs (Vastu, Culture & Tradeoffs)",
+        excerpt: "What if your 'perfect home' in the U.S. checks every financial box—but still feels slightly off? For many Indian-American buyers, that feeling isn't random..."
     },
     {
-        id: 2,
-        image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        id: 12,
+        image: "/newassets/indian_food_catering.png",
         category: "Articles",
-        date: "October 1, 2025",
-        title: "From Side Hustle to Success: How DESI Skills Are Turning Into Income Abroad",
-        excerpt: "For many Indian immigrants in the U.S., moving to a new country means adapting to a new lifestyle..."
+        date: "April 13, 2026",
+        title: "How to Choose a Caterer for Indian Food in the USA (Before It's Too Late)",
+        excerpt: "When it comes to choosing a caterer for Indian food in the USA, the stakes are high. You're trusting someone to handle flavor, timing, hygiene..."
     },
     {
-        id: 3,
-        image: "https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        id: 11,
+        image: "/newassets/satya_narayan_puja.png",
         category: "Articles",
-        date: "September 30, 2025",
-        title: "Parenting Made Easier: How Indian Families Find Nannies & Helpers in U.S",
-        excerpt: "Raising children in a new country comes with its unique set of joys and hurdles..."
+        date: "April 13, 2026",
+        title: "Satya Narayan Puja: Complete Guide with Videos, Preparation & Checklist (USA Edition)",
+        excerpt: "Satya Narayan Puja is one of the most meaningful Hindu rituals, dedicated to Lord Vishnu. This complete guide covers videos, preparation & more..."
     }
 ];
 
@@ -45,22 +45,24 @@ export const BlogSection: React.FC = () => {
 
                 <div className={styles.grid}>
                     {blogPosts.map((post) => (
-                        <div key={post.id} className={styles.card}>
-                            <div className={styles.imageContainer}>
-                                <img src={post.image} alt={post.title} className={styles.image} />
-                            </div>
-                            <div className={styles.cardContent}>
-                                <div className={styles.metaRow}>
-                                    <span className={styles.category}>{post.category}</span>
-                                    <span className={styles.date}>{post.date}</span>
+                        <Link key={post.id} href={`/resources/${post.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                            <div className={styles.card} style={{ cursor: 'pointer', height: '100%' }}>
+                                <div className={styles.imageContainer}>
+                                    <img src={post.image} alt={post.title} className={styles.image} />
                                 </div>
-                                <h3 className={styles.cardTitle}>{post.title}</h3>
-                                <p className={styles.cardExcerpt}>{post.excerpt}</p>
-                                <a href="#" className={styles.readMore}>
-                                    Read more <FontAwesomeIcon icon={faArrowRight} />
-                                </a>
+                                <div className={styles.cardContent}>
+                                    <div className={styles.metaRow}>
+                                        <span className={styles.category}>{post.category}</span>
+                                        <span className={styles.date}>{post.date}</span>
+                                    </div>
+                                    <h3 className={styles.cardTitle}>{post.title}</h3>
+                                    <p className={styles.cardExcerpt}>{post.excerpt}</p>
+                                    <span className={styles.readMore}>
+                                        Read more <FontAwesomeIcon icon={faArrowRight} />
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 

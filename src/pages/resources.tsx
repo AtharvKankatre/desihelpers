@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import {
     Box,
@@ -106,11 +106,43 @@ const OrangeButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-// Mock Data
-const articles = [
+// Static Articles Data
+const staticArticles = [
+    {
+        id: 13,
+        image: "/newassets/indian_realtor_vastu.png",
+        category: "ARTICLES",
+        date: "April 13, 2026",
+        title: "Finding a U.S. Realtor Who Understands Indian Housing Needs (Vastu, Culture & Tradeoffs)",
+        description: "What if your 'perfect home' in the U.S. checks every financial box—but still feels slightly off? This guide explains how to find a realtor who understands Vastu principles and cultural needs.",
+    },
+    {
+        id: 12,
+        image: "/newassets/indian_food_catering.png",
+        category: "ARTICLES",
+        date: "April 13, 2026",
+        title: "How to Choose a Caterer for Indian Food in the USA (Before It's Too Late)",
+        description: "When it comes to choosing a caterer for Indian food in the USA, the stakes are high. You're trusting someone to handle flavor, timing, hygiene, and dozens of guests.",
+    },
+    {
+        id: 11,
+        image: "/newassets/satya_narayan_puja.png",
+        category: "ARTICLES",
+        date: "April 13, 2026",
+        title: "Satya Narayan Puja: Complete Guide with Videos, Preparation & Checklist (USA Edition)",
+        description: "Satya Narayan Puja is one of the most meaningful Hindu rituals, dedicated to Lord Vishnu. This complete guide covers videos, preparation, checklist & more for families in the U.S.",
+    },
+    {
+        id: 10,
+        image: "/newassets/griha_pravesh.png",
+        category: "ARTICLES",
+        date: "April 10, 2026",
+        title: "Griha Pravesh & Housewarming: A Complete Guide to a Blessed New Beginning",
+        description: "Moving into a new home is more than just a milestone—it's a deeply emotional and spiritual moment celebrated through Griha Pravesh...",
+    },
     {
         id: 1,
-        image: "/newassets/motherbaby.png", // Mom & child in grass
+        image: "/newassets/motherbaby.png",
         category: "ARTICLES",
         date: "October 2, 2025",
         title: "Finding Trusted Help in the U.S. – How the DESI Community Supports Each Other",
@@ -118,7 +150,7 @@ const articles = [
     },
     {
         id: 2,
-        image: "/newassets/study.png", // Woman teaching child
+        image: "/newassets/study.png",
         category: "ARTICLES",
         date: "October 1, 2025",
         title: "From Side Hustle to Success: How DESI Skills Are Turning Into Income Abroad",
@@ -126,15 +158,15 @@ const articles = [
     },
     {
         id: 3,
-        image: "/newassets/motherchild1.png", // Placeholder for "Parenting/Lunchbox" (Missing img) - reusing pro woman or existing
+        image: "/newassets/motherchild1.png",
         category: "ARTICLES",
         date: "September 30, 2025",
-        title: "Parenting Made Easier: How Indian Families Find Nannies & Helpers in U.S",
-        description: "Raising children in a new country comes with its unique set of joys and hurdles...",
+        title: "Deadly Lessons: When a Nanny or Daycare Tragedy Strikes, What Every Parent Must Know",
+        description: "These real incidents aren't just isolated events—they are a wake-up call for every parent hiring help...",
     },
     {
         id: 4,
-        image: "/newassets/card1.png", // Men shaking hands
+        image: "/newassets/card1.png",
         category: "CATEGORY",
         date: "September 23, 2025",
         title: "Blog title heading will go here",
@@ -151,7 +183,7 @@ const articles = [
     },
     {
         id: 6,
-        image: "/newassets/card2.png", // Coffee shop lady
+        image: "/newassets/card2.png",
         category: "CATEGORY",
         date: "September 07, 2025",
         title: "Blog title heading will go here",
@@ -159,7 +191,7 @@ const articles = [
     },
     {
         id: 7,
-        image: "/newassets/card3nanny.png", // Elderly lady
+        image: "/newassets/card3nanny.png",
         category: "CATEGORY",
         date: "August 22, 2025",
         title: "Blog title heading will go here",
@@ -167,7 +199,7 @@ const articles = [
     },
     {
         id: 8,
-        image: "/newassets/card3nanny.png", // Elderly lady
+        image: "/newassets/card3nanny.png",
         category: "CATEGORY",
         date: "August 10, 2025",
         title: "Blog title heading will go here",
@@ -175,7 +207,7 @@ const articles = [
     },
     {
         id: 9,
-        image: "/newassets/card3nanny.png", // Elderly lady
+        image: "/newassets/card3nanny.png",
         category: "CATEGORY",
         date: "July 22, 2025",
         title: "Blog title heading will go here",
@@ -186,6 +218,27 @@ const articles = [
 const Resources = () => {
     const [activeTab, setActiveTab] = useState("All");
     const categories = ["All", "Category 1", "Category 2", "Category 3", "Category 4", "Category 5"];
+    const [articles, setArticles] = useState<any[]>(staticArticles);
+
+    // Fetch admin-created blogs from API and merge with static articles
+    useEffect(() => {
+        const fetchAdminBlogs = async () => {
+            try {
+                const response = await fetch("/api/blogs");
+                if (response.ok) {
+                    const adminBlogs = await response.json();
+                    if (Array.isArray(adminBlogs) && adminBlogs.length > 0) {
+                        // Merge admin blogs (shown first) with static articles
+                        const merged = [...adminBlogs, ...staticArticles];
+                        setArticles(merged);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching admin blogs:", error);
+            }
+        };
+        fetchAdminBlogs();
+    }, []);
 
     return (
         <>
@@ -193,7 +246,7 @@ const Resources = () => {
                 <title>Resources - Tips, Stories & Inspiration | DesiHelpers</title>
             </Head>
             {CustomNavbarStyles}
-            <CHeader /> {/* Ensure Header is present */}
+            <CHeader />
 
             {/* Hero Section */}
             <HeroSection>
@@ -231,7 +284,6 @@ const Resources = () => {
                         {articles.map((article) => (
                             <Grid item xs={12} sm={6} md={4} key={article.id}>
                                 {article.isEmpty ? (
-                                    /* Empty Placeholder Card */
                                     <Box sx={{ height: "100%", minHeight: "300px", backgroundColor: "#f0f0f0", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         <Box component="span" sx={{ fontSize: "3rem", color: "#ccc" }}>📷</Box>
                                     </Box>
@@ -258,8 +310,6 @@ const Resources = () => {
 
                 </Container>
             </Box>
-
-            {/* <FooterSection /> Duplicate footer removed */}
         </>
     );
 };

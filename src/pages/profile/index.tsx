@@ -20,7 +20,7 @@ import { cookieParams } from "@/constants/ECookieParams";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { getWorkPhotoUrls } from "@/utils/s3Helper";
-import { FaBell, FaEnvelope } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaHome } from "react-icons/fa";
 import { useNotification } from "@/context/NotificationContext";
 import { useChatStore } from "@/stores/ChatStore";
 import { useRouter } from "next/router";
@@ -263,6 +263,7 @@ const Profile: React.FC = () => {
             const result = await ApiService.crud(APIDetails.getUserProfile);
             if (result[0]) {
                 const apiProfile = result[1];
+                console.log("[Profile] API response:", JSON.stringify({ rating: apiProfile.rating, _id: apiProfile._id, id: apiProfile.id, userId: apiProfile.userId }));
                 const photoToSign = apiProfile.profilePhoto;
                 const signedInitPhotoUrl = (photoToSign && photoToSign !== "/newassets/account_circle.png")
                     ? (await getWorkPhotoUrls("", [photoToSign]))[0]
@@ -286,6 +287,7 @@ const Profile: React.FC = () => {
                     commutePreference: apiProfile.commutePreference || "Not specified",
                     dietaryPreference: apiProfile.dietaryRestrictions || "Not specified",
                     okWithPets: apiProfile.okWithPets ? "Yes" : "No",
+                    rating: Number(apiProfile.rating) || 0,
                     listProfileAs: apiProfile.listProfileAs || "Both",
                     address: {
                         line1: apiProfile.addressLine1 || "",
@@ -319,35 +321,62 @@ const Profile: React.FC = () => {
                 storeActions.setUserProfile({ ...apiProfile, profilePhoto: signedInitPhotoUrl });
 
                 // Try fetching testimonials if user ID is present
-                const userId = apiProfile._id || apiProfile.id;
+                const userId = apiProfile._id || apiProfile.id || apiProfile.userId;
+                console.log("[Profile] userId for feedback:", userId);
                 if (userId && typeof userId === 'string' && userId.trim() !== "" && userId !== "undefined") {
                     const feedbackRes = await ApiService.crud(APIDetails.getFeedback, userId);
+                    console.log("[Profile] Feedback response:", feedbackRes[0], Array.isArray(feedbackRes[1]) ? feedbackRes[1].length + " items" : feedbackRes[1]);
                     if (feedbackRes[0] && Array.isArray(feedbackRes[1])) {
+                        const testimonials = feedbackRes[1].map((f: any) => ({
+                            id: f._id || Math.random().toString(),
+                            rating: f.rating,
+                            text: f.feedback,
+                            highlightName: "",
+                            reviewerName: f.reviewerName || "Anonymous",
+                            reviewerLocation: "",
+                            reviewerPhoto: f.reviewerPhoto || "/assets/icons/icon_user.svg"
+                        }));
+
+                        // Calculate average rating from testimonials
+                        const totalRatings = testimonials.filter((t: any) => t.rating > 0);
+                        const avgRating = totalRatings.length > 0
+                            ? totalRatings.reduce((sum: number, t: any) => sum + t.rating, 0) / totalRatings.length
+                            : 0;
+
                         setProfile((prev: any) => ({
                             ...prev,
-                            testimonialsReceived: feedbackRes[1].map((f: any) => ({
-                                id: f._id || Math.random().toString(),
-                                rating: f.rating,
-                                text: f.feedback,
-                                highlightName: "",
-                                reviewerName: f.reviewerName || "Anonymous",
-                                reviewerLocation: "",
-                                reviewerPhoto: f.reviewerPhoto || "/assets/icons/icon_user.svg"
-                            }))
+                            testimonialsReceived: testimonials,
+                            rating: Math.round(avgRating * 10) / 10,
                         }));
                     }
                 }
 
-                // Map work photos to gallery
-                if (apiProfile.uploadPhotoOfWork && Array.isArray(apiProfile.uploadPhotoOfWork)) {
-                    setProfile((prev: any) => ({
-                        ...prev,
-                        photoGallery: apiProfile.uploadPhotoOfWork.map((url: string, index: number) => ({
-                            id: index,
-                            url: url,
-                            alt: `Work photo ${index + 1}`
-                        }))
-                    }));
+                // Map work photos to gallery (sign URLs so they are accessible)
+                if (apiProfile.uploadPhotoOfWork && Array.isArray(apiProfile.uploadPhotoOfWork) && apiProfile.uploadPhotoOfWork.length > 0) {
+                    try {
+                        const signedUrls = await getWorkPhotoUrls("", apiProfile.uploadPhotoOfWork);
+                        setProfile((prev: any) => ({
+                            ...prev,
+                            photoGallery: apiProfile.uploadPhotoOfWork.map((url: string, index: number) => ({
+                                id: index,
+                                url: signedUrls[index] || url,
+                                rawUrl: url, // Keep raw S3 URL for delete API
+                                alt: `Work photo ${index + 1}`
+                            }))
+                        }));
+                    } catch (e) {
+                        console.error("[Profile] Failed to sign gallery URLs:", e);
+                        // Fallback to raw URLs
+                        setProfile((prev: any) => ({
+                            ...prev,
+                            photoGallery: apiProfile.uploadPhotoOfWork.map((url: string, index: number) => ({
+                                id: index,
+                                url: url,
+                                rawUrl: url,
+                                alt: `Work photo ${index + 1}`
+                            }))
+                        }));
+                    }
                 }
             }
         };
@@ -420,14 +449,89 @@ const Profile: React.FC = () => {
         }
     }, [userProfile]);
 
-    // Delete photo handler
+    // Delete photo handler — shows a styled toast confirmation, then deletes from backend + S3
     const handleDeletePhoto = (photoId: number) => {
-        if (window.confirm("Are you sure you want to delete this photo?")) {
-            setProfile({
-                ...profile,
-                photoGallery: profile.photoGallery.filter(p => p.id !== photoId)
-            });
-        }
+        const photoToDelete = profile.photoGallery.find(p => p.id === photoId);
+        toast(
+            ({ closeToast }) => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                        <span style={{ fontWeight: 600, fontSize: '14px', color: '#333' }}>Delete this photo?</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>This action cannot be undone.</p>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '4px' }}>
+                        <button
+                            onClick={() => closeToast?.()}
+                            style={{
+                                padding: '6px 16px', borderRadius: '6px', border: '1px solid #ddd',
+                                background: '#fff', color: '#555', fontSize: '13px', fontWeight: 500,
+                                cursor: 'pointer', transition: 'background 0.2s'
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={async () => {
+                                closeToast?.();
+                                const deleteToastId = toast.loading("Deleting photo...");
+                                try {
+                                    // Call backend to delete from S3 + database
+                                    const rawUrl = photoToDelete?.rawUrl;
+                                    if (rawUrl) {
+                                        const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+                                        const accessToken = Cookies.get(cookieParams.accessToken);
+                                        const res = await fetch(`${BASE_URL}user-profile/deleteS3Images`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'Authorization': `Bearer ${accessToken}`,
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ urls: [rawUrl] })
+                                        });
+                                        const result = await res.json();
+                                        console.log("[GalleryDelete] Backend response:", result);
+                                    }
+                                    // Update local state
+                                    setProfile(prev => ({
+                                        ...prev,
+                                        photoGallery: prev.photoGallery.filter(p => p.id !== photoId)
+                                    }));
+                                    toast.update(deleteToastId, { render: "Photo deleted successfully!", type: "success", isLoading: false, autoClose: 3000 });
+                                } catch (err: any) {
+                                    console.error("[GalleryDelete] Error:", err);
+                                    toast.update(deleteToastId, { render: err.message || "Failed to delete photo.", type: "error", isLoading: false, autoClose: 3000 });
+                                }
+                            }}
+                            style={{
+                                padding: '6px 16px', borderRadius: '6px', border: 'none',
+                                background: 'linear-gradient(135deg, #ff6b35, #e05525)', color: '#fff',
+                                fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s'
+                            }}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                position: 'top-center',
+                autoClose: false,
+                closeOnClick: false,
+                draggable: false,
+                closeButton: false,
+                style: {
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+                    padding: '16px',
+                    border: '1px solid #f0f0f0',
+                    minWidth: '300px',
+                }
+            }
+        );
     };
 
     const tabs = [
@@ -772,30 +876,65 @@ const Profile: React.FC = () => {
             formData.append('file', file);
             const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
             const accessToken = Cookies.get(cookieParams.accessToken);
-            
-            const response = await fetch(`${BASE_URL}user-profile/upload/${userId}/SeekerPhotos`, {
+
+            if (!BASE_URL) {
+                throw new Error("API URL is not configured. Please check your environment settings.");
+            }
+
+            const uploadUrl = `${BASE_URL}user-profile/upload/${userId}/SeekerPhotos`;
+            console.log("[GalleryUpload] Uploading to:", uploadUrl);
+
+            const response = await fetch(uploadUrl, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${accessToken}` },
                 body: formData
             });
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.message || `Upload failed with status ${response.status}`);
             }
-            
+
             const result = await response.json();
-            const uploadedUrl = Array.isArray(result.urls) ? result.urls[0] : (result.urls?.profilePhoto || localUrl);
-            // Replace local preview with signed remote URL
+            console.log("[GalleryUpload] Backend response:", JSON.stringify(result, null, 2));
+            // Backend returns { message: 'true', urls: <full UserProfile document> }
+            // For gallery (SeekerPhotos), the newly uploaded URL is the last item in uploadPhotoOfWork
+            let uploadedUrl = localUrl;
+            if (result.urls) {
+                if (Array.isArray(result.urls)) {
+                    // If backend returns a plain array of URLs
+                    uploadedUrl = result.urls[result.urls.length - 1] || localUrl;
+                } else if (result.urls.uploadPhotoOfWork && Array.isArray(result.urls.uploadPhotoOfWork)) {
+                    // Backend returned the full UserProfile — get the last gallery photo
+                    uploadedUrl = result.urls.uploadPhotoOfWork[result.urls.uploadPhotoOfWork.length - 1] || localUrl;
+                }
+            }
+
+            // Sign the uploaded URL so the correct image displays
+            let displayUrl = uploadedUrl;
+            try {
+                const signedUrls = await getWorkPhotoUrls("", [uploadedUrl]);
+                if (signedUrls.length > 0 && signedUrls[0]) {
+                    displayUrl = signedUrls[0];
+                }
+            } catch (signErr) {
+                console.warn("[GalleryUpload] Could not sign URL, using raw:", signErr);
+            }
+
+            // Replace local preview with signed remote URL, keep rawUrl for delete
             setProfile(prev => ({
                 ...prev,
-                photoGallery: prev.photoGallery.map(p => p.id === newPhoto.id ? { ...p, url: uploadedUrl } : p)
+                photoGallery: prev.photoGallery.map(p => p.id === newPhoto.id ? { ...p, url: displayUrl, rawUrl: uploadedUrl } : p)
             }));
             setGalleryPhotoModalOpen(false);
             toast.update(toastId, { render: "Photo added to gallery!", type: "success", isLoading: false, autoClose: 3000 });
         } catch (error: any) {
             console.error("Gallery upload error:", error);
-            toast.update(toastId, { render: error.message || 'Upload failed. Please try again.', type: "error", isLoading: false, autoClose: 3000 });
+            // Provide a user-friendly message for network errors
+            const message = error instanceof TypeError && error.message === 'Failed to fetch'
+                ? 'Network error: Could not reach the server. Please check your internet connection and try again.'
+                : (error.message || 'Upload failed. Please try again.');
+            toast.update(toastId, { render: message, type: "error", isLoading: false, autoClose: 5000 });
         } finally {
             setIsGalleryUploading(false);
         }
@@ -911,6 +1050,17 @@ const Profile: React.FC = () => {
                             </div>
                         </div>
 
+                        {/* Home Button */}
+                        <div style={{ position: "relative" }}>
+                            <button
+                                className={styles.navIconButton}
+                                onClick={() => router.push(Routes.landing)}
+                                style={{ position: 'relative' }}
+                            >
+                                <FaHome size={mobile ? 20 : 22} style={{ color: "white" }} />
+                            </button>
+                        </div>
+
                         {/* Messages Button */}
                         <div style={{ position: "relative" }}>
                             <button
@@ -950,7 +1100,7 @@ const Profile: React.FC = () => {
                             <CNotificationPopup
                                 open={notificationOpen}
                                 onClose={() => setNotificationOpen(false)}
-                                onFeedbackClick={() => {}}
+                                onFeedbackClick={() => { }}
                             />
                         </div>
 
@@ -1029,6 +1179,14 @@ const Profile: React.FC = () => {
                         </h1>
                         <div className={styles.starRating}>
                             {renderStars(profile.rating, "main-rating")}
+                            <span style={{ marginLeft: '8px', fontSize: '14px', color: '#555', fontWeight: 500 }}>
+                                {profile.rating > 0 ? profile.rating.toFixed(1) : "0"}
+                            </span>
+                            {profile.testimonialsReceived.length > 0 && (
+                                <span style={{ marginLeft: '4px', fontSize: '13px', color: '#888' }}>
+                                    ({profile.testimonialsReceived.length} {profile.testimonialsReceived.length === 1 ? 'review' : 'reviews'})
+                                </span>
+                            )}
                         </div>
                         <div className={styles.profileLocation}>
                             <LocationIcon />
@@ -1419,14 +1577,23 @@ const Profile: React.FC = () => {
                                             {/* Photo Cards */}
                                             {profile.photoGallery && profile.photoGallery.map((photo) => (
                                                 <div key={photo.id} className={styles.photoCard}>
-                                                    <img
-                                                        src={photo.url}
-                                                        alt={photo.alt}
-                                                        className={styles.photoImage}
-                                                        onError={(e) => {
-                                                            (e.target as HTMLImageElement).src = "/assets/icons/icon_image.svg";
-                                                        }}
-                                                    />
+                                                    <div className={styles.photoImageWrapper}>
+                                                        <div className={styles.photoSkeleton} />
+                                                        <img
+                                                            src={photo.url}
+                                                            alt={photo.alt}
+                                                            className={styles.photoImage}
+                                                            loading="eager"
+                                                            onLoad={(e) => {
+                                                                (e.target as HTMLImageElement).style.opacity = '1';
+                                                            }}
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = "/assets/icons/icon_image.svg";
+                                                                (e.target as HTMLImageElement).style.opacity = '1';
+                                                            }}
+                                                            style={{ opacity: 0, transition: 'opacity 0.4s ease-in-out' }}
+                                                        />
+                                                    </div>
                                                     <div className={styles.photoActions}>
                                                         <button
                                                             className={styles.photoActionBtn}

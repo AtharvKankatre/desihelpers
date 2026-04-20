@@ -1018,43 +1018,70 @@
 
 .photoCard {
     position: relative;
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     background: #fff;
     display: flex;
     flex-direction: column;
 }
 
-.photoImage {
+.photoImageWrapper {
+    position: relative;
     width: 100%;
     aspect-ratio: 1;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.photoSkeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.photoImage {
+    position: relative;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    display: block;
+    z-index: 1;
 }
 
 .photoActions {
     display: flex;
     justify-content: space-between;
-    padding: 10px 12px;
+    align-items: center;
+    padding: 8px 10px;
     background: #fff;
 }
 
 .photoActionBtn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 6px;
-    background: white;
-    border: none;
+    background: #f8f8f8;
+    border: 1px solid #eee;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .photoActionBtn:hover {
-    background: #f5f5f5;
+    background: #f0f0f0;
     transform: scale(1.05);
 }
 
@@ -1065,18 +1092,17 @@
 .addPhotoPlaceholder {
     aspect-ratio: 1;
     border: 2px dashed #ff6b35;
-    border-radius: 16px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: #fff;
-    min-height: 200px;
+    background: #fffaf8;
 }
 
 .addPhotoPlaceholder:hover {
-    background: #fff8f5;
+    background: #fff0ea;
     border-color: #e85a2a;
 }
 
@@ -1251,8 +1277,61 @@
     }
 
     .galleryGrid {
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px;
+        padding: 12px;
+        align-items: start;
+    }
+
+    .galleryGrid > * {
+        width: 100% !important;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .galleryContainer {
+        padding: 0;
+    }
+
+    .photoCard {
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        width: 100% !important;
+        overflow: hidden;
+    }
+
+    .photoImageWrapper {
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+    }
+
+    .photoImage {
+        width: 100% !important;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .photoActions {
+        padding: 6px 8px;
+    }
+
+    .photoActionBtn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .photoActionBtn svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .addPhotoPlaceholder {
+        border-radius: 10px;
+        min-height: unset;
+        width: 100% !important;
+        box-sizing: border-box;
     }
 
     .profileContent {

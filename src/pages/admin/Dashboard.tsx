@@ -4,9 +4,12 @@ import {
 } from "react-bootstrap";
 import {
   FaBars,
+  FaBlog,
+  FaEdit,
   FaFileExport,
   FaPhoneAlt,
   FaPlus,
+  FaTrash,
   FaUser,
   FaUserFriends,
   FaUserPlus,
@@ -42,6 +45,8 @@ import { FaEllipsisVertical, FaSistrix } from "react-icons/fa6";
 import style from "@/styles/Admin.module.css";
 import { exportToExcel } from "@/utils/exportToExcel";
 import { date } from "yup";
+import AdminBlogModal from "@/components/admin/AdminBlogModal";
+import Swal2 from "sweetalert2";
 
 interface UserDetails {
   email: string;
@@ -95,6 +100,12 @@ const Dashboard: React.FC<Props> = ({ data }) => {
   const [showJobModal, setShowJobModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
+  // Blog management state
+  const [showBlogModal, setShowBlogModal] = useState(false);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [editingBlog, setEditingBlog] = useState<any | null>(null);
+  const [blogsLoading, setBlogsLoading] = useState(false);
+
   const handleModalClose = () => {
     setShowJobModal(false);
     setSelectedRow(null);
@@ -135,7 +146,104 @@ const Dashboard: React.FC<Props> = ({ data }) => {
 
   useEffect(() => {
     fetchAllJobs();
+    fetchBlogs();
   }, []);
+
+  // Blog management functions
+  const fetchBlogs = async () => {
+    setBlogsLoading(true);
+    try {
+      const response = await fetch("/api/blogs");
+      if (response.ok) {
+        const data = await response.json();
+        setBlogs(data);
+      }
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+    } finally {
+      setBlogsLoading(false);
+    }
+  };
+
+  const handleEditBlog = (blog: any) => {
+    setEditingBlog(blog);
+    setShowBlogModal(true);
+  };
+
+  const handleDeleteBlog = (blogId: number) => {
+    toast.warn(
+      ({ closeToast }) => (
+        <div>
+          <p style={{ margin: "0 0 10px", fontWeight: 600, color: "#073157" }}>
+            Delete this blog post?
+          </p>
+          <p style={{ margin: "0 0 12px", fontSize: "0.85rem", color: "#6b7a8d" }}>
+            This action cannot be undone.
+          </p>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button
+              onClick={async () => {
+                closeToast?.();
+                try {
+                  const response = await fetch(`/api/blogs/${blogId}`, { method: "DELETE" });
+                  if (response.ok) {
+                    toast.success("Blog deleted successfully");
+                    fetchBlogs();
+                  } else {
+                    toast.error("Failed to delete blog");
+                  }
+                } catch (error) {
+                  toast.error("Error deleting blog");
+                }
+              }}
+              style={{
+                background: "#dc3545",
+                color: "#fff",
+                border: "none",
+                padding: "6px 16px",
+                borderRadius: "6px",
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                cursor: "pointer",
+              }}
+            >
+              Yes, delete
+            </button>
+            <button
+              onClick={() => closeToast?.()}
+              style={{
+                background: "#f1f5f9",
+                color: "#64748b",
+                border: "1px solid #e2e8f0",
+                padding: "6px 16px",
+                borderRadius: "6px",
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        position: "top-center",
+        style: {
+          borderRadius: "12px",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
+        },
+      }
+    );
+  };
+
+  const handleNewBlog = () => {
+    setEditingBlog(null);
+    setShowBlogModal(true);
+  };
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -557,6 +665,16 @@ const Dashboard: React.FC<Props> = ({ data }) => {
               Contacted Users
             </span>
           </button>
+
+          <button
+            className={`${style.sidebarLink} ${selectedTab === "blogs" ? style.sidebarLinkActive : ""}`}
+            onClick={() => { handleTabSelect("blogs"); closeSidebarOnMobile(); }}
+          >
+            <span className={style.sidebarIcon}><FaBlog /></span>
+            <span className={`${style.sidebarLabel} ${isSidebarOpen ? style.sidebarLabelVisible : ""}`}>
+              Blog Manager
+            </span>
+          </button>
         </div>
 
         {/* ── Content Panel ── */}
@@ -607,6 +725,12 @@ const Dashboard: React.FC<Props> = ({ data }) => {
               onClick={() => handleTabSelect("contactedUsers")}
             >
               <FaPhoneAlt size={14} /> Contacted
+            </button>
+            <button
+              className={`${style.tabBtn} ${selectedTab === "blogs" ? style.tabBtnActive : ""}`}
+              onClick={() => handleTabSelect("blogs")}
+            >
+              <FaBlog size={14} /> Blogs
             </button>
           </div>
 
@@ -663,7 +787,7 @@ const Dashboard: React.FC<Props> = ({ data }) => {
                     onChange={(e: {
                       target: { value: React.SetStateAction<string> };
                     }) => setSearchText(e.target.value)}
-                  />
+                  />
                 </div>
               </div>
               <div className={style.tablePanelBody}>
@@ -675,6 +799,78 @@ const Dashboard: React.FC<Props> = ({ data }) => {
                   responsive
                 />
               </div>
+            </div>
+          )}
+
+          {/* ── Blog Manager Tab ── */}
+          {selectedTab === "blogs" && (
+            <div className={style.tablePanel}>
+              <div className={style.blogManagerHeader} style={{ padding: "20px 24px" }}>
+                <div className={style.blogManagerTitle}>
+                  <FaBlog style={{ color: "#FF812B" }} /> Blog Manager
+                </div>
+                <button className={style.newBlogBtn} onClick={handleNewBlog}>
+                  <FaPlus size={14} /> New Blog Post
+                </button>
+              </div>
+
+              {blogsLoading ? (
+                <div style={{ textAlign: "center", padding: "40px" }}>
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : blogs.length === 0 ? (
+                <div className={style.blogEmptyState}>
+                  <FaBlog size={48} />
+                  <h4>No blog posts yet</h4>
+                  <p>Click "New Blog Post" to create your first article</p>
+                </div>
+              ) : (
+                <div className={style.blogGrid} style={{ padding: "0 24px 24px" }}>
+                  {blogs.map((blog: any) => (
+                    <div key={blog.id} className={style.blogCard}>
+                      <img
+                        src={blog.image || "/newassets/card1.png"}
+                        alt={blog.title}
+                        className={style.blogCardImage}
+                        onError={(e: any) => {
+                          e.target.src = "/newassets/card1.png";
+                        }}
+                      />
+                      <div className={style.blogCardBody}>
+                        <div className={style.blogCardMeta}>
+                          <span className={style.blogCardCategory}>{blog.category}</span>
+                          <span className={style.blogCardDate}>{blog.date}</span>
+                        </div>
+                        {blog.tags && blog.tags.length > 0 && (
+                          <div className={style.blogCardTags}>
+                            {blog.tags.slice(0, 3).map((tag: string) => (
+                              <span key={tag} className={style.blogCardTagChip}>{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                        <div className={style.blogCardTitle}>{blog.title}</div>
+                        <div className={style.blogCardDesc}>{blog.description}</div>
+                        <div className={style.blogCardActions}>
+                          <button
+                            className={style.blogEditBtn}
+                            onClick={() => handleEditBlog(blog)}
+                          >
+                            <FaEdit size={13} /> Edit
+                          </button>
+                          <button
+                            className={style.blogDeleteBtn}
+                            onClick={() => handleDeleteBlog(blog.id)}
+                          >
+                            <FaTrash size={13} /> Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -692,6 +888,15 @@ const Dashboard: React.FC<Props> = ({ data }) => {
         onClose={handleModalClose}
         onConfirm={handleJobSeekerUpdate}
         userId={selectedRow?.email || null}
+      />
+      <AdminBlogModal
+        show={showBlogModal}
+        handleClose={() => {
+          setShowBlogModal(false);
+          setEditingBlog(null);
+        }}
+        onSaved={fetchBlogs}
+        editBlog={editingBlog}
       />
     </div>
   );

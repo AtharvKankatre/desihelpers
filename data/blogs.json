@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1000,
+    "title": "Trek Lead -Trekking",
+    "category": "ARTICLES",
+    "date": "April 16, 2026",
+    "description": "trekking",
+    "content": "<p>Trekking and campaign</p>",
+    "image": "Something went wrong",
+    "tags": [],
+    "createdAt": "2026-04-16T09:08:30.161Z",
+    "updatedAt": "2026-04-16T09:08:30.161Z"
+  }
+]
