@@ -26,6 +26,7 @@ import { useChatStore } from "@/stores/ChatStore";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
+import useTranslation from "next-translate/useTranslation";
 
 const CNotificationPopup = dynamic(() => import("@/components/global/header/header_components/CNotificationPopup").then(mod => mod.CNotificationPopup));
 const CMobileCanvas = dynamic(() => import("@/components/global/mobile_canvas/CMobileCanvas").then(mod => mod.CMobileCanvas));
@@ -218,8 +219,9 @@ interface ProfileData {
 
 
 const Profile: React.FC = () => {
+    const { t } = useTranslation('common');
     const { userProfile } = userProfileStore((state) => state);
-    const [activeTab, setActiveTab] = useState("services"); // Keeping for possible desktop fallback not requested
+    const [activeTab, setActiveTab] = useState("services");
     const [expandedSections, setExpandedSections] = useState({
         services: true,
         jobs: true,
@@ -247,7 +249,6 @@ const Profile: React.FC = () => {
     const [testimonialFilter, setTestimonialFilter] = useState<"received" | "given">("received");
     const [expandedPhoto, setExpandedPhoto] = useState<{ url: string; alt: string } | null>(null);
     const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-    const [selectedLang, setSelectedLang] = useState("Eng");
     const [avatarOpen, setAvatarOpen] = useState(false);
     const [profilePhotoError, setProfilePhotoError] = useState(false);
     const [isPhotoUploading, setIsPhotoUploading] = useState(false);
@@ -257,6 +258,12 @@ const Profile: React.FC = () => {
     const { mobile, tablet } = useAppMediaQuery();
     const { unreadCount } = useNotification();
     const chatUnreadCount = useChatStore((state) => state.unreadTotal);
+
+    const switchLocale = (locale: 'en' | 'hi') => {
+        router.push(router.asPath, router.asPath, { locale });
+        setLangDropdownOpen(false);
+    };
+    const currentLang = router.locale === 'hi' ? t('lang_short_hi') : t('lang_short_en');
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -318,7 +325,9 @@ const Profile: React.FC = () => {
 
                 // Also update the global store with latest profile data
                 const storeActions = userProfileStore.getState();
-                storeActions.setUserProfile({ ...apiProfile, profilePhoto: signedInitPhotoUrl });
+                // Store the RAW S3 key (not the signed URL) — CUserAvatar will sign it fresh.
+                // Storing the signed URL causes double-signing (broken AWS signature → 403).
+                storeActions.setUserProfile({ ...apiProfile, profilePhoto: apiProfile.profilePhoto });
 
                 // Try fetching testimonials if user ID is present
                 const userId = apiProfile._id || apiProfile.id || apiProfile.userId;
@@ -535,10 +544,10 @@ const Profile: React.FC = () => {
     };
 
     const tabs = [
-        { id: "services", label: "Services Provided" },
-        { id: "jobs", label: "Jobs Offered by Me" },
-        { id: "testimonials", label: "Testimonials" },
-        { id: "gallery", label: "Photo Gallery" }
+        { id: "services", label: t('profile.services_provided') },
+        { id: "jobs", label: t('profile.jobs_offered') },
+        { id: "testimonials", label: t('profile.testimonials') },
+        { id: "gallery", label: t('profile.photo_gallery') }
     ];
 
     // Color-coded star rating: 1-2 = red, 3 = yellow/orange, 4-5 = green
@@ -568,10 +577,7 @@ const Profile: React.FC = () => {
         }
     };
 
-    const handleLangChange = (lang: string) => {
-        setSelectedLang(lang);
-        setLangDropdownOpen(false);
-    };
+    // Lang switching is handled by switchLocale() above
 
     const handleProfileUpdate = async (updatedData: ProfileUpdateData) => {
         // Map frontend values to backend expected enums
@@ -1023,10 +1029,10 @@ const Profile: React.FC = () => {
                         <DesiHelpersIcon />
                     </Link>
                     <div className={styles.navbarLinks}>
-                        <Link href={Routes.viewAllJobs} className={styles.navLink}>Find Job</Link>
-                        <Link href="/seekers/ViewAllSeekers" className={styles.navLink}>Hire Help</Link>
-                        <Link href="/about" className={styles.navLink}>About Us</Link>
-                        <Link href="/resources" className={styles.navLink}>Resources</Link>
+                        <Link href={Routes.viewAllJobs} className={styles.navLink}>{t('nav.find_job')}</Link>
+                        <Link href="/seekers/ViewAllSeekers" className={styles.navLink}>{t('nav.hire_help')}</Link>
+                        <Link href="/about" className={styles.navLink}>{t('nav.about_us')}</Link>
+                        <Link href="/resources" className={styles.navLink}>{t('nav.resources')}</Link>
                     </div>
                     <div className={styles.navbarActions}>
                         {/* Language Selector - Desktop only */}
@@ -1036,15 +1042,15 @@ const Profile: React.FC = () => {
                                     className={styles.langButton}
                                     onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                                 >
-                                    {selectedLang}
+                                    {currentLang}
                                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ marginLeft: "4px" }}>
                                         <path d="M3 4.5L6 7.5L9 4.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </button>
                                 {langDropdownOpen && (
                                     <div className={styles.langDropdown}>
-                                        <button className={styles.langOption} onClick={() => handleLangChange("Eng")}>English</button>
-                                        <button className={styles.langOption} onClick={() => handleLangChange("Hindi")}>Hindi</button>
+                                        <button className={`${styles.langOption} ${router.locale === 'en' ? styles.langOptionActive : ''}`} onClick={() => switchLocale('en')}>{t('lang_english')}</button>
+                                        <button className={`${styles.langOption} ${router.locale === 'hi' ? styles.langOptionActive : ''}`} onClick={() => switchLocale('hi')}>{t('lang_hindi')}</button>
                                     </div>
                                 )}
                             </div>
@@ -1175,7 +1181,7 @@ const Profile: React.FC = () => {
 
                     <div className={styles.profileDetails}>
                         <h1 className={styles.profileName}>
-                            {(profile.firstName || profile.lastName) ? `${profile.firstName} ${profile.lastName}` : "Enter Name"}
+                            {(profile.firstName || profile.lastName) ? `${profile.firstName} ${profile.lastName}` : t('profile.enter_name')}
                         </h1>
                         <div className={styles.starRating}>
                             {renderStars(profile.rating, "main-rating")}
@@ -1184,24 +1190,24 @@ const Profile: React.FC = () => {
                             </span>
                             {profile.testimonialsReceived.length > 0 && (
                                 <span style={{ marginLeft: '4px', fontSize: '13px', color: '#888' }}>
-                                    ({profile.testimonialsReceived.length} {profile.testimonialsReceived.length === 1 ? 'review' : 'reviews'})
+                                    ({profile.testimonialsReceived.length} {profile.testimonialsReceived.length === 1 ? t('profile.review') : t('profile.reviews')})
                                 </span>
                             )}
                         </div>
                         <div className={styles.profileLocation}>
                             <LocationIcon />
-                            <span>{profile.location || "Enter Location"}</span>
+                            <span>{profile.location || t('profile.enter_location')}</span>
                         </div>
 
                         <div className={styles.actionButtons}>
                             <a href={`tel:${profile.mobileNumber}`} className={`${styles.actionBtn} ${styles.callBtn}`}>
-                                <PhoneIcon /> Call ME
+                                <PhoneIcon /> {t('profile.call_me')}
                             </a>
                             <a href={`mailto:${profile.email}`} className={`${styles.actionBtn} ${styles.emailBtn}`}>
-                                <EmailIcon /> Email Me
+                                <EmailIcon /> {t('profile.email_me')}
                             </a>
                             <a href={`https://wa.me/${profile.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className={`${styles.actionBtn} ${styles.whatsappBtn}`}>
-                                <WhatsAppIcon /> Whatsapp Me
+                                <WhatsAppIcon /> {t('profile.whatsapp_me')}
                             </a>
                         </div>
 
@@ -1218,33 +1224,33 @@ const Profile: React.FC = () => {
                     {/* About Me Card */}
                     <div className={styles.sidebarCard}>
                         <div className={styles.cardHeader}>
-                            <h3 className={styles.cardTitle} style={{ color: '#003385' }}>About Me</h3>
+                            <h3 className={styles.cardTitle} style={{ color: '#003385' }}>{t('profile.about_me')}</h3>
                             <span className={styles.editIcon} onClick={() => setEditModalOpen(true)}>
                                 <EditIcon /></span>
                         </div>
                         <div className={styles.cardContent}>
                             <p style={{ margin: 0, color: '#444', fontSize: '14px', lineHeight: '1.5' }}>
-                                {profile.aboutMe || "-"} {profile.aboutMe && <span className={styles.readMore} style={{ fontWeight: 500 }}>Read more...</span>}
+                                {profile.aboutMe || "-"} {profile.aboutMe && <span className={styles.readMore} style={{ fontWeight: 500 }}>{t('profile.read_more')}</span>}
                             </p>
 
                             <div className={styles.infoRow} style={{ marginTop: "20px" }}>
-                                <div className={styles.infoLabel}>Languages Spoken</div>
+                                <div className={styles.infoLabel}>{t('profile.languages')}</div>
                                 <div className={styles.infoValue}>{profile.languages || "-"}</div>
                             </div>
 
                             <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
-                                    <div className={styles.infoLabel}>Commute Preference</div>
+                                    <div className={styles.infoLabel}>{t('profile.commute')}</div>
                                     <div className={styles.infoValue}>{profile.commutePreference || "-"}</div>
                                 </div>
                                 <div className={styles.infoRow}>
-                                    <div className={styles.infoLabel}>Dietary Preference</div>
+                                    <div className={styles.infoLabel}>{t('profile.dietary')}</div>
                                     <div className={styles.infoValue}>{profile.dietaryPreference || "-"}</div>
                                 </div>
                             </div>
 
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
-                                <div className={styles.infoLabel}>OK With Pets</div>
+                                <div className={styles.infoLabel}>{t('profile.pets')}</div>
                                 <div className={styles.infoValue}>{profile.okWithPets || "-"}</div>
                             </div>
 
@@ -1255,7 +1261,7 @@ const Profile: React.FC = () => {
                     {/* Address Details Card */}
                     <div className={styles.sidebarCard}>
                         <div className={styles.cardHeader}>
-                            <h3 className={styles.cardTitle} style={{ color: '#003385' }}>Address Details</h3>
+                            <h3 className={styles.cardTitle} style={{ color: '#003385' }}>{t('profile.address_details')}</h3>
                             <span
                                 className={styles.editIcon}
                                 onClick={() => setAddressModalOpen(true)}
@@ -1265,26 +1271,26 @@ const Profile: React.FC = () => {
                         </div>
                         <div className={styles.cardContent}>
                             <div className={styles.infoRow}>
-                                <div className={styles.infoLabel}>Address Line 1</div>
-                                <div className={styles.infoValue}>{profile.address.line1 || "Enter Address Line 1"}</div>
+                                <div className={styles.infoLabel}>{t('profile.addr_line1')}</div>
+                                <div className={styles.infoValue}>{profile.address.line1 || t('profile.enter_addr1')}</div>
                             </div>
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
-                                <div className={styles.infoLabel}>Address Line 2</div>
-                                <div className={styles.infoValue}>{profile.address.line2 || "Enter Address Line 2"}</div>
+                                <div className={styles.infoLabel}>{t('profile.addr_line2')}</div>
+                                <div className={styles.infoValue}>{profile.address.line2 || t('profile.enter_addr2')}</div>
                             </div>
                             <div className={styles.infoGrid} style={{ marginTop: "15px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
                                 <div className={styles.infoRow}>
-                                    <div className={styles.infoLabel}>City</div>
-                                    <div className={styles.infoValue}>{profile.address.city || "Enter City"}</div>
+                                    <div className={styles.infoLabel}>{t('profile.city')}</div>
+                                    <div className={styles.infoValue}>{profile.address.city || t('profile.enter_city')}</div>
                                 </div>
                                 <div className={styles.infoRow}>
-                                    <div className={styles.infoLabel}>State</div>
-                                    <div className={styles.infoValue}>{profile.address.state || "Enter State"}</div>
+                                    <div className={styles.infoLabel}>{t('profile.state')}</div>
+                                    <div className={styles.infoValue}>{profile.address.state || t('profile.enter_state')}</div>
                                 </div>
                             </div>
                             <div className={styles.infoRow} style={{ marginTop: "15px" }}>
-                                <div className={styles.infoLabel}>Zip Code</div>
-                                <div className={styles.infoValue}>{profile.address.zipCode || "Enter Zip Code"}</div>
+                                <div className={styles.infoLabel}>{t('profile.zip')}</div>
+                                <div className={styles.infoValue}>{profile.address.zipCode || t('profile.enter_zip')}</div>
                             </div>
                         </div>
                     </div>
@@ -1305,13 +1311,13 @@ const Profile: React.FC = () => {
                         ))}
                         {activeTab === 'services' && (
                             <div className={styles.addServicesBtn} onClick={() => setServicesModalOpen(true)}>
-                                <span style={{ color: '#f07c00' }}>+ Add Services</span>
+                                <span style={{ color: '#f07c00' }}>{t('profile.add_services')}</span>
                                 <EditIcon color="#666" />
                             </div>
                         )}
                         {activeTab === 'jobs' && (
                             <div className={styles.addServicesBtn} onClick={() => setJobsModalOpen(true)}>
-                                <span style={{ color: '#f07c00' }}>+ Add Jobs</span>
+                                <span style={{ color: '#f07c00' }}>{t('profile.add_jobs')}</span>
                                 <EditIcon color="#666" />
                             </div>
                         )}
@@ -1322,7 +1328,7 @@ const Profile: React.FC = () => {
                     <div className={activeTab === 'services' ? styles.activeTabContent : styles.mobileOnly}>
                         <div className={`${styles.sidebarCard} ${activeTab === 'services' ? styles.tabSection : ""}`}>
                             <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('services')} style={{ cursor: 'pointer' }}>
-                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Services Provided</h3>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>{t('profile.services_provided')}</h3>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                                     <span className={styles.editIcon} onClick={(e) => { e.stopPropagation(); setServicesModalOpen(true); }}><EditIcon /></span>
                                     <span style={{ transform: expandedSections.services ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
@@ -1344,15 +1350,15 @@ const Profile: React.FC = () => {
 
                                                 <div className={styles.serviceDetails}>
                                                     <div className={styles.serviceDetail}>
-                                                        <span className={styles.detailLabel}>Category</span>
+                                                        <span className={styles.detailLabel}>{t('profile.category')}</span>
                                                         <span className={styles.detailValue}>{service.category}</span>
                                                     </div>
                                                     <div className={styles.serviceDetail}>
-                                                        <span className={styles.detailLabel}>Experience</span>
+                                                        <span className={styles.detailLabel}>{t('profile.experience')}</span>
                                                         <span className={styles.detailValue}>{service.experience}</span>
                                                     </div>
                                                     <div className={styles.serviceDetail}>
-                                                        <span className={styles.detailLabel}>Available</span>
+                                                        <span className={styles.detailLabel}>{t('profile.available')}</span>
                                                         <span className={styles.detailValue}>{service.available}</span>
                                                     </div>
                                                 </div>
@@ -1368,14 +1374,14 @@ const Profile: React.FC = () => {
                                                             expandedService === service.id ? null : service.id
                                                         )}
                                                     >
-                                                        {expandedService === service.id ? "Show Less..." : "Show More..."}
+                                                        {expandedService === service.id ? t('profile.show_less') : t('profile.show_more')}
                                                     </button>
                                                 )}
                                             </div>
                                         ))
                                     ) : (
                                         <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                            No services provided yet
+                                            {t('profile.no_services')}
                                         </div>
                                     )}
                                 </div>
@@ -1387,7 +1393,7 @@ const Profile: React.FC = () => {
                     <div className={activeTab === 'jobs' ? styles.activeTabContent : styles.mobileOnly}>
                         <div className={`${styles.sidebarCard} ${activeTab === 'jobs' ? styles.tabSection : ""}`}>
                             <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('jobs')} style={{ cursor: 'pointer' }}>
-                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Jobs Offered by Me</h3>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>{t('profile.jobs_offered')}</h3>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                                     <span className={styles.editIcon} onClick={(e) => { e.stopPropagation(); setJobsModalOpen(true); }}><EditIcon /></span>
                                     <span style={{ transform: expandedSections.jobs ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
@@ -1409,35 +1415,35 @@ const Profile: React.FC = () => {
 
                                                 <div className={styles.jobDetailsGrid}>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Location</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.location')}</span>
                                                         <span className={styles.jobDetailValue}>{job.location}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Start Date</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.start_date')}</span>
                                                         <span className={styles.jobDetailValue}>{job.startDate}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Req Experience (in years)</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.req_experience')}</span>
                                                         <span className={styles.jobDetailValue}>{job.reqExperience}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Work Type</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.work_type')}</span>
                                                         <span className={styles.jobDetailValue}>{job.workType}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Days per week</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.days_per_week')}</span>
                                                         <span className={styles.jobDetailValue}>{job.daysPerWeek}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Pay Range</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.pay_range')}</span>
                                                         <span className={styles.jobDetailValue}>{job.payRange}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Dietary Preference</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.dietary_pref')}</span>
                                                         <span className={styles.jobDetailValue}>{job.dietaryPreference}</span>
                                                     </div>
                                                     <div className={styles.jobDetail}>
-                                                        <span className={styles.jobDetailLabel}>Posted Date</span>
+                                                        <span className={styles.jobDetailLabel}>{t('profile.posted_date')}</span>
                                                         <span className={styles.jobDetailValue}>{job.postedDate}</span>
                                                     </div>
                                                 </div>
@@ -1456,13 +1462,13 @@ const Profile: React.FC = () => {
                                                         expandedJob === job.id ? null : job.id
                                                     )}
                                                 >
-                                                    {expandedJob === job.id ? "Show Less..." : "Read More..."}
+                                                    {expandedJob === job.id ? t('profile.show_less') : t('profile.read_more')}
                                                 </button>
                                             </div>
                                         ))
                                     ) : (
                                         <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                            No jobs offered yet
+                                            {t('profile.no_jobs')}
                                         </div>
                                     )}
                                 </div>
@@ -1474,7 +1480,7 @@ const Profile: React.FC = () => {
                     <div className={activeTab === 'testimonials' ? styles.activeTabContent : styles.mobileOnly}>
                         <div className={`${styles.sidebarCard} ${activeTab === 'testimonials' ? styles.tabSection : ""}`}>
                             <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('testimonials')} style={{ cursor: 'pointer' }}>
-                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Testimonials</h3>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>{t('profile.testimonials')}</h3>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                                     {/* Add Feedback button removed — users cannot give feedback on their own profile */}
                                     <span style={{ transform: expandedSections.testimonials ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
@@ -1490,7 +1496,7 @@ const Profile: React.FC = () => {
                                             className={`${styles.toggleBtn} ${styles.toggleBtnActive}`}
                                             style={{ width: '100%', borderRadius: '8px' }}
                                         >
-                                            Feedback Received
+                                            {t('profile.feedback_received')}
                                         </button>
                                     </div>
 
@@ -1549,7 +1555,7 @@ const Profile: React.FC = () => {
                                             ))
                                         ) : (
                                             <div style={{ padding: "40px", textAlign: "center", color: "#888" }}>
-                                                No testimonials received yet
+                                            {t('profile.no_testimonials')}
                                             </div>
                                         )}
                                     </div>
@@ -1562,7 +1568,7 @@ const Profile: React.FC = () => {
                     <div className={activeTab === 'gallery' ? styles.activeTabContent : styles.mobileOnly}>
                         <div className={`${styles.sidebarCard} ${activeTab === 'gallery' ? styles.tabSection : ""}`}>
                             <div className={`${styles.cardHeader} ${styles.mobileOnly}`} onClick={() => toggleSection('gallery')} style={{ cursor: 'pointer' }}>
-                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>Photo Gallery</h3>
+                                <h3 className={styles.cardTitle} style={{ color: '#ff6b35' }}>{t('profile.photo_gallery')}</h3>
                                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                                     <span style={{ transform: expandedSections.gallery ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s", color: '#ff6b35' }}>
                                         <ChevronUpIcon />

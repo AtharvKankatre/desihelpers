@@ -10,10 +10,12 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import { toast } from "react-toastify";
+import useTranslation from "next-translate/useTranslation";
 
 const ViewAllSeekers: FunctionComponent = () => {
   const router = useRouter();
   const { mobile } = useAppMediaQuery();
+  const { t } = useTranslation('common');
 
   // Filter state
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -137,21 +139,11 @@ const ViewAllSeekers: FunctionComponent = () => {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
-              <input
-                type="text"
-                className={styles.locationInput}
-                placeholder="Location (City, State)"
-                value={locationSearch}
-                onChange={(e) => setLocationSearch(e.target.value)}
-              />
+              <input type="text" className={styles.locationInput} placeholder={t('jobs.location_placeholder')} value={locationSearch} onChange={(e) => setLocationSearch(e.target.value)} />
             </div>
 
-            <select
-              className={styles.filterSelect}
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="">All Services</option>
+            <select className={styles.filterSelect} value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+              <option value="">{t('seekers.all_services')}</option>
               {getUniqueServiceTypes().map((svc, i) => (
                 <option key={i} value={svc}>{svc}</option>
               ))}
@@ -194,13 +186,7 @@ const ViewAllSeekers: FunctionComponent = () => {
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <input
-                  type="text"
-                  className={styles.newSearchInput}
-                  placeholder="Search Name or Service"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <input type="text" className={styles.newSearchInput} placeholder={t('seekers.search_placeholder')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
               </div>
               <button className={styles.mobileFilterBtn} onClick={() => setFilterModalOpen(true)}>
                 <FaSlidersH style={{ fontSize: 12 }} /> Filter
@@ -209,7 +195,7 @@ const ViewAllSeekers: FunctionComponent = () => {
 
             <div className={styles.mobileTitleRow}>
               <h2 className={styles.listTitle}>
-                Service Provider List {hasLoaded && <span className={styles.jobCount}>{filteredSeekers.length}</span>}
+                {t('jobs.provider_list')} {hasLoaded && <span className={styles.jobCount}>{filteredSeekers.length}</span>}
               </h2>
               <div className={styles.mobileActions}>
                 <button className={`${styles.mobileActionBtn} ${viewMode === "card" ? styles.activeMobileBtn : ""}`} onClick={() => setViewMode("card")}>
@@ -225,7 +211,7 @@ const ViewAllSeekers: FunctionComponent = () => {
           <div className={styles.filterBottomRow}>
             <div className={styles.listHeader}>
               <h2 className={styles.listTitle}>
-                Service Provider List {hasLoaded && <span className={styles.jobCount}>{filteredSeekers.length}</span>}
+                {t('jobs.provider_list')} {hasLoaded && <span className={styles.jobCount}>{filteredSeekers.length}</span>}
               </h2>
             </div>
             <div className={styles.searchContainer}>
@@ -233,13 +219,7 @@ const ViewAllSeekers: FunctionComponent = () => {
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-              <input
-                type="text"
-                className={styles.newSearchInput}
-                placeholder="Search Name or Service"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <input type="text" className={styles.newSearchInput} placeholder={t('seekers.search_placeholder')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
           </div>
         )}
@@ -257,11 +237,11 @@ const ViewAllSeekers: FunctionComponent = () => {
             <table className={styles.jobTable}>
               <thead>
                 <tr>
-                  <th>Provider Name</th>
-                  <th>Services Offered</th>
-                  <th>Rating</th>
-                  <th>Location</th>
-                  <th>Action</th>
+                  <th>{t('seekers.col_provider')}</th>
+                  <th>{t('seekers.col_services')}</th>
+                  <th>{t('seekers.col_rating')}</th>
+                  <th>{t('seekers.col_location')}</th>
+                  <th>{t('jobs.col_action')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -274,8 +254,8 @@ const ViewAllSeekers: FunctionComponent = () => {
                     <td>{seeker.rating} ⭐</td>
                     <td>{`${seeker.city}, ${seeker.country}`}</td>
                     <td>
-                      <span className={styles.viewDetailsLink} onClick={(e) => { e.stopPropagation(); navigateToProfile(seeker.id); }} style={{ marginRight: '10px' }}>View Profile</span>
-                      <span className={styles.viewDetailsLink} onClick={(e) => { e.stopPropagation(); handleContactClick(seeker.id); }} style={{ color: '#25d366' }}>Contact Now</span>
+                      <span className={styles.viewDetailsLink} onClick={(e) => { e.stopPropagation(); navigateToProfile(seeker.id); }} style={{ marginRight: '10px' }}>{t('seekers.view_profile')}</span>
+                      <span className={styles.viewDetailsLink} onClick={(e) => { e.stopPropagation(); handleContactClick(seeker.id); }} style={{ color: '#25d366' }}>{t('seekers.contact_now')}</span>
                     </td>
                   </tr>
                 ))}
@@ -326,7 +306,7 @@ const ViewAllSeekers: FunctionComponent = () => {
                   ))}
                 </div>
                 <div className={styles.seekerServices}>
-                  <span className={styles.seekerServicesLabel}>Offer Services</span>
+                  <span className={styles.seekerServicesLabel}>{t('seekers.offer_services')}</span>
                   <div className={styles.seekerServiceTags}>
                     {seeker.services.map((svc: string, i: number) => (
                       <span key={`${seeker.id}-svc-${i}`} className={styles.seekerServiceTag}>{svc}</span>
@@ -338,14 +318,14 @@ const ViewAllSeekers: FunctionComponent = () => {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
-                    Contact Now
+                    {t('seekers.contact_now')}
                   </span>
                   <span className={styles.seekerViewProfile}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />
                     </svg>
-                    View Profile
+                    {t('seekers.view_profile')}
                   </span>
                 </div>
               </Link>
@@ -359,7 +339,7 @@ const ViewAllSeekers: FunctionComponent = () => {
         <div className={styles.filterModalOverlay}>
           <div className={styles.filterModal}>
             <div className={styles.filterModalHeader}>
-              <span className={styles.filterModalTitle}>Filter</span>
+              <span className={styles.filterModalTitle}>{t('jobs.filter')}</span>
               <button className={styles.filterModalClose} onClick={() => setFilterModalOpen(false)}>✕</button>
             </div>
             <div className={styles.filterModalBody}>
@@ -368,14 +348,14 @@ const ViewAllSeekers: FunctionComponent = () => {
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
-                <option value="">All Services</option>
+                <option value="">{t('seekers.all_services')}</option>
                 {getUniqueServiceTypes().map((svc, i) => (
                   <option key={i} value={svc}>{svc}</option>
                 ))}
               </select>
             </div>
             <div className={styles.filterModalFooter}>
-              <button className={styles.filterModalApply} onClick={() => setFilterModalOpen(false)}>Apply Filter</button>
+              <button className={styles.filterModalApply} onClick={() => setFilterModalOpen(false)}>{t('jobs.apply_filter')}</button>
             </div>
           </div>
         </div>

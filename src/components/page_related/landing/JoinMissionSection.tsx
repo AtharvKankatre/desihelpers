@@ -7,9 +7,11 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import { useAuth } from "@/services/authorization/AuthContext";
 import Swal from "sweetalert2";
+import useTranslation from "next-translate/useTranslation";
 
 export const JoinMissionSection: React.FC = () => {
     const router = useRouter();
+    const { t } = useTranslation('common');
     const { isActive } = useAuth();
     const [completionPercent, setCompletionPercent] = useState(0);
     const [profileName, setProfileName] = useState("");
@@ -62,14 +64,14 @@ export const JoinMissionSection: React.FC = () => {
         fetchProfile();
     }, [isActive]);
 
-    // Checklist items from the design
+    // Checklist items from translation
     const checklistItems = [
-        "Completely Free for Everyone",
-        "Local, Active Profiles at Your Fingertips",
-        "Zero Sensitive Data Collected",
-        "Community-Driven Empowerment",
-        "Effort and Time Saved, Real Results Gained",
-        "No Hidden Agendas, Just Connection"
+        t('join_mission.checklist_1'),
+        t('join_mission.checklist_2'),
+        t('join_mission.checklist_3'),
+        t('join_mission.checklist_4'),
+        t('join_mission.checklist_5'),
+        t('join_mission.checklist_6'),
     ];
 
     return (
@@ -77,12 +79,11 @@ export const JoinMissionSection: React.FC = () => {
             <div className={styles.container}>
                 {/* LEFT CONTENT */}
                 <div className={styles.leftContent}>
-                    <div className={styles.subHeader}>Join Our Mission</div>
-                    <h2 className={styles.mainHeader}>Be Part Of The Change</h2>
+                    <div className={styles.subHeader}>{t('join_mission.sub_header')}</div>
+                    <h2 className={styles.mainHeader}>{t('join_mission.main_header')}</h2>
 
                     <p className={styles.description}>
-                        Join a growing community built on trust, simplicity, and shared value.
-                        Whether you need help or want to offer your skills—start here, today.
+                        {t('join_mission.description')}
                     </p>
 
                     <ul className={styles.checklist}>
@@ -102,7 +103,7 @@ export const JoinMissionSection: React.FC = () => {
                         backgroundColor: "#f8faff"
                     } : {}}>
                         <h3 className={styles.cardTitle} style={completionPercent === 100 ? { textAlign: "center" } : {}}>
-                            {completionPercent === 100 ? "Your Profile" : "Create Your Profile"}
+                            {completionPercent === 100 ? t('join_mission.card_title_done') : t('join_mission.card_title_new')}
                         </h3>
 
                         {completionPercent === 100 ? (
@@ -138,13 +139,13 @@ export const JoinMissionSection: React.FC = () => {
                                     )}
                                 </div>
                                 <h3 className={styles.cardTitle} style={{ marginBottom: "8px", fontSize: "1.25rem", color: "#111827" }}>
-                                    Welcome, {profileName.split(' ')[0]}!
+                                    {t('join_mission.welcome')}, {profileName.split(' ')[0]}!
                                 </h3>
                                 <p style={{ color: "#6b7280", marginBottom: "24px", fontSize: "0.875rem" }}>
-                                    Your profile is 100% complete.
+                                    {t('join_mission.profile_complete')}
                                 </p>
                                 <button type="button" onClick={() => router.push("/profile")} className={styles.submitButton} style={{ width: "100%" }}>
-                                    Go to My Profile
+                                    {t('join_mission.go_to_profile')}
                                 </button>
                             </div>
                         ) : (
@@ -152,7 +153,7 @@ export const JoinMissionSection: React.FC = () => {
                                 {/* Progress Bar */}
                                 <div className={styles.progressContainer}>
                                     <div className={styles.progressLabels}>
-                                        <span>Profile Completion</span>
+                                        <span>{t('join_mission.profile_completion')}</span>
                                         <span className={styles.progressHighlight}>{completionPercent}%</span>
                                     </div>
                                     <div className={styles.progressBar}>
@@ -168,7 +169,7 @@ export const JoinMissionSection: React.FC = () => {
                                     <div className={styles.inputGroup}>
                                         <input
                                             type="text"
-                                            placeholder="Name"
+                                            placeholder={t('join_mission.name_placeholder')}
                                             value={profileName}
                                             readOnly
                                             className={styles.input}
@@ -178,7 +179,7 @@ export const JoinMissionSection: React.FC = () => {
                                     <div className={styles.inputGroup}>
                                         <input
                                             type="email"
-                                            placeholder="Email Address"
+                                            placeholder={t('join_mission.email_placeholder')}
                                             value={profileEmail}
                                             readOnly
                                             className={styles.input}
@@ -188,7 +189,7 @@ export const JoinMissionSection: React.FC = () => {
                                     <div className={styles.inputGroup}>
                                         <input
                                             type="tel"
-                                            placeholder="Mobile Number"
+                                            placeholder={t('join_mission.mobile_placeholder')}
                                             value={profileMobile}
                                             readOnly
                                             className={styles.input}
@@ -202,7 +203,7 @@ export const JoinMissionSection: React.FC = () => {
                                             router.push("/Login?mode=signup");
                                         }
                                     }} className={styles.submitButton}>
-                                        {isActive ? "Complete Your Profile" : "Get Started"}
+                                        {isActive ? t('join_mission.complete_profile_btn') : t('join_mission.get_started_btn')}
                                     </button>
                                 </form>
                             </>

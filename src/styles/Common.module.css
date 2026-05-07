@@ -1112,6 +1112,12 @@
   background-color: #f5f5f5;
 }
 
+.langOptionActive {
+  background-color: #fff3e8;
+  color: #FF6B35 !important;
+  font-weight: 600;
+}
+
 .navIconButton:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
@@ -2046,4 +2052,10 @@
 .langOption:hover {
   background-color: #f5f5f5;
   color: #007bff;
+}
+
+.langOptionActive {
+  background-color: #fff3e8;
+  color: #FF6B35 !important;
+  font-weight: 600;
 }

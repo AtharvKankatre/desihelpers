@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { Zoom } from "@mui/material";
 import { useRouter } from "next/router";
 import { useAppMediaQuery } from "@/services/media_query/CalculateBreakpoints";
+import useTranslation from "next-translate/useTranslation";
 
 const CMobileCanvas = dynamic(() => import("@/components/global/mobile_canvas/CMobileCanvas").then(mod => mod.CMobileCanvas));
 const CNotificationPopup = dynamic(() => import("./header_components/CNotificationPopup").then(mod => mod.CNotificationPopup));
@@ -26,9 +27,17 @@ import { useChatStore } from "@/stores/ChatStore";// ... imports
 const _CHeader = () => {
   const { mobile, tablet } = useAppMediaQuery();
   const router = useRouter();
+  const { t } = useTranslation('common');
   const isHidden = router.pathname === Routes.mapSearch;
   const [show, setShow] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+
+  const switchLocale = (locale: 'en' | 'hi') => {
+    router.push(router.asPath, router.asPath, { locale });
+    setLangDropdownOpen(false);
+  };
+
+  const currentLang = router.locale === 'hi' ? t('lang_short_hi') : t('lang_short_en');
 
   // New State for Notifications and Feedback
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -74,10 +83,10 @@ const _CHeader = () => {
   }, []);
 
   const navLinks = [
-    { label: "Find Job", href: Routes.viewAllJobs },
-    { label: "Hire Help", href: Routes.viewAllSeekers },
-    { label: "About Us", href: "/about" },
-    { label: "Resources", href: "/resources" },
+    { label: t('nav.find_job'), href: Routes.viewAllJobs },
+    { label: t('nav.hire_help'), href: Routes.viewAllSeekers },
+    { label: t('nav.about_us'), href: "/about" },
+    { label: t('nav.resources'), href: "/resources" },
   ];
 
   return (
@@ -134,7 +143,7 @@ const _CHeader = () => {
                   setLangDropdownOpen(!langDropdownOpen);
                 }}
               >
-                Eng
+                {currentLang}
                 <svg
                   width="12"
                   height="12"
@@ -155,16 +164,16 @@ const _CHeader = () => {
               <Zoom in={langDropdownOpen} style={{ transformOrigin: 'top right' }}>
                 <div className={`${styles.langDropdown} language-dropdown`}>
                   <button
-                    className={styles.langOption}
-                    onClick={() => setLangDropdownOpen(false)}
+                    className={`${styles.langOption} ${router.locale === 'en' ? styles.langOptionActive : ''}`}
+                    onClick={() => switchLocale('en')}
                   >
-                    English
+                    {t('lang_english')}
                   </button>
                   <button
-                    className={styles.langOption}
-                    onClick={() => setLangDropdownOpen(false)}
+                    className={`${styles.langOption} ${router.locale === 'hi' ? styles.langOptionActive : ''}`}
+                    onClick={() => switchLocale('hi')}
                   >
-                    Hindi
+                    {t('lang_hindi')}
                   </button>
                 </div>
               </Zoom>

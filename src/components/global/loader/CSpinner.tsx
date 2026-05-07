@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import styles from "@/styles/PageLoader.module.css";
 
 type Props = {
@@ -10,27 +9,30 @@ type Props = {
 export const CSpinner: React.FC<Props> = ({ text = "Loading", inline = false }) => {
     return (
         <div className={inline ? styles.inlineLoaderContent : styles.loaderContent}>
-            <div className={styles.spinnerRing}>
-                {/* Central Logo */}
-                <div style={{ position: 'relative', width: '50px', height: '50px' }}>
-                    <Image
-                        src="/DesiHelpers_colored.svg"
-                        alt="DesiHelpers Loading"
-                        fill
-                        style={{ objectFit: 'contain' }}
-                        className={styles.logoImage}
-                        priority
-                    />
+            {/* Skeleton row 1 */}
+            <div className={styles.skeletonRow}>
+                <div className={`${styles.skeletonBone} ${styles.skeletonCircle}`} />
+                <div className={styles.skeletonLines}>
+                    <div className={`${styles.skeletonBone} ${styles.skeletonLine} ${styles.skeletonLineLong}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonLine} ${styles.skeletonLineMed}`} />
                 </div>
             </div>
 
-            {/* Loading text with animated dots */}
-            <div className={styles.loaderText}>
-                {text}
-                <div className={styles.dots} style={{ display: 'inline-flex', gap: '2px' }}>
-                    <span>.</span>
-                    <span>.</span>
-                    <span>.</span>
+            {/* Skeleton row 2 */}
+            <div className={styles.skeletonRow}>
+                <div className={`${styles.skeletonBone} ${styles.skeletonCircle}`} />
+                <div className={styles.skeletonLines}>
+                    <div className={`${styles.skeletonBone} ${styles.skeletonLine} ${styles.skeletonLineMed}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonLine} ${styles.skeletonLineShort}`} />
+                </div>
+            </div>
+
+            {/* Skeleton row 3 */}
+            <div className={styles.skeletonRow}>
+                <div className={`${styles.skeletonBone} ${styles.skeletonCircle}`} />
+                <div className={styles.skeletonLines}>
+                    <div className={`${styles.skeletonBone} ${styles.skeletonLine} ${styles.skeletonLineLong}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonLine} ${styles.skeletonLineShort}`} />
                 </div>
             </div>
         </div>

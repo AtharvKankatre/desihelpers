@@ -20,6 +20,7 @@ import { FaMapMarkedAlt, FaList, FaSlidersH, FaSortAmountDown, FaBell, FaArrowLe
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import Radar from "radar-sdk-js";
+import useTranslation from "next-translate/useTranslation";
 
 // Dynamically import map component for SSR compatibility
 const DisplayMap = dynamic(() => import("@/components/maps/DisplayMaps"), {
@@ -34,6 +35,7 @@ type SortKey = "jobType" | "workType" | "startDate" | "urgent" | "cityState" | "
 const ViewAllJobs = () => {
     const router = useRouter();
     const { mobile } = useAppMediaQuery();
+    const { t } = useTranslation('common');
 
     // Block page for non-logged-in users — show alert and redirect
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -556,48 +558,27 @@ const ViewAllJobs = () => {
                             )}
                         </div>
 
-                        <select
-                            className={styles.filterSelect}
-                            value={viewType === "jobs" ? "viewJobs" : "viewSeekers"}
-                            onChange={(e) => {
-                                setViewType(e.target.value === "viewSeekers" ? "seekers" : "jobs");
-                            }}
-                        >
-                            <option value="viewJobs">View Jobs</option>
-                            <option value="viewSeekers">View Service Provider</option>
+                        <select className={styles.filterSelect} value={viewType === "jobs" ? "viewJobs" : "viewSeekers"} onChange={(e) => { setViewType(e.target.value === "viewSeekers" ? "seekers" : "jobs"); }}>
+                            <option value="viewJobs">{t('jobs.view_jobs')}</option>
+                            <option value="viewSeekers">{t('jobs.view_providers')}</option>
                         </select>
 
-                        <select
-                            className={styles.filterSelect}
-                            value={workTypeFilter}
-                            onChange={(e) => setWorkTypeFilter(e.target.value)}
-                        >
-                            <option value="">Work Type</option>
-                            <option value="Part Time">Part Time</option>
-                            <option value="Full Time">Full Time</option>
-                            <option value="Remote">Remote</option>
+                        <select className={styles.filterSelect} value={workTypeFilter} onChange={(e) => setWorkTypeFilter(e.target.value)}>
+                            <option value="">{t('jobs.work_type')}</option>
+                            <option value="Part Time">{t('jobs.part_time')}</option>
+                            <option value="Full Time">{t('jobs.full_time')}</option>
+                            <option value="Remote">{t('jobs.remote')}</option>
                         </select>
 
-                        <select
-                            className={styles.filterSelect}
-                            value={categoryFilter}
-                            onChange={(e) => {
-                                setCategoryFilter(e.target.value);
-                                setSubCategoryFilter(""); // Default to "All Sub Category"
-                            }}
-                        >
-                            <option value="">All Category</option>
+                        <select className={styles.filterSelect} value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setSubCategoryFilter(""); }}>
+                            <option value="">{t('jobs.all_category')}</option>
                             {displayCategories.map((cat: IJobCategories) => (
                                 <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
                             ))}
                         </select>
 
-                        <select
-                            className={styles.filterSelect}
-                            value={subCategoryFilter}
-                            onChange={(e) => setSubCategoryFilter(e.target.value)}
-                        >
-                            <option value="">All Sub Category</option>
+                        <select className={styles.filterSelect} value={subCategoryFilter} onChange={(e) => setSubCategoryFilter(e.target.value)}>
+                            <option value="">{t('jobs.all_sub_category')}</option>
                             {subCategories.map((sub: ISubCategory) => (
                                 <option key={sub.name} value={sub.name}>{sub.name}</option>
                             ))}
@@ -659,11 +640,8 @@ const ViewAllJobs = () => {
                 {mobile ? (
                     viewMode === "map" ? (
                         <div className={styles.mobileMapHeader}>
-                            <button
-                                className={styles.mobileBackBtn}
-                                onClick={() => setViewMode("card")}
-                            >
-                                <FaArrowLeft /> Back to List
+                            <button className={styles.mobileBackBtn} onClick={() => setViewMode("card")}>
+                                <FaArrowLeft /> {t('jobs.back_to_list')}
                             </button>
                         </div>
                     ) : (
@@ -703,12 +681,9 @@ const ViewAllJobs = () => {
                                         </div>
                                     )}
                                 </div>
-                                <button
-                                    className={styles.mobileFilterBtn}
-                                    onClick={() => setFilterModalOpen(true)}
-                                >
+                                <button className={styles.mobileFilterBtn} onClick={() => setFilterModalOpen(true)}>
                                     <FaSlidersH style={{ fontSize: 12 }} />
-                                    Filter
+                                    {t('jobs.filter')}
                                 </button>
                             </div>
 
@@ -748,7 +723,7 @@ const ViewAllJobs = () => {
                         <div className={styles.filterBottomRow}>
                             <div className={styles.listHeader}>
                                 <h2 className={styles.listTitle}>
-                                    {viewType === "jobs" ? "Job List" : "Service Provider List"}{" "}
+                                    {viewType === "jobs" ? t('jobs.job_list') : t('jobs.provider_list')}{" "}
                                     <span className={styles.jobCount}>
                                         {displayJobs.length}
                                     </span>
@@ -760,13 +735,7 @@ const ViewAllJobs = () => {
                                     <circle cx="11" cy="11" r="8" />
                                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                                 </svg>
-                                <input
-                                    type="text"
-                                    className={styles.newSearchInput}
-                                    placeholder="Search by Name & Type of job"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
+                                <input type="text" className={styles.newSearchInput} placeholder={t('jobs.search_placeholder')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                             </div>
                         </div>
                     )
@@ -881,22 +850,22 @@ const ViewAllJobs = () => {
                             </div>
                         ) : displayJobs.length === 0 ? (
                             <div className={styles.emptyState}>
-                                <h3 className={styles.emptyStateTitle}>No jobs found</h3>
-                                <p className={styles.emptyStateText}>Try adjusting your filters or search query.</p>
+                                <h3 className={styles.emptyStateTitle}>{t('jobs.no_jobs')}</h3>
+                                <p className={styles.emptyStateText}>{t('jobs.adjust_filters')}</p>
                             </div>
                         ) : viewMode === "table" ? (
                             <div className={styles.tableContainer}>
                                 <table className={styles.jobTable}>
                                     <thead>
                                         <tr>
-                                            <th onClick={() => handleSort("jobType")}>Job Type {sortIndicator("jobType")}</th>
-                                            <th onClick={() => handleSort("workType")}>Work Type {sortIndicator("workType")}</th>
-                                            <th onClick={() => handleSort("startDate")}>Start Date {sortIndicator("startDate")}</th>
-                                            <th onClick={() => handleSort("urgent")} className={styles.centeredTh}>Urgent {sortIndicator("urgent")}</th>
-                                            <th onClick={() => handleSort("cityState")}>City/State {sortIndicator("cityState")}</th>
-                                            <th onClick={() => handleSort("distance")}>Distance {sortIndicator("distance")}</th>
-                                            <th onClick={() => handleSort("postedBy")}>Posted By {sortIndicator("postedBy")}</th>
-                                            <th>Action</th>
+                                            <th onClick={() => handleSort("jobType")}>{t('jobs.col_job_type')} {sortIndicator("jobType")}</th>
+                                            <th onClick={() => handleSort("workType")}>{t('jobs.col_work_type')} {sortIndicator("workType")}</th>
+                                            <th onClick={() => handleSort("startDate")}>{t('jobs.col_start_date')} {sortIndicator("startDate")}</th>
+                                            <th onClick={() => handleSort("urgent")} className={styles.centeredTh}>{t('jobs.col_urgent')} {sortIndicator("urgent")}</th>
+                                            <th onClick={() => handleSort("cityState")}>{t('jobs.col_city_state')} {sortIndicator("cityState")}</th>
+                                            <th onClick={() => handleSort("distance")}>{t('jobs.col_distance')} {sortIndicator("distance")}</th>
+                                            <th onClick={() => handleSort("postedBy")}>{t('jobs.col_posted_by')} {sortIndicator("postedBy")}</th>
+                                            <th>{t('jobs.col_action')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -913,11 +882,9 @@ const ViewAllJobs = () => {
                                                     ) : <span className={styles.notUrgent}>—</span>}
                                                 </td>
                                                 <td>{`${job.city ?? "-"}, ${job.state ?? "-"}`}</td>
-                                                <td>{job.distance ? `${job.distance} miles away` : "—"}</td>
+                                                <td>{job.distance ? `${job.distance} ${t('jobs.miles_away')}` : "—"}</td>
                                                 <td>{job.userProfile?.displayName ?? "-"}</td>
-                                                <td>
-                                                    <span className={styles.viewDetailsLink} onClick={() => navigateToDetails(job._id ?? job.id)}>View Job Details</span>
-                                                </td>
+                                                <td><span className={styles.viewDetailsLink} onClick={() => navigateToDetails(job._id ?? job.id)}>{t('jobs.view_details')}</span></td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -965,7 +932,7 @@ const ViewAllJobs = () => {
                                                         <rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                                                     </svg>
                                                 </span>
-                                                <span>Work Type: <strong>{job.workType ?? "Full Time"}</strong></span>
+                                                <span>{t('jobs.lbl_work_type')}: <strong>{job.workType ?? t('jobs.full_time')}</strong></span>
                                             </div>
                                             <div className={styles.cardDetailItem}>
                                                 <span className={styles.cardIcon}>
@@ -973,7 +940,7 @@ const ViewAllJobs = () => {
                                                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
                                                     </svg>
                                                 </span>
-                                                <span>{job.distance ? `${job.distance} miles away` : "—"}, {job.city ?? "Bothell"}, {job.state ?? "Washington"}</span>
+                                                <span>{job.distance ? `${job.distance} ${t('jobs.miles_away')}` : "—"}, {job.city ?? "Bothell"}, {job.state ?? "Washington"}</span>
                                             </div>
                                         </div>
                                         <div className={styles.cardTags}>
@@ -983,7 +950,7 @@ const ViewAllJobs = () => {
                                         <div className={styles.cardFooter}>
                                             <div className={styles.cardViewDetails} onClick={() => navigateToDetails(job._id ?? job.id)}>
                                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><line x1="10" y1="9" x2="8" y2="9" /></svg>
-                                                View Job Details
+                                                {t('jobs.view_details')}
                                             </div>
                                         </div>
                                     </div>
@@ -1000,51 +967,30 @@ const ViewAllJobs = () => {
                     <div className={styles.filterModal}>
                         {/* Header */}
                         <div className={styles.filterModalHeader}>
-                            <span className={styles.filterModalTitle}>Filter</span>
-                            <button
-                                className={styles.filterModalClose}
-                                onClick={() => setFilterModalOpen(false)}
-                            >
-                                ✕
-                            </button>
+                            <span className={styles.filterModalTitle}>{t('jobs.filter')}</span>
+                            <button className={styles.filterModalClose} onClick={() => setFilterModalOpen(false)}>✕</button>
                         </div>
 
                         {/* Filter Options */}
                         <div className={styles.filterModalBody}>
-                            <select
-                                className={styles.filterModalSelect}
-                                value={viewType === "jobs" ? "viewJobs" : "viewSeekers"}
-                                onChange={(e) => setViewType(e.target.value === "viewSeekers" ? "seekers" : "jobs")}
-                            >
-                                <option value="viewJobs">View Jobs</option>
-                                <option value="viewSeekers">View Service Provider</option>
+                            <select className={styles.filterModalSelect} value={viewType === "jobs" ? "viewJobs" : "viewSeekers"} onChange={(e) => setViewType(e.target.value === "viewSeekers" ? "seekers" : "jobs")}>
+                                <option value="viewJobs">{t('jobs.view_jobs')}</option>
+                                <option value="viewSeekers">{t('jobs.view_providers')}</option>
                             </select>
-                            <select
-                                className={styles.filterModalSelect}
-                                value={workTypeFilter}
-                                onChange={(e) => setWorkTypeFilter(e.target.value)}
-                            >
-                                <option value="">Work Type</option>
-                                <option value="Part Time">Part Time</option>
-                                <option value="Full Time">Full Time</option>
-                                <option value="Remote">Remote</option>
+                            <select className={styles.filterModalSelect} value={workTypeFilter} onChange={(e) => setWorkTypeFilter(e.target.value)}>
+                                <option value="">{t('jobs.work_type')}</option>
+                                <option value="Part Time">{t('jobs.part_time')}</option>
+                                <option value="Full Time">{t('jobs.full_time')}</option>
+                                <option value="Remote">{t('jobs.remote')}</option>
                             </select>
-                            <select
-                                className={styles.filterModalSelect}
-                                value={categoryFilter}
-                                onChange={(e) => { setCategoryFilter(e.target.value); setSubCategoryFilter(""); }}
-                            >
-                                <option value="">All Category</option>
+                            <select className={styles.filterModalSelect} value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setSubCategoryFilter(""); }}>
+                                <option value="">{t('jobs.all_category')}</option>
                                 {displayCategories.map((cat: IJobCategories) => (
                                     <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
                                 ))}
                             </select>
-                            <select
-                                className={styles.filterModalSelect}
-                                value={subCategoryFilter}
-                                onChange={(e) => setSubCategoryFilter(e.target.value)}
-                            >
-                                <option value="">All Sub Category</option>
+                            <select className={styles.filterModalSelect} value={subCategoryFilter} onChange={(e) => setSubCategoryFilter(e.target.value)}>
+                                <option value="">{t('jobs.all_sub_category')}</option>
                                 {subCategories.map((sub: ISubCategory) => (
                                     <option key={sub.name} value={sub.name}>{sub.name}</option>
                                 ))}
@@ -1062,11 +1008,8 @@ const ViewAllJobs = () => {
 
                         {/* Footer Button */}
                         <div className={styles.filterModalFooter}>
-                            <button
-                                className={styles.filterModalApply}
-                                onClick={() => setFilterModalOpen(false)}
-                            >
-                                Filter
+                            <button className={styles.filterModalApply} onClick={() => setFilterModalOpen(false)}>
+                                {t('jobs.apply_filter')}
                             </button>
                         </div>
                     </div>

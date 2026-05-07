@@ -8,7 +8,7 @@ import { userProfileStore } from "@/stores/UserProfileStore";
 import { seekerStore } from "@/stores/SeekerStore";
 import { jobStore } from "@/stores/JobStore";
 import { useRouter } from "next/router";
-import Image from "next/image";
+
 import { CProfilePopup } from "./CProfilePopup";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
@@ -90,16 +90,23 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
       ).length;
       const percent = Math.round((filled / fields.length) * 100);
 
-      // If we have a profile photo, we might need to sign it if it's new
+      // If we have a profile photo, sign it only if it's a raw S3 key (not already a full URL).
+      // Passing an already-signed URL to getWorkPhotoUrls causes the backend to produce a
+      // garbled double-signed URL → AWS signature mismatch → 403.
       const updatePhoto = async () => {
         let signedPhoto = "/newassets/account_circle.png";
         if (p.profilePhoto && p.profilePhoto !== "/newassets/account_circle.png") {
-          try {
-            const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
-            const signedUrls = await getWorkPhotoUrls("", [p.profilePhoto]);
-            signedPhoto = (signedUrls && signedUrls.length > 0) ? signedUrls[0] : p.profilePhoto;
-          } catch (s3Error) {
+          // Already a full URL (signed or public) — use it directly
+          if (p.profilePhoto.startsWith('http') || p.profilePhoto.startsWith('data:')) {
             signedPhoto = p.profilePhoto;
+          } else {
+            try {
+              const { getWorkPhotoUrls } = await import("@/utils/s3Helper");
+              const signedUrls = await getWorkPhotoUrls("", [p.profilePhoto]);
+              signedPhoto = (signedUrls && signedUrls.length > 0) ? signedUrls[0] : p.profilePhoto;
+            } catch (s3Error) {
+              signedPhoto = p.profilePhoto;
+            }
           }
         }
 
@@ -147,13 +154,14 @@ export const CUserAvatar: FunctionComponent<CUserAvatarProps> = ({ className, st
             if (onToggle) onToggle(newState);
           }}
         >
-          <Image
+          <img
             src={typeof userData.profilePhoto === 'string' && userData.profilePhoto.trim().length > 1 ? userData.profilePhoto : "/newassets/account_circle.png"}
             alt="Profile"
             width={size}
             height={size}
             className="rounded-circle"
-            style={{ objectFit: 'cover' }}
+            style={{ objectFit: 'cover', borderRadius: '50%' }}
+            onError={(e) => { (e.target as HTMLImageElement).src = "/newassets/account_circle.png"; }}
           />
         </button>
 

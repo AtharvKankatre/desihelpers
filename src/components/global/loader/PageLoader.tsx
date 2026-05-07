@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styles from "@/styles/PageLoader.module.css";
-import Image from "next/image";
 
 export const PageLoader: React.FC = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Show loader only for Find Job (/jobs) and Hire Help (/seekers) pages
+        // Show loader only for prioritized pages
         const handleStart = (url: string) => {
             const prioritizedRoutes = ['/jobs', '/seekers', '/profile', '/Messages', '/user_profile', '/admin'];
-            const shouldShowLoader = prioritizedRoutes.some(route => url.startsWith(route));
+            const basePath = url.split('?')[0]; 
+            const shouldShowLoader = prioritizedRoutes.some(route => basePath.startsWith(route));
 
             if (url !== router.asPath && shouldShowLoader) {
                 setLoading(true);
             }
         };
 
-        let timeoutId: NodeJS.Timeout;
         const handleComplete = () => {
-            timeoutId = setTimeout(() => {
-                setLoading(false);
-            }, 800); // 800ms purposeful delay ensures underlying data fetches have time to resolve, preventing empty-screen flashing
+            setLoading(false);
         };
 
         router.events.on("routeChangeStart", handleStart);
@@ -33,34 +30,41 @@ export const PageLoader: React.FC = () => {
             router.events.off("routeChangeStart", handleStart);
             router.events.off("routeChangeComplete", handleComplete);
             router.events.off("routeChangeError", handleComplete);
-            if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [router]);
+    }, [router.events, router.asPath]);
 
     return (
         <div className={`${styles.loaderOverlay} ${loading ? styles.loaderOverlayActive : ""}`}>
             <div className={styles.loaderContent}>
-                <div className={styles.spinnerRing}>
-                    {/* Central Logo */}
-                    <div style={{ position: 'relative', width: '50px', height: '50px' }}>
-                        <Image
-                            src="/DesiHelpers_colored.svg"
-                            alt="DesiHelpers Loading"
-                            fill
-                            style={{ objectFit: 'contain' }}
-                            className={styles.logoImage}
-                            priority
-                        />
-                    </div>
+                {/* ── Skeleton Nav Bar ── */}
+                <div className={styles.skeletonNav}>
+                    <div className={`${styles.skeletonBone} ${styles.skeletonNavLogo}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonNavLink}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonNavLink}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonNavLink}`} />
+                    <div className={`${styles.skeletonBone} ${styles.skeletonNavAvatar}`} />
                 </div>
 
-                {/* Loading text with animated dots */}
-                <div className={styles.loaderText}>
-                    Loading
-                    <div className={styles.dots} style={{ display: 'inline-flex', gap: '2px' }}>
-                        <span>.</span>
-                        <span>.</span>
-                        <span>.</span>
+                {/* ── Hero Banner ── */}
+                <div className={styles.skeletonHero}>
+                    <div className={`${styles.skeletonBone} ${styles.skeletonHeroBanner}`} />
+                </div>
+
+                {/* ── Body Content ── */}
+                <div className={styles.skeletonBody}>
+                    <div className={`${styles.skeletonBone} ${styles.skeletonSectionTitle}`} />
+
+                    <div className={styles.skeletonCardGrid}>
+                        {[0, 1, 2, 3].map((i) => (
+                            <div className={styles.skeletonCard} key={i}>
+                                <div className={`${styles.skeletonBone} ${styles.skeletonCardImage}`} />
+                                <div className={styles.skeletonCardBody}>
+                                    <div className={`${styles.skeletonBone} ${styles.skeletonCardTitle}`} />
+                                    <div className={`${styles.skeletonBone} ${styles.skeletonCardText}`} />
+                                    <div className={`${styles.skeletonBone} ${styles.skeletonCardTextShort}`} />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

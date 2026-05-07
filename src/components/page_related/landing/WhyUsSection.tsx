@@ -4,9 +4,11 @@ import styles from "@/styles/WhyUsSection.module.css";
 import { useAuth } from "@/services/authorization/AuthContext";
 import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
+import useTranslation from "next-translate/useTranslation";
 
 export const WhyUsSection: React.FC = () => {
     const router = useRouter();
+    const { t } = useTranslation('common');
     const { isActive } = useAuth();
     const [completionPercent, setCompletionPercent] = useState(0);
 
@@ -61,44 +63,41 @@ export const WhyUsSection: React.FC = () => {
             <div className={styles.container}>
                 {/* Left Content */}
                 <div className={styles.leftContent}>
-                    <span className={styles.label}>WHY US</span>
+                    <span className={styles.label}>{t('why_us.label')}</span>
 
                     <h2 className={styles.heading}>
-                        Connecting <span className={styles.seekers}>Seekers</span> And{" "}
-                        <span className={styles.providers}>Providers</span> In ONE Trusted DESI
-                        Community Platform.
+                        {t('why_us.heading_part1')} <span className={styles.seekers}>{t('why_us.seekers')}</span> {t('why_us.and')}{" "}
+                        <span className={styles.providers}>{t('why_us.providers')}</span> {t('why_us.heading_part2')}
                     </h2>
 
                     <p className={styles.description}>
-                        A trusted space where families and friends can easily find help, share
-                        services, and support each other—just like asking a neighbors back home,
-                        but online this time.
+                        {t('why_us.description')}
                     </p>
 
                     {/* Stats Grid */}
                     <div className={styles.statsGrid}>
                         <div className={styles.statItem}>
                             <span className={styles.statNumber}>200+</span>
-                            <span className={styles.statLabel}>Daily Visitors</span>
+                            <span className={styles.statLabel}>{t('why_us.stat_visitors')}</span>
                         </div>
                         <div className={styles.statItem}>
                             <span className={styles.statNumber}>1200+</span>
-                            <span className={styles.statLabel}>Number of members</span>
+                            <span className={styles.statLabel}>{t('why_us.stat_members')}</span>
                         </div>
                         <div className={styles.statItem}>
                             <span className={styles.statNumber}>25+</span>
-                            <span className={styles.statLabel}>Types of helper categories</span>
+                            <span className={styles.statLabel}>{t('why_us.stat_categories')}</span>
                         </div>
                         <div className={styles.statItem}>
                             <span className={styles.statNumber}>
                                 4.8 <span className={styles.stars}>★★★★★</span>
                             </span>
-                            <span className={styles.statLabel}>Avg Rating</span>
+                            <span className={styles.statLabel}>{t('why_us.stat_rating')}</span>
                         </div>
                     </div>
 
                     <button className={styles.getStartedButton} onClick={handleGetStarted}>
-                        {isActive ? (completionPercent === 100 ? "See Your Profile" : "Complete Your Profile") : "Get Started"}
+                        {isActive ? (completionPercent === 100 ? t('why_us.see_profile') : t('why_us.complete_profile')) : t('why_us.get_started')}
                     </button>
                 </div>
 

@@ -17,6 +17,7 @@ import { FooterSection } from "@/components/page_related/landing/FooterSection";
 import { CHeader } from "@/components/global/header/CHeader";
 import { BlogCard } from "@/components/page_related/landing/BlogCard";
 import { FaArrowRight } from "react-icons/fa";
+import useTranslation from "next-translate/useTranslation";
 
 // Global style for transparent header on this page
 const CustomNavbarStyles = (
@@ -217,7 +218,8 @@ const staticArticles = [
 
 const Resources = () => {
     const [activeTab, setActiveTab] = useState("All");
-    const categories = ["All", "Category 1", "Category 2", "Category 3", "Category 4", "Category 5"];
+    const { t } = useTranslation('common');
+    const categories = [t('resources.tab_all'), t('resources.tab_cat1'), t('resources.tab_cat2'), t('resources.tab_cat3'), t('resources.tab_cat4'), t('resources.tab_cat5')];
     const [articles, setArticles] = useState<any[]>(staticArticles);
 
     // Fetch admin-created blogs from API and merge with static articles
@@ -252,13 +254,13 @@ const Resources = () => {
             <HeroSection>
                 <Container maxWidth="md">
                     <Typography variant="overline" sx={{ letterSpacing: 2, fontWeight: 500, opacity: 0.8 }}>
-                        BLOG
+                        {t('resources.blog_label')}
                     </Typography>
                     <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
-                        Tips, Stories & Inspiration For You
+                        {t('resources.hero_title')}
                     </Typography>
                     <Typography variant="body1" sx={{ opacity: 0.9, maxWidth: "600px", mx: "auto", lineHeight: 1.6 }}>
-                        Real experiences from our DESI community—helpful tips, inspiring journeys, and stories that make life in the U.S. feel a little more like home.
+                        {t('resources.hero_subtitle')}
                     </Typography>
                 </Container>
             </HeroSection>
@@ -304,7 +306,7 @@ const Resources = () => {
                     {/* View All Button */}
                     <Box sx={{ textAlign: "center", mt: 8 }}>
                         <OrangeButton>
-                            View All
+                            {t('resources.view_all')}
                         </OrangeButton>
                     </Box>
 

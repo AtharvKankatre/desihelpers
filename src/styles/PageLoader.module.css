@@ -1,22 +1,21 @@
+/* ===========================
+   SKELETON LOADER SYSTEM
+   =========================== */
+
+/* ---------- Full-page overlay (used by PageLoader) ---------- */
 .loaderOverlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(255, 255, 255, 0.85);
-    /* Semi-transparent white to feel light & modern */
-    backdrop-filter: blur(4px);
-    /* Professional frosted glass effect */
+    background-color: #f6f7f9;
     z-index: 999999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
-    backdrop-filter: blur(8px);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.2s;
+    overflow: hidden;
 }
 
 .loaderOverlayActive {
@@ -24,135 +23,246 @@
     visibility: visible;
 }
 
+/* ---------- Skeleton wrapper (centres content) ---------- */
 .loaderContent {
     display: flex;
     flex-direction: column;
     align-items: center;
-    animation: bounce 4.5s infinite ease-in-out;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    gap: 0;
+    animation: none;
 }
 
-/* 
-  Creating a sleek animated ring around the logo 
-*/
-.spinnerRing {
-    position: relative;
-    width: 120px;
-    height: 120px;
+/* ---------- Inline variant (used by CSpinner) ---------- */
+.inlineLoaderContent {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 10px 30px rgba(0, 71, 157, 0.1), inset 0 0 0 2px rgba(240, 124, 0, 0.05);
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    padding: 20px;
 }
 
-.spinnerRing::before {
-    content: "";
-    position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f07c00, #00c2a8, #001838);
-    z-index: -1;
-    animation: spinGradient 4.2s linear infinite;
-    opacity: 0.8;
+/* ===========================
+   SHIMMER KEYFRAME
+   =========================== */
+@keyframes shimmer {
+    0%   { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
 }
 
-.spinnerRing::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 50%;
+/* ---------- Base skeleton bone ---------- */
+.skeletonBone {
+    background: linear-gradient(
+        90deg,
+        #e8eaed 25%,
+        #f5f6f8 50%,
+        #e8eaed 75%
+    );
+    background-size: 468px 100%;
+    animation: shimmer 1.0s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    border-radius: 8px;
+    will-change: background-position;
+}
+
+/* ===========================
+   PAGE SKELETON LAYOUT
+   (mimics a typical page)
+   =========================== */
+
+/* Top nav bar skeleton */
+.skeletonNav {
+    width: 100%;
+    height: 68px;
     background: #fff;
-    z-index: -1;
-}
-
-.logoImage {
-    max-width: 60px;
-    max-height: 60px;
-    object-fit: contain;
-    animation: pulse 3.8s infinite;
-}
-
-.loaderText {
-    margin-top: 24px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #001838;
-    letter-spacing: 1px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    padding: 0 32px;
+    gap: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    flex-shrink: 0;
 }
 
-/* Dots animation for "Loading..." */
-.dots span {
-    animation: wave 2.5s infinite ease-in-out both;
+.skeletonNavLogo {
+    width: 140px;
+    height: 36px;
+    border-radius: 6px;
 }
 
-.dots span:nth-child(1) {
-    animation-delay: -0.32s;
+.skeletonNavLink {
+    width: 72px;
+    height: 16px;
+    border-radius: 4px;
 }
 
-.dots span:nth-child(2) {
-    animation-delay: -0.16s;
+.skeletonNavAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-left: auto;
 }
 
-@keyframes spinGradient {
-    0% {
-        transform: rotate(0deg);
+/* Hero / banner skeleton */
+.skeletonHero {
+    width: 100%;
+    max-width: 1200px;
+    margin: 28px auto 0;
+    padding: 0 24px;
+}
+
+.skeletonHeroBanner {
+    width: 100%;
+    height: 180px;
+    border-radius: 16px;
+}
+
+/* Content rows */
+.skeletonBody {
+    width: 100%;
+    max-width: 1200px;
+    margin: 32px auto 0;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.skeletonSectionTitle {
+    width: 220px;
+    height: 22px;
+    border-radius: 6px;
+}
+
+/* Card grid */
+.skeletonCardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.skeletonCard {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.skeletonCardImage {
+    width: 100%;
+    height: 140px;
+    border-radius: 0;
+}
+
+.skeletonCardBody {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeletonCardTitle {
+    width: 75%;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.skeletonCardText {
+    width: 100%;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.skeletonCardTextShort {
+    width: 55%;
+    height: 12px;
+    border-radius: 4px;
+}
+
+/* ===========================
+   INLINE SKELETON ROWS
+   (used by CCommonLoader / CSpinner)
+   =========================== */
+.skeletonRow {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.skeletonCircle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeletonLines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.skeletonLine {
+    height: 14px;
+    border-radius: 4px;
+}
+
+.skeletonLineLong {
+    width: 90%;
+}
+
+.skeletonLineMed {
+    width: 65%;
+}
+
+.skeletonLineShort {
+    width: 40%;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 768px) {
+    .skeletonNav {
+        padding: 0 16px;
+        height: 56px;
     }
 
-    100% {
-        transform: rotate(360deg);
+    .skeletonNavLink {
+        display: none;
+    }
+
+    .skeletonHero {
+        padding: 0 12px;
+        margin-top: 16px;
+    }
+
+    .skeletonHeroBanner {
+        height: 120px;
+        border-radius: 12px;
+    }
+
+    .skeletonBody {
+        padding: 0 12px;
+        margin-top: 20px;
+        gap: 20px;
+    }
+
+    .skeletonCardGrid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .skeletonCardImage {
+        height: 110px;
     }
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.9;
-    }
-
-    50% {
-        transform: scale(1.05);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(0.9);
-        opacity: 0.9;
-    }
-}
-
-@keyframes bounce {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-@keyframes wave {
-
-    0%,
-    80%,
-    100% {
-        transform: scale(0);
-        opacity: 0.5;
-    }
-
-    40% {
-        transform: scale(1);
-        opacity: 1;
-    }
+/* Hide legacy elements that are no longer used */
+.spinnerRing,
+.logoImage,
+.loaderText,
+.dots {
+    display: none;
 }

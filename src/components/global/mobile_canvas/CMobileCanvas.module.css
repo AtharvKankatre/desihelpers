@@ -123,6 +123,12 @@
     color: #f07c00;
 }
 
+.langOptionActive {
+    background-color: #fff3e8;
+    color: #FF6B35 !important;
+    font-weight: 600;
+}
+
 .editIcon {
     color: #f07c00;
     cursor: pointer;

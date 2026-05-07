@@ -53,25 +53,41 @@ const UserModal: React.FC<UserModalProps> = ({ show, userData, handleClose }) =>
   }, [userData?.profilePhoto]);
 
   return (
-    <Modal show={show} onHide={handleClose}
-      size="xl"
-      aria-labelledby="contained-modal-title-vcenter">
-      <Modal.Header closeButton>
-
+    <Modal
+      show={show}
+      onHide={handleClose}
+      size="lg"
+      centered
+      scrollable
+      aria-labelledby="contained-modal-title-vcenter"
+      style={{ paddingTop: "70px" }}
+    >
+      <Modal.Header
+        closeButton
+        closeVariant="white"
+        style={{
+          background: "linear-gradient(135deg, #073157 0%, #0a4a7f 100%)",
+          borderBottom: "none",
+          padding: "14px 20px",
+        }}
+      >
         <Modal.Title>
-          <div className="d-flex flex-row align-items-center">
+          <div className="d-flex flex-row align-items-center" style={{ gap: "12px" }}>
             <Image
               src={PhotoUrls || dummyImage}
-              height={36}
-              width={36}
+              height={40}
+              width={40}
               roundedCircle
-              className="me-2"
+              style={{ border: "2px solid rgba(255,255,255,0.3)", objectFit: "cover" }}
             />
-            {userData?.displayName ?? "-"}
-          </div></Modal.Title>
+            <span style={{ color: "#fff", fontSize: "1.1rem", fontWeight: 600 }}>
+              {userData?.displayName ?? "-"}
+            </span>
+          </div>
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        <Row className="mt-4">
+      <Modal.Body style={{ padding: "20px 24px", maxHeight: "55vh", overflowY: "auto" }}>
+        <Row className="mt-2">
           <Col sm={12} md={4}>
             <CDisplay
               heading="Name"
@@ -119,7 +135,6 @@ const UserModal: React.FC<UserModalProps> = ({ show, userData, handleClose }) =>
                   <CDisplay
                     heading="Whatsapp"
                     icon="/assets/icons/form_icons/icon_whatsapp.svg"
-                    // label={"Click to connect"}
                     label={userData?.mobile ?? "Not Mentioned"}
                   />
                 </div>
@@ -188,7 +203,6 @@ const UserModal: React.FC<UserModalProps> = ({ show, userData, handleClose }) =>
                   <Link
                     href={`${userData?.facebookLink!}`}
                     target="_blank"
-                    //rel="noopener noreferrer"
                     style={{ cursor: "pointer" }}
                   >
                     {userData?.facebookLink!}
@@ -208,7 +222,6 @@ const UserModal: React.FC<UserModalProps> = ({ show, userData, handleClose }) =>
                   <Link
                     href={`${userData?.instagram!}`}
                     target="_blank"
-                    // rel="noopener noreferrer"
                     style={{ cursor: "pointer" }}
                   >
                     {userData?.instagram!}
@@ -228,7 +241,6 @@ const UserModal: React.FC<UserModalProps> = ({ show, userData, handleClose }) =>
                   <Link
                     href={`${userData?.websiteLink!}`}
                     target="_blank"
-                    //rel="noopener noreferrer"
                     style={{ cursor: "pointer" }}
                   >
                     {userData?.websiteLink!}
@@ -244,8 +256,19 @@ const UserModal: React.FC<UserModalProps> = ({ show, userData, handleClose }) =>
 
         <CUserWorkPhotos workPhotos={userData?.uploadPhotoOfWork ?? []} />
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+      <Modal.Footer style={{ borderTop: "1px solid #eef2f7", padding: "12px 24px" }}>
+        <Button
+          variant="secondary"
+          onClick={handleClose}
+          style={{
+            borderRadius: "8px",
+            fontWeight: 600,
+            fontSize: "0.88rem",
+            padding: "8px 24px",
+            background: "#073157",
+            border: "none",
+          }}
+        >
           Close
         </Button>
       </Modal.Footer>

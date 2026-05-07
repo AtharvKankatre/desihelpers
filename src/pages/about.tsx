@@ -4,12 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FaPlay, FaCheckCircle, FaStar, FaQuoteLeft } from "react-icons/fa";
-import { Avatar, Box } from "@mui/material"; // Keeping Avatar as it's useful
+import { Avatar, Box } from "@mui/material";
 import styles from "@/styles/About.module.css";
 import { Routes } from "@/services/routes/Routes";
+import useTranslation from "next-translate/useTranslation";
 
 const About: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -71,15 +73,15 @@ const About: React.FC = () => {
       <section className={styles.aboutHero}>
         <div className={styles.container}>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 3, fontSize: '0.9rem' }}>
-            <span style={{ opacity: 0.8 }}>Home</span>
+            <span style={{ opacity: 0.8 }}>{t('about.home')}</span>
             <span style={{ fontSize: '1.2rem', opacity: 0.8 }}>›</span>
-            <span style={{ opacity: 1, fontWeight: 500 }}>About Us</span>
+            <span style={{ opacity: 1, fontWeight: 500 }}>{t('about.about_us')}</span>
           </Box>
           <h1 className={styles.heroTitle}>
-            Connecting Communities, One Helper at a Time
+            {t('about.hero_title')}
           </h1>
           <p className={styles.heroSubtitle}>
-            We make finding trusted household help simple, fast, and free—while building a supportive community where people help people.
+            {t('about.hero_subtitle')}
           </p>
         </div>
       </section>
@@ -89,15 +91,15 @@ const About: React.FC = () => {
         <div className={styles.container}>
           <div className={styles.contentWrapper}>
             <div className={styles.textContent}>
-              <span className={styles.whyLabel}>WHY Desi Helpers</span>
+              <span className={styles.whyLabel}>{t('about.why_label')}</span>
               <h2 className={styles.mainHeading}>
-                The <span>Problem We Are Solving</span>
+                {t('about.problem_title_1')} <span>{t('about.problem_title_2')}</span>
               </h2>
               <p className={styles.bodyText}>
-                The way people search for household help—nannies, chefs, tutors, and more—has changed drastically. Most rely on multiple social media groups, messaging apps, or word-of-mouth to post their needs or services.
+                {t('about.problem_body_1')}
               </p>
               <p className={styles.bodyText}>
-                Our platform provides a one-stop, scalable solution for all helper needs:
+                {t('about.problem_body_2')}
               </p>
 
               <div className={styles.checklist}>
@@ -107,7 +109,7 @@ const About: React.FC = () => {
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <p className={styles.checkText}>
-                    <strong>Posters can view active profiles nearby and connect instantly—no posting or reposting required.</strong>
+                    <strong>{t('about.check_1')}</strong>
                   </p>
                 </div>
                 <div className={styles.checkItem}>
@@ -116,17 +118,17 @@ const About: React.FC = () => {
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                   <p className={styles.checkText}>
-                    <strong>Seekers can see verified opportunities in their area—without endless group hopping.</strong>
+                    <strong>{t('about.check_2')}</strong>
                   </p>
                 </div>
               </div>
 
               <p className={styles.summaryText}>
-                This means faster connections, less effort, and a better experience for everyone.
+                {t('about.summary')}
               </p>
 
               <button className={styles.joinButton} onClick={() => router.push("/Login?mode=signup")}>
-                Join the community
+                {t('about.join_btn')}
               </button>
             </div>
 
@@ -149,48 +151,33 @@ const About: React.FC = () => {
       <section className={styles.missionSection}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle} style={{ color: '#00479d', fontSize: '2.5rem' }}>Our Mission</h2>
+            <h2 className={styles.sectionTitle} style={{ color: '#00479d', fontSize: '2.5rem' }}>{t('about.mission_title')}</h2>
             <p className={styles.sectionSubtitle}>
-              Our mission is simple - to create value by assisting you in finding high quality leads for your household needs saving your time and frustration from other platforms and connections.
+              {t('about.mission_subtitle')}
             </p>
           </div>
 
           <div className={styles.missionGrid}>
             <div className={styles.missionCard}>
               <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto 15px' }}>
-                <Image
-                  src="/assets/mission-connect-hq.png"
-                  alt="Connect"
-                  fill
-                  style={{ objectFit: 'contain' }}
-                />
+                <Image src="/assets/mission-connect-hq.png" alt="Connect" fill style={{ objectFit: 'contain' }} />
               </div>
-              <h3>Connect</h3>
-              <p>Connect and engage with potential social contacts on our platform</p>
+              <h3>{t('about.mission_connect')}</h3>
+              <p>{t('about.mission_connect_desc')}</p>
             </div>
             <div className={styles.missionCard}>
               <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto 15px' }}>
-                <Image
-                  src="/assets/mission-care-hq.png"
-                  alt="Care"
-                  fill
-                  style={{ objectFit: 'contain' }}
-                />
+                <Image src="/assets/mission-care-hq.png" alt="Care" fill style={{ objectFit: 'contain' }} />
               </div>
-              <h3>Care</h3>
-              <p>Find the nanny or household Care and support your need to elevate your lifestyle</p>
+              <h3>{t('about.mission_care')}</h3>
+              <p>{t('about.mission_care_desc')}</p>
             </div>
             <div className={styles.missionCard}>
               <div style={{ position: 'relative', width: '150px', height: '150px', margin: '0 auto 15px' }}>
-                <Image
-                  src="/assets/mission-excel-hq.png"
-                  alt="Excel"
-                  fill
-                  style={{ objectFit: 'contain' }}
-                />
+                <Image src="/assets/mission-excel-hq.png" alt="Excel" fill style={{ objectFit: 'contain' }} />
               </div>
-              <h3>Excel</h3>
-              <p>Foster the community culture and Excel together</p>
+              <h3>{t('about.mission_excel')}</h3>
+              <p>{t('about.mission_excel_desc')}</p>
             </div>
           </div>
         </div>
@@ -206,11 +193,11 @@ const About: React.FC = () => {
                 <path d="M70 60C70 48 72 37.3333 76 28C80.6667 18.6667 86.6667 11 94 5C102 -1 110.667 -3.66667 120 -4V8C112 9.33333 105.333 12.6667 100 18C94.6667 23.3333 91.6667 30 91 38H120V100H70V60Z" fill="#B8C5D9" />
               </svg>
             </div>
-            <h2 className={styles.testimonialHeading}>What Our Members Have To Say</h2>
+            <h2 className={styles.testimonialHeading}>{t('about.testimonials_heading')}</h2>
             <p className={styles.testimonialBody}>
-              DesiHelpers.com has saved me so much time in searching for ethnic help. I have deleted all the community Whatsapp groups now.
+              {t('about.testimonial_quote')}
             </p>
-            <button className={styles.joinButton} onClick={() => router.push("/Login?mode=signup")}>Connect Us</button>
+            <button className={styles.joinButton} onClick={() => router.push("/Login?mode=signup")}>{t('faq.connect_us')}</button>
           </div>
 
           <div className={styles.testimonialGrid}>
@@ -364,12 +351,12 @@ const About: React.FC = () => {
         }} />
         <div className={styles.readyContent}>
           <div className={styles.readyTextGroup}>
-            <h2 className={styles.readyTitle}>Ready to Get Started?</h2>
+            <h2 className={styles.readyTitle}>{t('cta.heading')}</h2>
             <p className={styles.readySubtitle}>
-              Join our community today and experience the difference of working with verified, trusted professionals.
+              {t('cta.description')}
             </p>
           </div>
-          <button className={styles.joinButton} style={{ padding: '15px 40px', fontSize: '1.1rem' }} onClick={() => router.push("/Login?mode=signup")}>Join the community</button>
+          <button className={styles.joinButton} style={{ padding: '15px 40px', fontSize: '1.1rem' }} onClick={() => router.push("/Login?mode=signup")}>{t('cta.button')}</button>
         </div>
       </section>
     </>

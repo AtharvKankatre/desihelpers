@@ -115,8 +115,25 @@ const Dashboard: React.FC<Props> = ({ data }) => {
     setSelectedRow(row);
     setShowJobModal(true);
   };
-  const handleJobSeekerUpdate = (email: string) => {
-    window.location.reload();
+  const handleJobSeekerUpdate = (email: string, listProfileAs: string) => {
+    // Optimistic update: immediately reflect the change in the table
+    setDetails((prev) =>
+      prev.map((user) =>
+        user.email === email
+          ? { ...user, listProfileAs, isJobSeeker: listProfileAs !== "Job Seeker" }
+          : user
+      )
+    );
+    // Update counts
+    const updated = SeekerDetails.map((user) =>
+      user.email === email ? { ...user, listProfileAs } : user
+    );
+    setJobSeekerCount(
+      updated.filter(
+        (item: any) => item.listProfileAs === "Service Provider" || item.listProfileAs === "Both"
+      ).length
+    );
+    toast.success("Profile updated successfully!");
   };
   const roleStatus = Cookies.get(cookieParams.role);
   const fetchAllJobs = async () => {
@@ -338,10 +355,15 @@ const Dashboard: React.FC<Props> = ({ data }) => {
       minWidth: "180px",
       cell: (row: any) =>
         row.listProfileAs ? (
-          <span className={`${style.profileBadge} ${row.listProfileAs === 'Both' ? style.badgeBoth :
-            row.listProfileAs === 'Service Provider' ? style.badgeProvider :
-              style.badgeSeeker
-            }`}>
+          <span
+            className={`${style.profileBadge} ${row.listProfileAs === 'Both' ? style.badgeBoth :
+              row.listProfileAs === 'Service Provider' ? style.badgeProvider :
+                style.badgeSeeker
+              }`}
+            style={{ cursor: "pointer" }}
+            title="Click to change"
+            onClick={() => handleModalOpen(row)}
+          >
             {row.listProfileAs}
           </span>
         ) : (
@@ -888,6 +910,7 @@ const Dashboard: React.FC<Props> = ({ data }) => {
         onClose={handleModalClose}
         onConfirm={handleJobSeekerUpdate}
         userId={selectedRow?.email || null}
+        currentListProfileAs={selectedRow?.listProfileAs || null}
       />
       <AdminBlogModal
         show={showBlogModal}

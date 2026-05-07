@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { cookieParams } from "@/constants/ECookieParams";
 import { Routes } from "@/services/routes/Routes";
 import Image from "next/image";
+import useTranslation from "next-translate/useTranslation";
 
 interface CMobileCanvasProps {
     show: boolean;
@@ -18,6 +19,7 @@ interface CMobileCanvasProps {
 
 export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose, handleShow }) => {
     const router = useRouter();
+    const { t } = useTranslation('common');
     const {
         setIsActive,
         setIsSeeker,
@@ -25,7 +27,12 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
     } = useAuth();
 
     const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-    const [selectedLang, setSelectedLang] = useState("Eng");
+
+    const switchLocale = (locale: 'en' | 'hi') => {
+        router.push(router.asPath, router.asPath, { locale });
+        setLangDropdownOpen(false);
+    };
+    const currentLang = router.locale === 'hi' ? t('lang_short_hi') : t('lang_short_en');
 
     // Fallback for user data
     const displayName = "Desi Helper";
@@ -57,31 +64,31 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
     };
 
     const menuItems = [
-        { label: "Find Job", icon: <FaSearch />, path: Routes.viewAllJobs },
-        { label: "Hire Help", icon: <FaHandsHelping />, path: Routes.viewAllSeekers },
-        { label: "About Us", icon: <FaInfoCircle />, path: "/about" },
-        { label: "Resources", icon: <FaBookOpen />, path: "/resources" },
-        { label: "My Profile", icon: <FaUser />, path: Routes.userProfile },
+        { label: t('nav.find_job'), icon: <FaSearch />, path: Routes.viewAllJobs },
+        { label: t('nav.hire_help'), icon: <FaHandsHelping />, path: Routes.viewAllSeekers },
+        { label: t('nav.about_us'), icon: <FaInfoCircle />, path: "/about" },
+        { label: t('nav.resources'), icon: <FaBookOpen />, path: "/resources" },
+        { label: t('canvas.my_profile'), icon: <FaUser />, path: Routes.userProfile },
     ];
 
     // Footer Data
     const services = [
-        { name: "Home & Baby care", href: Routes.landing },
-        { name: "Baking", href: Routes.landing },
-        { name: "Catering", href: Routes.landing },
-        { name: "Event Help", href: Routes.landing },
-        { name: "Tutoring", href: Routes.landing },
-        { name: "Professionals", href: Routes.landing },
+        { name: t('footer.home_baby'), href: Routes.landing },
+        { name: t('footer.baking'), href: Routes.landing },
+        { name: t('footer.catering'), href: Routes.landing },
+        { name: t('footer.event_help'), href: Routes.landing },
+        { name: t('footer.tutoring'), href: Routes.landing },
+        { name: t('footer.professionals'), href: Routes.landing },
     ];
 
     const pages = [
-        { name: "About Us", href: Routes.aboutUs || "/about" },
-        { name: "Resources", href: Routes.resources || "/resources" },
+        { name: t('footer.about_us'), href: Routes.aboutUs || "/about" },
+        { name: t('footer.resources'), href: Routes.resources || "/resources" },
     ];
 
     const otherLinks = [
-        { name: "Privacy Policy", href: Routes.privacyPolicy },
-        { name: "Contact Us", href: Routes.contactUs },
+        { name: t('footer.privacy_policy'), href: Routes.privacyPolicy },
+        { name: t('footer.contact_us'), href: Routes.contactUs },
     ];
 
     const socialLinks = [
@@ -129,15 +136,15 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                                         className={styles.langButton}
                                         onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                                     >
-                                        {selectedLang}
+                                        {currentLang}
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                                             <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
                                     </button>
                                     {langDropdownOpen && (
                                         <div className={styles.langDropdown}>
-                                            <button className={styles.langOption} onClick={() => { setSelectedLang("Eng"); setLangDropdownOpen(false); }}>English</button>
-                                            <button className={styles.langOption} onClick={() => { setSelectedLang("Hindi"); setLangDropdownOpen(false); }}>Hindi</button>
+                                            <button className={`${styles.langOption} ${router.locale === 'en' ? styles.langOptionActive : ''}`} onClick={() => switchLocale('en')}>{t('lang_english')}</button>
+                                            <button className={`${styles.langOption} ${router.locale === 'hi' ? styles.langOptionActive : ''}`} onClick={() => switchLocale('hi')}>{t('lang_hindi')}</button>
                                         </div>
                                     )}
                                 </div>
@@ -164,7 +171,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                             <div className={`${styles.iconBox} ${styles.logoutIconBox}`}>
                                 <FaSignOutAlt />
                             </div>
-                            <span className={styles.logoutBtn}>Logout</span>
+                            <span className={styles.logoutBtn}>{t('canvas.logout')}</span>
                         </button>
                     </div>
 
@@ -186,7 +193,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
 
                         <div className={styles.footerLinksGrid}>
                             <div className={styles.footerCol}>
-                                <h4 className={styles.footerColTitle}>SERVICES</h4>
+                                <h4 className={styles.footerColTitle}>{t('footer.services')}</h4>
                                 <ul className={styles.footerColList}>
                                     {services.map((service, index) => (
                                         <li key={index}><Link href={service.href}>{service.name}</Link></li>
@@ -194,7 +201,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                                 </ul>
                             </div>
                             <div className={styles.footerCol}>
-                                <h4 className={styles.footerColTitle}>PAGES</h4>
+                                <h4 className={styles.footerColTitle}>{t('footer.pages')}</h4>
                                 <ul className={styles.footerColList}>
                                     {pages.map((p, index) => (
                                         <li key={index}><Link href={p.href}>{p.name}</Link></li>
@@ -202,7 +209,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                                 </ul>
                             </div>
                             <div className={styles.footerCol}>
-                                <h4 className={styles.footerColTitle}>QUICK LINKS</h4>
+                                <h4 className={styles.footerColTitle}>{t('footer.quick_links')}</h4>
                                 <ul className={styles.footerColList}>
                                     {otherLinks.map((l, index) => (
                                         <li key={index}><Link href={l.href}>{l.name}</Link></li>
@@ -212,7 +219,7 @@ export const CMobileCanvas: React.FC<CMobileCanvasProps> = ({ show, handleClose,
                         </div>
 
                         <div className={styles.drawerCopyright}>
-                            © 2025 Desi Helpers. All rights reserved.
+                            {t('footer.copyright')}
                         </div>
                     </div>
                 </Offcanvas.Body>

@@ -6,10 +6,11 @@
 // =====================================================================
 import React from "react";
 import Head from "next/head";
-import { Box, GlobalStyles, Button, Container, CircularProgress } from "@mui/material"; // CHANGE: Added CircularProgress for loading state
+import { Box, GlobalStyles, Button, Container, CircularProgress } from "@mui/material";
 import { CHeader } from "@/components/global/header/CHeader";
 import { FaBell } from "react-icons/fa";
 import { useNotification, NotificationItem } from "@/context/NotificationContext";
+import useTranslation from "next-translate/useTranslation";
 
 // CHANGE: Helper function to format createdAt timestamp into relative time string
 function formatTimeAgo(dateStr: string): string {
@@ -41,8 +42,8 @@ function getDateLabel(dateStr: string): string {
 }
 
 const Notifications: React.FC = () => {
-    // CHANGE: Added loading and fetchNotifications from updated context
     const { notifications, markAllAsRead, markAsRead, loading } = useNotification();
+    const { t } = useTranslation('common');
 
     // CHANGE: Group notifications by date label computed from createdAt
     const groupedNotifications = notifications.reduce((groups, notification) => {
@@ -129,17 +130,17 @@ const Notifications: React.FC = () => {
                             opacity: 0.8,
                         }}
                     >
-                        <Box component="span">Home</Box>
+                        <Box component="span">{t('notif.home')}</Box>
                         <Box component="span">›</Box>
-                        <Box component="span">Notifications</Box>
+                        <Box component="span">{t('notif.title')}</Box>
                     </Box>
 
                     {/* Heading */}
                     <Box component="h1" sx={{ fontSize: "2.5rem", fontWeight: 700, mb: 2, textAlign: "center" }}>
-                        Notifications
+                        {t('notif.title')}
                     </Box>
                     <Box component="p" sx={{ opacity: 0.9, maxWidth: "600px", margin: "0 auto", textAlign: "center" }}>
-                        Stay updated with all your important notifications and activity.
+                        {t('notif.subtitle')}
                     </Box>
                 </Container>
             </Box>
@@ -157,21 +158,10 @@ const Notifications: React.FC = () => {
                         }}
                     >
                         <h3 style={{ color: "#003E95", fontWeight: 600, margin: 0 }}>
-                            Notifications
+                            {t('notif.title')}
                         </h3>
-                        <Button
-                            onClick={markAllAsRead}
-                            sx={{
-                                color: "#fd7e14",
-                                fontWeight: 600,
-                                textTransform: "uppercase",
-                                fontSize: "0.875rem",
-                                "&:hover": {
-                                    backgroundColor: "rgba(253, 126, 20, 0.1)",
-                                },
-                            }}
-                        >
-                            Mark All as Read
+                        <Button onClick={markAllAsRead} sx={{ color: "#fd7e14", fontWeight: 600, textTransform: "uppercase", fontSize: "0.875rem", "&:hover": { backgroundColor: "rgba(253, 126, 20, 0.1)" } }}>
+                            {t('notif.mark_all_read')}
                         </Button>
                     </Box>
 
@@ -192,7 +182,7 @@ const Notifications: React.FC = () => {
                         >
                             <FaBell color="#ccc" size={48} />
                             <p style={{ color: "#999", fontSize: "1.1rem", marginTop: "1rem" }}>
-                                No notifications yet. You&apos;re all caught up!
+                                {t('notif.empty')}
                             </p>
                         </Box>
                     ) : (
@@ -270,33 +260,11 @@ const Notifications: React.FC = () => {
 
                                                 {/* Action Buttons */}
                                                 <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
-                                                    <Button
-                                                        variant="text"
-                                                        sx={{
-                                                            color: "#333",
-                                                            fontWeight: 600,
-                                                            minWidth: "auto",
-                                                            padding: "4px 8px",
-                                                            "&:hover": {
-                                                                backgroundColor: "rgba(0,0,0,0.05)",
-                                                            },
-                                                        }}
-                                                    >
-                                                        YES
+                                                    <Button variant="text" sx={{ color: "#333", fontWeight: 600, minWidth: "auto", padding: "4px 8px", "&:hover": { backgroundColor: "rgba(0,0,0,0.05)" } }}>
+                                                        {t('common.yes')}
                                                     </Button>
-                                                    <Button
-                                                        variant="text"
-                                                        sx={{
-                                                            color: "#333",
-                                                            fontWeight: 600,
-                                                            minWidth: "auto",
-                                                            padding: "4px 8px",
-                                                            "&:hover": {
-                                                                backgroundColor: "rgba(0,0,0,0.05)",
-                                                            },
-                                                        }}
-                                                    >
-                                                        No
+                                                    <Button variant="text" sx={{ color: "#333", fontWeight: 600, minWidth: "auto", padding: "4px 8px", "&:hover": { backgroundColor: "rgba(0,0,0,0.05)" } }}>
+                                                        {t('common.no')}
                                                     </Button>
                                                 </Box>
 

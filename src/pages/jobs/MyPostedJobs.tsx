@@ -65,10 +65,36 @@ const MyPostedJobs = () => {
   };
 
   return (
-    <div className={`container-fluid ${styles.displayDetailsWrapper}`}>
+    <div className={`container-fluid`} style={{ marginTop: "80px", minHeight: "100vh", background: "linear-gradient(135deg, #f0f4f8 0%, #e8edf3 100%)", padding: "28px 32px" }}>
       <div className="row col-md-12 mx-auto">
-        <CH2Label className="col-md-12" label="My Posted Jobs" />
-        <hr className="mb-4" />
+        <div className="d-flex align-items-center" style={{ gap: "12px", marginBottom: "8px" }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              background: "#fff",
+              border: "1.5px solid #e2e8f0",
+              borderRadius: "10px",
+              width: "36px",
+              height: "36px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              color: "#073157",
+              fontSize: "1.1rem",
+              fontWeight: 700,
+              boxShadow: "0 2px 6px rgba(7,49,87,0.08)",
+            }}
+            title="Go back"
+            onMouseOver={(e) => { e.currentTarget.style.background = "#073157"; e.currentTarget.style.color = "#fff"; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.color = "#073157"; }}
+          >
+            ←
+          </button>
+          <h2 style={{ color: "#073157", fontWeight: 700, fontSize: "1.5rem", margin: 0 }}>My Posted Jobs</h2>
+        </div>
+        <hr style={{ borderColor: "#d4e5f7", marginBottom: "24px" }} />
 
         {isLoading ? (
           null

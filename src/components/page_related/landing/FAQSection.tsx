@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import styles from "@/styles/FAQSection.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import useTranslation from "next-translate/useTranslation";
 
 const faqData = [
     {
@@ -34,7 +35,16 @@ const faqData = [
 
 export const FAQSection: React.FC = () => {
     const router = useRouter();
-    const [activeIndex, setActiveIndex] = useState<number | null>(0); // First item open by default
+    const { t } = useTranslation('common');
+    const [activeIndex, setActiveIndex] = useState<number | null>(0);
+
+    const faqData = [
+        { id: 1, question: t('faq.q1'), answer: t('faq.a1') },
+        { id: 2, question: t('faq.q2'), answer: t('faq.a2') },
+        { id: 3, question: t('faq.q3'), answer: t('faq.a3') },
+        { id: 4, question: t('faq.q4'), answer: t('faq.a4') },
+        { id: 5, question: t('faq.q5'), answer: t('faq.a5') },
+    ];
 
     const toggleFAQ = (index: number) => {
         setActiveIndex(activeIndex === index ? null : index);
@@ -45,13 +55,11 @@ export const FAQSection: React.FC = () => {
             <div className={styles.container}>
                 {/* Left Side */}
                 <div className={styles.leftColumn}>
-                    <h2 className={styles.title}>FAQ's</h2>
+                    <h2 className={styles.title}>{t('faq.title')}</h2>
                     <p className={styles.description}>
-                        Find answers to all your questions about hiring trusted helpers,
-                        offering your services, and navigating our DESI community platform
-                        with ease and confidence.
+                        {t('faq.description')}
                     </p>
-                    <button className={styles.connectButton} onClick={() => router.push("/Login?mode=signup")}>Connect Us</button>
+                    <button className={styles.connectButton} onClick={() => router.push("/Login?mode=signup")}>{t('faq.connect_us')}</button>
                 </div>
 
                 {/* Right Side - Accordion */}

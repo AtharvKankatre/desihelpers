@@ -19,6 +19,7 @@ import { BlogCard } from "@/components/page_related/landing/BlogCard";
 import Link from "next/link";
 import { FaLinkedin, FaFacebook, FaTwitter, FaLink } from "react-icons/fa";
 import { BsXLg } from "react-icons/bs";
+import useTranslation from "next-translate/useTranslation";
 
 // --- Mock Data (Should ideally come from a shared source/API) ---
 const articles = [
@@ -698,6 +699,7 @@ const TagChip = styled(Chip)({
 const BlogPost = () => {
     const router = useRouter();
     const { id } = router.query;
+    const { t } = useTranslation('common');
     const [allArticles, setAllArticles] = useState(articles);
     const [loading, setLoading] = useState(true);
 
@@ -730,8 +732,8 @@ const BlogPost = () => {
             <>
                 <CHeader />
                 <Container sx={{ py: 20, textAlign: 'center' }}>
-                    <Typography variant="h4">Article not found</Typography>
-                    <Link href="/resources"><Typography sx={{ mt: 2, color: 'blue' }}>Back to Resources</Typography></Link>
+                    <Typography variant="h4">{t('resources.article_not_found')}</Typography>
+                    <Link href="/resources"><Typography sx={{ mt: 2, color: 'blue' }}>{t('resources.back_to_resources')}</Typography></Link>
                 </Container>
                 <FooterSection />
             </>
@@ -753,9 +755,9 @@ const BlogPost = () => {
                 <Container maxWidth="lg">
                     {/* Breadcrumbs */}
                     <Stack direction="row" spacing={1} justifyContent="center" alignItems="center" sx={{ mb: 3 }}>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                        <BreadcrumbLink href="/">{t('about.home')}</BreadcrumbLink>
                         <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>›</Typography>
-                        <BreadcrumbLink href="/resources">Resources</BreadcrumbLink>
+                        <BreadcrumbLink href="/resources">{t('nav.resources')}</BreadcrumbLink>
                         <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>›</Typography>
                         <Typography variant="body2" sx={{ color: "#ffffff", maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {article.title}
@@ -818,7 +820,7 @@ const BlogPost = () => {
 
                     {/* Tags */}
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 6 }}>
-                        <Typography variant="body2" fontWeight="bold">Tags:</Typography>
+                        <Typography variant="body2" fontWeight="bold">{t('resources.tags')}:</Typography>
                         {article.tags.map(tag => (
                             <TagChip key={tag} label={tag} />
                         ))}
@@ -826,7 +828,7 @@ const BlogPost = () => {
 
                     {/* Share Footer */}
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 4 }}>
-                        <Typography variant="body2" color="text.secondary">Found this helpful? <strong>Share it with your friends!</strong></Typography>
+                        <Typography variant="body2" color="text.secondary">{t('resources.share_text')}</Typography>
                         <IconButton size="small" color="primary"><FaLink /></IconButton>
                         <IconButton size="small" color="primary"><FaLinkedin /></IconButton>
                         <IconButton size="small" color="primary"><BsXLg /></IconButton>
@@ -840,7 +842,7 @@ const BlogPost = () => {
             <Box sx={{ backgroundColor: "#f8f9fa", py: 8 }}>
                 <Container maxWidth="lg">
                     <Typography variant="h4" sx={{ fontWeight: 700, color: "#003366", textAlign: "center", mb: 6 }}>
-                        You May Also Like To Read
+                        {t('resources.you_may_like')}
                     </Typography>
                     <Grid container spacing={4}>
                         {relatedArticles.map((related) => (

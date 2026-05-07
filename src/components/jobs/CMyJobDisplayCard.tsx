@@ -104,18 +104,39 @@ export const CMyJobDisplayCard: FunctionComponent<Props> = ({ ...Props }) => {
               onClick={handleDeleteClick}
             />
           </div>
-          <div className="d-flex flex-row">
-            <CButton
-              buttonClassName="btn mb-2 w-100 bgWarning"
-              label="Edit"
+          <div className="d-flex flex-row" style={{ gap: "8px" }}>
+            <button
               onClick={editJob}
-            />
-
-            <CButton
-              buttonClassName="btn text-white bgPrimary mb-2 w-100"
-              label="View"
+              style={{
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                padding: "6px 18px",
+                background: "linear-gradient(135deg, #FF812B, #ffaa66)",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              Edit
+            </button>
+            <button
               onClick={viewJobDetailsFn}
-            />
+              style={{
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                padding: "6px 18px",
+                background: "linear-gradient(135deg, #073157, #0a4a7f)",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              View
+            </button>
           </div>
         </div>
       </div>
@@ -128,16 +149,36 @@ export const CMyJobDisplayCard: FunctionComponent<Props> = ({ ...Props }) => {
         />
       )}
 
-      <Modal show={showDModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Deletion</Modal.Title>
+      <Modal show={showDModal} onHide={handleClose} centered>
+        <Modal.Header
+          closeButton
+          closeVariant="white"
+          style={{
+            background: "linear-gradient(135deg, #073157 0%, #0a4a7f 100%)",
+            borderBottom: "none",
+            padding: "14px 20px",
+          }}
+        >
+          <Modal.Title style={{ color: "#fff", fontSize: "1.05rem", fontWeight: 700 }}>
+            Confirm Deletion
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+        <Modal.Body style={{ padding: "24px", fontSize: "0.95rem", color: "#334155" }}>
+          Are you sure you want to delete this post?
+        </Modal.Body>
+        <Modal.Footer style={{ borderTop: "1px solid #eef2f7", padding: "12px 20px" }}>
+          <Button
+            variant="secondary"
+            onClick={handleClose}
+            style={{ borderRadius: "8px", fontWeight: 600, fontSize: "0.85rem", background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#64748b" }}
+          >
             Cancel
           </Button>
-          <Button variant="danger" onClick={handleConfirmDelete}>
+          <Button
+            variant="danger"
+            onClick={handleConfirmDelete}
+            style={{ borderRadius: "8px", fontWeight: 600, fontSize: "0.85rem", background: "#dc2626", border: "none" }}
+          >
             Delete
           </Button>
         </Modal.Footer>

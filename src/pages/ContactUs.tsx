@@ -6,7 +6,7 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import styles from "@/styles/Forms.module.css";
 import style from "@/styles/Common.module.css";
-import contactStyles from "@/styles/Contact.module.css"; // Imported new styles
+import contactStyles from "@/styles/Contact.module.css";
 import { Button, Form, FormCheck } from "react-bootstrap";
 import commonStyles from "@/styles/Common.module.css";
 import Swal from "sweetalert2";
@@ -18,11 +18,13 @@ import { CH3Label } from "@/components/reusable/labels/CH3Label";
 import { CHeader } from "@/components/global/header/CHeader";
 import { Box, GlobalStyles } from "@mui/material";
 import Head from "next/head";
+import useTranslation from "next-translate/useTranslation";
 
 
 const ContactUs: React.FC = () => {
   const [onLoad, setOnLoad] = useState<boolean>(false);
   const router = useRouter();
+  const { t } = useTranslation('common');
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
   const onRecaptchaChange = (token: string | null) => {
@@ -157,15 +159,14 @@ const ContactUs: React.FC = () => {
         <div className="container">
           {/* Breadcrumbs */}
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 3, fontSize: '0.9rem' }}>
-            <span style={{ opacity: 0.8 }}>Home</span>
+            <span style={{ opacity: 0.8 }}>{t('about.home')}</span>
             <span style={{ fontSize: '1.2rem', opacity: 0.8 }}>›</span>
-            <span style={{ opacity: 1, fontWeight: 500 }}>Contact Us</span>
+            <span style={{ opacity: 1, fontWeight: 500 }}>{t('contact.title')}</span>
           </Box>
 
-          {/* Heading */}
-          <h1 className={contactStyles.heroHeading} style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem' }}>Contact us</h1>
+          <h1 className={contactStyles.heroHeading} style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '1rem' }}>{t('contact.title')}</h1>
           <p style={{ opacity: 0.9, maxWidth: '600px', margin: '0 auto', fontSize: '1.1rem', lineHeight: 1.6, fontWeight: 400 }}>
-            Questions? Feedback? We're here to help you every step of the way. Reach out to the DesiHelpers team today!
+            {t('contact.subtitle')}
           </p>
         </div>
       </Box>
@@ -178,7 +179,7 @@ const ContactUs: React.FC = () => {
                 <form onSubmit={formik.handleSubmit}>
                   <div className="row">
                     <div className="col-md-6 mb-4 text-start">
-                      <label htmlFor="name" className="fw-bold mb-2" style={{ color: '#333' }}>Name <span className="text-danger">*</span></label>
+                      <label htmlFor="name" className="fw-bold mb-2" style={{ color: '#333' }}>{t('contact.name')} <span className="text-danger">*</span></label>
                       <CInput
                         id="name"
                         name="name"
@@ -194,7 +195,7 @@ const ContactUs: React.FC = () => {
                     </div>
 
                     <div className="col-md-6 mb-4 text-start">
-                      <label htmlFor="email" className="fw-bold mb-2" style={{ color: '#333' }}>Email <span className="text-danger">*</span></label>
+                      <label htmlFor="email" className="fw-bold mb-2" style={{ color: '#333' }}>{t('contact.email')} <span className="text-danger">*</span></label>
                       <CInput
                         id="email"
                         name="email"
@@ -212,24 +213,13 @@ const ContactUs: React.FC = () => {
 
                   {/* Query Type */}
                   <div className="text-start mb-4">
-                    <label htmlFor="issueType" className="fw-bold mb-2">Query Type <span className="text-danger">*</span></label>
-                    <Form.Select
-                      id="issueType"
-                      name="issueType"
-                      className="py-2 px-3"
-                      value={formik.values.issueType}
-                      onChange={formik.handleChange}
-                      isInvalid={!!formik.errors.issueType}
-                      disabled={onLoad}
-                      style={{ borderRadius: '12px', backgroundColor: '#F8F9FA', border: '1px solid #dee2e6', padding: '12px 16px', fontSize: '0.95rem' }}
-                    >
-                      <option value="" disabled>
-                        Select
-                      </option>
-                      <option value="Improvement">Improvement</option>
-                      <option value="Application Issues">Application Query</option>
-                      <option value="General Inquiry">General Inquiry</option>
-                      <option value="ReferABusiness">Refer A Business</option>
+                    <label htmlFor="issueType" className="fw-bold mb-2">{t('contact.query_type')} <span className="text-danger">*</span></label>
+                    <Form.Select id="issueType" name="issueType" className="py-2 px-3" value={formik.values.issueType} onChange={formik.handleChange} isInvalid={!!formik.errors.issueType} disabled={onLoad} style={{ borderRadius: '12px', backgroundColor: '#F8F9FA', border: '1px solid #dee2e6', padding: '12px 16px', fontSize: '0.95rem' }}>
+                      <option value="" disabled>{t('common.select')}</option>
+                      <option value="Improvement">{t('contact.improvement')}</option>
+                      <option value="Application Issues">{t('contact.app_query')}</option>
+                      <option value="General Inquiry">{t('contact.general_inquiry')}</option>
+                      <option value="ReferABusiness">{t('contact.refer_business')}</option>
                     </Form.Select>
                     {formik.errors.issueType && (
                       <div className="text-danger small mt-1">{formik.errors.issueType}</div>
@@ -238,31 +228,15 @@ const ContactUs: React.FC = () => {
 
                   {/* Role */}
                   <div className="text-start mb-4">
-                    <label className="fw-bold mb-2 d-block">Role <span className="text-danger">*</span></label>
+                    <label className="fw-bold mb-2 d-block">{t('contact.role')} <span className="text-danger">*</span></label>
                     <div className="d-flex flex-row align-items-center gap-4">
                       <div className="d-flex align-items-center">
-                        <FormCheck
-                          type="radio"
-                          id="jobPoster"
-                          name="role"
-                          value="Job Poster"
-                          checked={formik.values.role === "Job Poster"}
-                          onChange={formik.handleChange}
-                          className="m-0 custom-radio"
-                        />
-                        <label htmlFor="jobPoster" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Job Poster</label>
+                        <FormCheck type="radio" id="jobPoster" name="role" value="Job Poster" checked={formik.values.role === "Job Poster"} onChange={formik.handleChange} className="m-0 custom-radio" />
+                        <label htmlFor="jobPoster" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>{t('contact.job_poster')}</label>
                       </div>
                       <div className="d-flex align-items-center">
-                        <FormCheck
-                          type="radio"
-                          id="jobSeeker"
-                          name="role"
-                          value="Job Seeker"
-                          checked={formik.values.role === "Job Seeker"}
-                          onChange={formik.handleChange}
-                          className="m-0 custom-radio"
-                        />
-                        <label htmlFor="jobSeeker" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>Service Provider</label>
+                        <FormCheck type="radio" id="jobSeeker" name="role" value="Job Seeker" checked={formik.values.role === "Job Seeker"} onChange={formik.handleChange} className="m-0 custom-radio" />
+                        <label htmlFor="jobSeeker" className="ms-2 mb-0" style={{ cursor: 'pointer', fontSize: '0.95rem', color: '#555' }}>{t('contact.service_provider')}</label>
                       </div>
                     </div>
                     {formik.errors.role && (
@@ -272,7 +246,7 @@ const ContactUs: React.FC = () => {
 
                   {/* Describe Your Query */}
                   <div className="text-start mb-4">
-                    <label htmlFor="issueDescription" className="fw-bold mb-2">Describe Your Query <span className="text-danger">*</span></label>
+                    <label htmlFor="issueDescription" className="fw-bold mb-2">{t('contact.describe_query')} <span className="text-danger">*</span></label>
                     <CInputArea
                       id="issueDescription"
                       name="issueDescription"
@@ -301,13 +275,8 @@ const ContactUs: React.FC = () => {
 
                   {/* Submit Button */}
                   <div className="text-start">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      disabled={onLoad}
-                      className={contactStyles.submitBtn}
-                    >
-                      Submit
+                    <Button variant="primary" type="submit" disabled={onLoad} className={contactStyles.submitBtn}>
+                      {t('common.submit')}
                     </Button>
                   </div>
                 </form>

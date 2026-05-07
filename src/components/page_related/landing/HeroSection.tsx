@@ -8,6 +8,7 @@ import ApiService from "@/services/data/crud/crud";
 import { APIDetails } from "@/services/data/constants/ApiDetails";
 import { IJobs } from "@/models/Jobs";
 import { getOptimizedIcon } from "@/utils/iconMapping";
+import useTranslation from "next-translate/useTranslation";
 
 // Fallback Job card data matching the design
 const fallbackJobCards = [
@@ -125,6 +126,7 @@ import Image from "next/image";
 
 const _HeroSection: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const { isActive, isProfileBuild } = useAuth();
   const [activeTab, setActiveTab] = useState<"findJob" | "hireSomeone">("findJob");
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -286,13 +288,13 @@ const _HeroSection: React.FC = () => {
             className={`${styles.toggleButton} ${activeTab === "findJob" ? styles.findJobActive : ""}`}
             onClick={() => router.push(Routes.viewAllJobs)}
           >
-            Find Job
+            {t('hero.find_job')}
           </button>
           <button
             className={`${styles.toggleButton} ${activeTab === "hireSomeone" ? styles.hireSomeoneActive : ""}`}
             onClick={() => router.push(Routes.viewAllSeekers)}
           >
-            Hire Someone
+            {t('hero.hire_someone')}
           </button>
         </div>
         <div className={styles.toggleLine}></div>
@@ -301,20 +303,20 @@ const _HeroSection: React.FC = () => {
       {/* Desktop Version - Headline & Subtitle */}
       <div className={styles.desktopOnly}>
         <h1 className={styles.headline}>
-          Discover Opportunities That Match Your Skills
+          {t('hero.headline_desktop')}
         </h1>
         <p className={styles.subtitle}>
-          Join a growing network where your skills meet real demand, and start earning by helping others in your community.
+          {t('hero.subtitle_desktop')}
         </p>
       </div>
 
       {/* Mobile Version - Headline & Subtitle */}
       <div className={styles.mobileOnly}>
         <h1 className={styles.headline}>
-          Find Trusted Help for Desi Need
+          {t('hero.headline_mobile')}
         </h1>
         <p className={styles.subtitle}>
-          NRI's trusted platform for Jobs, Clients and Connections ! सब कुछ यही मिलेगा
+          {t('hero.subtitle_mobile')}
         </p>
       </div>
 
@@ -337,7 +339,7 @@ const _HeroSection: React.FC = () => {
               className={styles.jobCard}
               onClick={() => handleCardClick(job)}
             >
-              {job.urgent && <span className={styles.urgentBadge}>URGENT</span>}
+              {job.urgent && <span className={styles.urgentBadge}>{t('hero.urgent')}</span>}
 
               <div className={styles.cardImage}>
                 <Image
@@ -373,12 +375,12 @@ const _HeroSection: React.FC = () => {
       {/* Desktop Version - Additional CTA Links */}
       <div className={styles.desktopOnly}>
         <div className={styles.exploreLinkWrapper} onClick={handleExploreJobs}>
-          <span className={styles.exploreAvailableLink}>Explore available jobs now</span>
+          <span className={styles.exploreAvailableLink}>{t('hero.explore_jobs')}</span>
         </div>
         {!isActive && (
           <div className={styles.registerCtaWrapper}>
             <button className={styles.registerButton} onClick={handleRegister}>
-              Register Now
+              {t('hero.register_now')}
             </button>
           </div>
         )}
@@ -390,13 +392,13 @@ const _HeroSection: React.FC = () => {
           <svg viewBox="0 0 24 24" className={styles.locateIcon}>
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5 0-1.38 1.12-2.5 2.5-2.5 1.38 0 2.5 1.12 2.5 2.5 0 1.38-1.12 2.5-2.5 2.5z" />
           </svg>
-          <span className={styles.locateHelperLink}>Locate a helper near you?</span>
+          <span className={styles.locateHelperLink}>{t('hero.locate_helper')}</span>
         </div>
 
         {!isActive && (
           <div className={styles.postJobCtaWrapper}>
             <button className={styles.postJobButton} onClick={() => router.push('/Login?mode=signup')}>
-              Post A Job
+              {t('hero.post_a_job')}
             </button>
           </div>
         )}

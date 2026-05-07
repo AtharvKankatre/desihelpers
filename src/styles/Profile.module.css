@@ -134,6 +134,12 @@
     background: #f0f4f8;
 }
 
+.langOptionActive {
+    background-color: #fff3e8;
+    color: #FF6B35 !important;
+    font-weight: 600;
+}
+
 .navIconButton {
     background-color: rgba(255, 255, 255, 0.1);
     border: none;

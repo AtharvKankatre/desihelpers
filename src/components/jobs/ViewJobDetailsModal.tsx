@@ -56,36 +56,49 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
     <Modal
       show={showModal}
       onHide={handleClose}
-      className={styles.customModalWidth} // Custom class added here
-      size="xl"
-      aria-labelledby="example-modal-sizes-title-xl"
+      size="lg"
       centered
+      scrollable
+      aria-labelledby="example-modal-sizes-title-xl"
       backdrop="static"
+      style={{ paddingTop: "70px" }}
     >
-      <Modal.Header closeButton>
-        <Modal.Title className="d-flex flex-row w-100 justify-content-between align-items-center">
-          <div className="d-flex flex-row justify-content-between align-items-center">
+      <Modal.Header
+        closeButton
+        closeVariant="white"
+        style={{
+          background: "linear-gradient(135deg, #073157 0%, #0a4a7f 100%)",
+          borderBottom: "none",
+          padding: "14px 20px",
+        }}
+      >
+        <Modal.Title>
+          <div className="d-flex flex-row align-items-center" style={{ gap: "10px" }}>
             {job.urgent ? (
-              <div>
-                <img
-                  src="/assets/icons/form_icons/icon_urgent_need.svg"
-                  height={34}
-                />
-                <CH8Label label="Urgent" />
-              </div>
+              <span style={{
+                background: "#ff4444",
+                color: "#fff",
+                fontSize: "0.68rem",
+                fontWeight: 700,
+                padding: "3px 10px",
+                borderRadius: "12px",
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+              }}>
+                ⚠ Urgent
+              </span>
             ) : (
-              <img src={job.jobType?.icons} height={34} />
+              <img src={job.jobType?.icons} height={22} style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
             )}
-            <CH4Label
-              label={`Looking for ${job.subCategory ?? "-"} Services`}
-              className="displayIconHeadingLabel genericWordWrap me-2 ms-2"
-            />
+            <span style={{ color: "#fff", fontSize: "1rem", fontWeight: 600 }}>
+              Looking for {job.subCategory ?? "-"} Services
+            </span>
           </div>
         </Modal.Title>
       </Modal.Header>
 
       {/* Modal Body */}
-      <Modal.Body className="pt-0">
+      <Modal.Body style={{ padding: "20px 24px", maxHeight: "55vh", overflowY: "auto" }}>
         <Row>
           <Col sm={12} className="pt-2 modalImportantInfo">
             <CDisplay
@@ -155,7 +168,7 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
       </Modal.Body>
 
       {/* Modal Footer */}
-      <Modal.Footer className="modalImportantInfo">
+      <Modal.Footer style={{ borderTop: "1px solid #eef2f7", padding: "14px 20px", flexDirection: "column", gap: "12px" }}>
         <Container fluid className="p-0">
           <Row md={12}>
             <Col md={tablet ? 12 : 4}>
@@ -174,7 +187,7 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
                   job.userProfile?.email ? (
                     <Link
                       href={`mailto:${job.userProfile.email}`}
-                      style={{ cursor: "pointer" }} // Add pointer cursor
+                      style={{ cursor: "pointer" }}
                     >
                       {job.userProfile.email}
                     </Link>
@@ -204,10 +217,18 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
             </Col>
           </Row>
         </Container>
-        <div className="d-flex w-100 justify-content-end mt-3">
+        <div className="d-flex w-100 justify-content-end" style={{ gap: "10px" }}>
           {job.postedBy && (
             <button
-              className={'btn rounded ps-3 pe-3 pt-2 pb-2 text-white bgPrimary mx-2'}
+              style={{
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "0.88rem",
+                padding: "8px 20px",
+                background: "linear-gradient(135deg, #06b9a3, #04d9c0)",
+                border: "none",
+                color: "#fff",
+              }}
               onClick={() => {
                 handleClose();
                 router.push(`/Messages?userId=${job.postedBy}`);
@@ -217,7 +238,15 @@ const ViewJobDetailsModal: FunctionComponent<Props> = ({
             </button>
           )}
           <button
-            className={"btn rounded ps-4 pe-4 pt-2 pb-2 text-white bgCancel"}
+            style={{
+              borderRadius: "8px",
+              fontWeight: 600,
+              fontSize: "0.88rem",
+              padding: "8px 24px",
+              background: "#073157",
+              border: "none",
+              color: "#fff",
+            }}
             onClick={handleClose}
           >
             Close
